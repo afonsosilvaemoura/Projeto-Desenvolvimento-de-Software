@@ -1,23 +1,23 @@
 # Projeto-Desenvolvimento-de-Software
 
-<font size="17">Diagrama de Sequências</font>
-1 - Gestão de autenticação e perfis
-Autenticação Utilizador
+##Diagrama de Sequências
+###1 - Gestão de autenticação e perfis
+###Autenticação Utilizador
 
 <img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
-
-
-
-
-2 - Gestão de utentes
-Criar utentes, Consultar utentes e dados
+.
+.
+.
+.
+##2 - Gestão de utentes
+###Criar utentes, Consultar utentes e dados
 
 <img width="1354" height="2201" alt="ds_consultar_utentes" src="https://github.com/user-attachments/assets/20f2d35e-b034-49af-a009-4c2d9116e097" />
-
-
-
-
-Atualizar e remover informação sobre utente
+.
+.
+.
+.
+###Atualizar e remover informação sobre utente
 
 <img width="1327" height="1436" alt="ds_atualizar_remover" src="https://github.com/user-attachments/assets/556f33d7-904e-4864-a3cb-e1247e3fee94" />
 
