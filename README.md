@@ -1,6 +1,6 @@
-# Projeto-Desenvolvimento-de-Software (Título 1)
+# Projeto-Desenvolvimento-de-Software
 
-Diagrama de Sequências
+<font size="7">Diagrama de Sequências</font>
 1 - Gestão de autenticação e perfis
 Autenticação Utilizador
 
