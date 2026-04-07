@@ -5,10 +5,10 @@
 ###Autenticação Utilizador
 
 <img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
-.
-.
-.
-.
+-m
+-m
+-m
+-m
 ##2 - Gestão de utentes
 ###Criar utentes, Consultar utentes e dados
 
