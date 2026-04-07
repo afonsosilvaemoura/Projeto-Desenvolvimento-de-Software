@@ -2,13 +2,60 @@
 
 Diagrama de Sequências
 1 - Gestão de autenticação e perfis
-<img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
 Autenticação Utilizador
 
+<img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
+
+
+
+
 2 - Gestão de utentes
-Criar utentes, Consultar utentes e dados e Atualizar informação sobre utente
+Criar utentes, Consultar utentes e dados
+
 <img width="1354" height="2201" alt="ds_consultar_utentes" src="https://github.com/user-attachments/assets/20f2d35e-b034-49af-a009-4c2d9116e097" />
 
+
+
+
+Atualizar e remover informação sobre utente
+
+<img width="1327" height="1436" alt="ds_atualizar_remover" src="https://github.com/user-attachments/assets/556f33d7-904e-4864-a3cb-e1247e3fee94" />
+
+
+
+
+3 - Gestão de Médicos
+Criação, gestão e atualização de dados do médico
+
+<img width="1408" height="2035" alt="ds_gestaomedico" src="https://github.com/user-attachments/assets/99a151ca-2f01-45bc-a55e-af6a275d41d4" />
+
+
+
+
+Inativação do médico
+
+<img width="1477" height="1376" alt="ds_inativamedico" src="https://github.com/user-attachments/assets/61f86faa-0796-47c4-9460-427acfa9ffb0" />
+
+
+
+
+
+4 - Consultar dashboard do Utente
+
+<img width="1708" height="1348" alt="ds_dashboard" src="https://github.com/user-attachments/assets/69352a16-7395-4043-929a-b36e3e87f92e" />
+
+
+
+
+5 - Módulo CARAT
+Responder CARAT
+<img width="1761" height="1673" alt="ds_carat" src="https://github.com/user-attachments/assets/f867d6c9-8669-49f6-ad06-a720c2b9a898" />
+
+
+
+
+Consultar histórico CARAT
+<img width="1478" height="1405" alt="ds_historico" src="https://github.com/user-attachments/assets/7536aead-1e0f-4f1c-8ec7-c9913660bf2e" />
 
 
 
