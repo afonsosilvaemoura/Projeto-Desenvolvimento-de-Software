@@ -1,8 +1,8 @@
 # Projeto-Desenvolvimento-de-Software
 
-body {font-size: 18px !important; Diagrama de Sequências
+Diagrama de Sequências
 1 - Gestão de autenticação e perfis
-Autenticação Utilizador}
+Autenticação Utilizador
 
 <img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
 
@@ -61,6 +61,38 @@ Consultar histórico CARAT
 
 
 6 - Sistema de Alertas
+Definição do limiar 
+
+<img width="1546" height="1135" alt="ds_limiar" src="https://github.com/user-attachments/assets/d4ea1cae-b9db-4173-bcdf-76292bc23a36" />
+
+
+
+
+Consultar e gerir alertas clínicos
+
+<img width="1555" height="2075" alt="ds_alertas" src="https://github.com/user-attachments/assets/c44fb83a-c0c6-43d7-9d20-b4b85f1ebe35" />
+
+
+7 - Consulta Médica
+Consulta de lista de utentes e dados associados
+
+<img width="1532" height="1385" alt="ds_consulta" src="https://github.com/user-attachments/assets/7927a07b-1367-4de0-b80d-59e7ea82123c" />
+
+
+
+
+Prescrição de Medicação
+
+<img width="1527" height="1608" alt="ds_prescricao" src="https://github.com/user-attachments/assets/d996d2bc-d821-47c6-854e-1cba676bdc11" />
+
+
+
+
+8 - Gestão de Medicação
+Consulta e gestão da medicação
+
+<img width="1316" height="2155" alt="ds_medicacao" src="https://github.com/user-attachments/assets/ae178573-5f7b-4f2a-9ae2-69afdaffc238" />
+
 
 
 
