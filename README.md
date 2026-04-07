@@ -13,10 +13,10 @@
 ###Criar utentes, Consultar utentes e dados
 
 <img width="1354" height="2201" alt="ds_consultar_utentes" src="https://github.com/user-attachments/assets/20f2d35e-b034-49af-a009-4c2d9116e097" />
-.
-.
-.
-.
+-m
+-m
+-m
+-m
 ###Atualizar e remover informação sobre utente
 
 <img width="1327" height="1436" alt="ds_atualizar_remover" src="https://github.com/user-attachments/assets/556f33d7-904e-4864-a3cb-e1247e3fee94" />
