@@ -2,7 +2,7 @@
 
 Diagrama de Sequências
 <br>1 - Gestão de autenticação e perfis
-<br>utenticação Utilizador
+<br>Autenticação Utilizador
 
 <img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
 
