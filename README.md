@@ -1,22 +1,22 @@
 # Projeto-Desenvolvimento-de-Software
 
-##Diagrama de Sequências
-###1 - Gestão de autenticação e perfis
-###Autenticação Utilizador
+Diagrama de Sequências
+<br>1 - Gestão de autenticação e perfis
+<br>utenticação Utilizador
 
 <img width="1389" height="1372" alt="ds_autenticacao" src="https://github.com/user-attachments/assets/f56f8b0f-35b1-40d0-be34-7e3fe6e222e7" />
 
 <br><br><br><br><br>
 
 
-##2 - Gestão de utentes
-###Criar utentes, Consultar utentes e dados
+2 - Gestão de utentes
+<br>Criar utentes, Consultar utentes e dados
 
 <img width="1354" height="2201" alt="ds_consultar_utentes" src="https://github.com/user-attachments/assets/20f2d35e-b034-49af-a009-4c2d9116e097" />
 
 <br><br><br><br><br>
 
-###Atualizar e remover informação sobre utente
+Atualizar e remover informação sobre utente
 
 <img width="1327" height="1436" alt="ds_atualizar_remover" src="https://github.com/user-attachments/assets/556f33d7-904e-4864-a3cb-e1247e3fee94" />
 
@@ -25,7 +25,7 @@
 
 
 3 - Gestão de Médicos
-Criação, gestão e atualização de dados do médico
+<br>Criação, gestão e atualização de dados do médico
 
 <img width="1408" height="2035" alt="ds_gestaomedico" src="https://github.com/user-attachments/assets/99a151ca-2f01-45bc-a55e-af6a275d41d4" />
 
@@ -49,7 +49,7 @@ Inativação do médico
 
 
 5 - Módulo CARAT
-Responder CARAT
+<br>Responder CARAT
 <img width="1761" height="1673" alt="ds_carat" src="https://github.com/user-attachments/assets/f867d6c9-8669-49f6-ad06-a720c2b9a898" />
 
 <br><br><br><br><br>
@@ -62,7 +62,7 @@ Consultar histórico CARAT
 
 
 6 - Sistema de Alertas
-Definição do limiar 
+<br>Definição do limiar 
 
 <img width="1546" height="1135" alt="ds_limiar" src="https://github.com/user-attachments/assets/d4ea1cae-b9db-4173-bcdf-76292bc23a36" />
 
@@ -77,7 +77,7 @@ Consultar e gerir alertas clínicos
 
 
 7 - Consulta Médica
-Consulta de lista de utentes e dados associados
+<br>Consulta de lista de utentes e dados associados
 
 <img width="1532" height="1385" alt="ds_consulta" src="https://github.com/user-attachments/assets/7927a07b-1367-4de0-b80d-59e7ea82123c" />
 
@@ -92,7 +92,7 @@ Prescrição de Medicação
 
 
 8 - Gestão de Medicação
-Consulta e gestão da medicação
+<br>Consulta e gestão da medicação
 
 <img width="1316" height="2155" alt="ds_medicacao" src="https://github.com/user-attachments/assets/ae178573-5f7b-4f2a-9ae2-69afdaffc238" />
 
