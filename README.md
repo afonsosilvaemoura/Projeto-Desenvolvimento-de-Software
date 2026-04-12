@@ -101,7 +101,8 @@ Prescrição de Medicação
 
 
 
-<img width="8192" height="7745" alt="DiagramadeClasses" src="https://github.com/user-attachments/assets/76056f40-1915-4ff0-892b-96f1092aca64" />
+
+<img width="8192" height="7863" alt="Desenvolvimento de software-2026-04-12-152115" src="https://github.com/user-attachments/assets/1923a692-45a5-42a2-824f-ca2b3e7a1671" />
 O Diagrama de Classes representa a vista lógica estática do sistema, fundamentada no paradigma de programação orientada a objetos (POO). O núcleo clínico do modelo gravita em torno da classe AvaliacaoCARAT, que processa a submissão de questionários e detém a lógica de cálculo de scores. O sistema apresenta uma elevada coesão através da interligação desta classe com as entidades de Alerta e Prescricao (que agrega Medicacao e Exame). De forma a mitigar ambiguidades e garantir a tipagem forte do domínio, o modelo faz um uso extensivo de enumerações (e.g., EstadoAlertaEnum, PrioridadeEnum, NivelControloEnum), restringindo os estados a domínios de valores clinicamente válidos. Importa ainda salientar a presença das classes Auditoria e TokenSessao, que atestam a conformidade com os requisitos não funcionais de segurança e rastreabilidade (accountability), essenciais no tratamento de dados sensíveis de saúde.
 
 
