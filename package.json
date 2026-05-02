@@ -1,0 +1,41 @@
+{
+  "name": "projeto-desenvolvimento-de-software",
+  "version": "1.0.0",
+  "description": "Diagrama de Sequências\r <br>1 - Gestão de autenticação e perfis\r <br>Autenticação Utilizador",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.ts",
+    "build": "tsc src/app.ts --outDir dist --module commonjs --target es2020",
+    "start": "node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/afonsosilvaemoura/Projeto-Desenvolvimento-de-Software.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/afonsosilvaemoura/Projeto-Desenvolvimento-de-Software/issues"
+  },
+  "homepage": "https://github.com/afonsosilvaemoura/Projeto-Desenvolvimento-de-Software#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/uuid": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.9.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "uuid": "^14.0.0"
+  }
+}

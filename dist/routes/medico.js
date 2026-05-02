@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const medico_1 = require("../controller/medico");
+const auth_1 = require("../middleware/auth");
+const entities_1 = require("../models/entities");
+const router = (0, express_1.Router)();
+const ctrl = new medico_1.MedicoController();
+const { ADMINISTRADOR } = entities_1.PerfilUtilizador;
+router.get('/', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.listar(req, res));
+router.post('/', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.criar(req, res));
+router.get('/:id', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.obter(req, res));
+router.put('/:id', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.atualizar(req, res));
+router.patch('/:id/inativar', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.inativar(req, res));
+router.patch('/:id/utentes/:utenteId/reassociar', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.reassociarUtente(req, res));
+exports.default = router;

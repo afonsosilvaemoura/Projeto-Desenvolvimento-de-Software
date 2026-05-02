@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const alerta_1 = require("../controller/alerta");
+const auth_1 = require("../middleware/auth");
+const entities_1 = require("../models/entities");
+const router = (0, express_1.Router)();
+const ctrl = new alerta_1.AlertaController();
+const { ADMINISTRADOR, MEDICO, UTENTE } = entities_1.PerfilUtilizador;
+router.get('/limiares', auth_1.autenticar, (req, res) => ctrl.obterLimiares(req, res));
+router.put('/limiares', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR), (req, res) => ctrl.atualizarLimiares(req, res));
+router.get('/', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR, MEDICO, UTENTE), (req, res) => ctrl.listar(req, res));
+router.get('/:id', auth_1.autenticar, (req, res) => ctrl.obter(req, res));
+router.patch('/:id/estado', auth_1.autenticar, (0, auth_1.autorizar)(MEDICO, ADMINISTRADOR), (req, res) => ctrl.atualizarEstado(req, res));
+exports.default = router;
