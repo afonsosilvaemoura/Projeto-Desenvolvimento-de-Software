@@ -16,8 +16,8 @@ Node.js (verificar com node -v)<br>
 npm (verificar com npm -v)<br>
 
 <h2>Instalação</h2>
-# Clonar o repositório
-git clone !!!!!
+# Clonar o repositório<br>
+git clone !!!!!<br>
 cd !!!!!
 
 # Instalar dependências
