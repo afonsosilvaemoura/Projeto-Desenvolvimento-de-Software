@@ -7,6 +7,9 @@ import {
 } from '../services/carat';
 import { registarAuditoria } from '../services/auditoria';
 import { PerfilUtilizador } from '../models/entities';
+import { environment } from '../environment/environment';
+
+type RequestWithUtilizador = Request & { utilizador?: { id: string; perfil: PerfilUtilizador } };
 
 export class CaratController {
   // GET /carat/perguntas
@@ -17,7 +20,7 @@ export class CaratController {
   // POST /carat/avaliacoes
   submeter(req: Request, res: Response): void {
     const { respostas, utente_id } = req.body;
-    const user = req.utilizador; // pode ser undefined (anónimo) — definido na rota
+    const user = (req as RequestWithUtilizador).utilizador; // pode ser undefined (anónimo) — definido na rota
 
     if (!respostas || !Array.isArray(respostas)) {
       res.status(400).json({ erro: 'O campo "respostas" é obrigatório e deve ser um array.' });
@@ -102,7 +105,7 @@ export class CaratController {
       respostas: JSON.parse(a.respostas),
     }));
 
-    registarAuditoria(req.utilizador!.id, 'VER_HISTORICO_CARAT', 'avaliacoes_carat', utenteId);
+    registarAuditoria((req as any).utilizador!.id, 'VER_HISTORICO_CARAT', 'avaliacoes_carat', utenteId);
     res.json(avaliacoes);
   }
 
@@ -113,7 +116,7 @@ export class CaratController {
     const av = db.prepare('SELECT * FROM avaliacoes_carat WHERE id=?').get(avaliacaoId) as any;
     if (!av) { res.status(404).json({ erro: 'Avaliação não encontrada.' }); return; }
 
-    registarAuditoria(req.utilizador!.id, 'VER_AVALIACAO_CARAT', 'avaliacoes_carat', avaliacaoId);
+    registarAuditoria((req as any).utilizador!.id, 'VER_AVALIACAO_CARAT', 'avaliacoes_carat', avaliacaoId);
     res.json({ ...av, respostas: JSON.parse(av.respostas) });
   }
 }

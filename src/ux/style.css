@@ -1,0 +1,36 @@
+:root {
+  /* Primárias */
+  --cor-primaria:        #007BFF;
+  --cor-primaria-hover:  #0056B3;
+  --cor-primaria-light:  #E0F2F7;
+
+  /* Semáforo clínico */
+  --cor-controlada:      #28A745;
+  --cor-parcial:         #F4D03F;
+  --cor-nao-controlada:  #DC3545;
+
+  /* Alerta institucional */
+  --cor-alerta:          #F4D03F;
+
+  /* Neutras */
+  --cor-fundo:           #F4F8FB;
+  --cor-card:            #FFFFFF;
+  --cor-texto:           #333333;
+  --cor-texto-muted:     #6C757D;
+  --cor-borda:           #DEE2E6;
+
+  /* Fundos semáforo (badges) */
+  --bg-controlada:       #D4EDDA;
+  --bg-parcial:          #FFF3CD;
+  --bg-nao-controlada:   #F8D7DA;
+
+  /* Texto semáforo (badges) */
+  --txt-controlada:      #155724;
+  --txt-parcial:         #856404;
+  --txt-nao-controlada:  #721C24;
+
+  /* Fundos de alerta por prioridade */
+  --bg-alerta-critico:   #F8D7DA;
+  --bg-alerta-alto:      #FFF3CD;
+  --bg-alerta-info:      #CCE5FF;
+}
