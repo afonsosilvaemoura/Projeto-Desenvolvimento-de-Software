@@ -17,7 +17,7 @@ npm (verificar com npm -v)<br>
 
 <h2>Instalação</h2>
 # Clonar o repositório<br>
-git clone !!!!!<br>
+git clone https://github.com/afonsosilvaemoura/Projeto-Desenvolvimento-de-Software.git<br>
 cd !!!!!
 
 # Instalar dependências
