@@ -1,4 +1,35 @@
+<h1>Gestão de Prevenção e Acompanhamento de doenças crónicas</h1>
+
+Projeto desenvolvido no âmbito da disciplina de Desenvolvimento de Software da Licenciatura em Saúde Digital e Inovação Biomédica - FMUP.
+
+Implementação de uma API REST seguindo o padrão MVC (Model-View-Controller) com Node.js, Express e TypeScript, utilizando armazenamento local em memória.
 # Projeto-Desenvolvimento-de-Software
+
+
+<h2>Estrutura do Projeto</h2>
+<br><br>
+
+
+<h2>Pré-requisitos</h2>
+
+Node.js (verificar com node -v)<br>
+npm (verificar com npm -v)<br>
+
+<h2>Instalação</h2>
+# Clonar o repositório<br>
+git clone https://github.com/afonsosilvaemoura/Projeto-Desenvolvimento-de-Software.git<br>
+cd !!!!!
+
+# Instalar dependências
+npm install
+
+<h2>Como Correr</h2><br>
+<h3>Modo de desenvolvimento (com auto-reload)</h3>
+npx nodemon src/app.ts<br>
+O servidor arranca em http://localhost:3000<br>
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 Diagrama de Sequências
 <br>1 - Gestão de autenticação e perfis
@@ -100,9 +131,8 @@ Prescrição de Medicação
 <br><br><br><br><br>
 
 
+<img width="8192" height="7772" alt="Desenvolvimento de software-2026-05-12-120501" src="https://github.com/user-attachments/assets/ce4d2b47-ed44-46ef-b8c7-4fd78f4f70fa" />
 
-
-<img width="8192" height="7863" alt="Desenvolvimento de software-2026-04-12-152115" src="https://github.com/user-attachments/assets/1923a692-45a5-42a2-824f-ca2b3e7a1671" />
 O Diagrama de Classes representa a vista lógica estática do sistema, fundamentada no paradigma de programação orientada a objetos (POO). O núcleo clínico do modelo gravita em torno da classe AvaliacaoCARAT, que processa a submissão de questionários e detém a lógica de cálculo de scores. O sistema apresenta uma elevada coesão através da interligação desta classe com as entidades de Alerta e Prescricao (que agrega Medicacao e Exame). De forma a mitigar ambiguidades e garantir a tipagem forte do domínio, o modelo faz um uso extensivo de enumerações (e.g., EstadoAlertaEnum, PrioridadeEnum, NivelControloEnum), restringindo os estados a domínios de valores clinicamente válidos. Importa ainda salientar a presença das classes Auditoria e TokenSessao, que atestam a conformidade com os requisitos não funcionais de segurança e rastreabilidade (accountability), essenciais no tratamento de dados sensíveis de saúde.
 
 
