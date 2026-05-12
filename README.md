@@ -1,4 +1,8 @@
-# Projeto-Desenvolvimento-de-Software
+<h1>Gestão de Prevenção e Acompanhamento de doenças crónicas</h1>
+
+Projeto desenvolvido no âmbito da disciplina de Desenvolvimento de Software em Saúde (DSS) — FMUP.
+
+Implementação de uma API REST seguindo o padrão MVC (Model-View-Controller) com Node.js, Express e TypeScript, utilizando armazenamento local em memória.# Projeto-Desenvolvimento-de-Software
 
 Diagrama de Sequências
 <br>1 - Gestão de autenticação e perfis
