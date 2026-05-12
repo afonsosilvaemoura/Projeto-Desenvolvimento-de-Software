@@ -1,4 +1,3 @@
-<img width="8192" height="7772" alt="Desenvolvimento de software-2026-05-12-120501" src="https://github.com/user-attachments/assets/109e0e17-0692-4cc5-85b7-58ed9acbf741" />
 <h1>Gestão de Prevenção e Acompanhamento de doenças crónicas</h1>
 
 Projeto desenvolvido no âmbito da disciplina de Desenvolvimento de Software da Licenciatura em Saúde Digital e Inovação Biomédica - FMUP.
