@@ -34,13 +34,15 @@ CREATE TABLE IF NOT EXISTS utente (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     id_utilizador   INTEGER NOT NULL UNIQUE,
     id_medico       INTEGER NOT NULL,
-    nif             TEXT    NOT NULL UNIQUE,
+    num_utente      TEXT    NOT NULL UNIQUE,
     nome_utente     TEXT    NOT NULL,
     email           TEXT    NOT NULL,
     telemovel       TEXT,
     morada          TEXT,
     data_nascimento TEXT,
     estado_civil    TEXT,
+    alergias        TEXT,
+    nif             TEXT    NOT NULL UNIQUE,
     ativo           INTEGER NOT NULL DEFAULT 1 CHECK (ativo IN (0, 1)),
     motivo_remocao  INTEGER          CHECK (motivo_remocao IN (1, 2, 3, 4)),
     data_remocao    TEXT,
@@ -100,6 +102,12 @@ CREATE TABLE IF NOT EXISTS configuracao (
     delta_deterioracao INTEGER NOT NULL DEFAULT 3,
     FOREIGN KEY (id_admin) REFERENCES administrador(id)
 );
+   -- Restrições de validação de dados
+    CHECK (valor_minimo > 0),
+    CHECK (valor_maximo > 0),
+    CHECK (valor_minimo < valor_maximo)
+    Delta positivo para evitar alertas infinitos ou nulos
+    CHECK (delta_deterioracao > 0),
 
 -- -------------------------------------------------------------
 -- PRESCRICAO
