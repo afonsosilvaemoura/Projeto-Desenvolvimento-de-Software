@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — SAUDINOB</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 1000px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .selector { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .selector label { font-weight: 600; font-size: 0.9rem; }
+    .selector select, .selector input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; }
+    .btn { padding: 8px 18px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #074870; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px; }
+    .card h2 { font-size: 0.95rem; font-weight: 700; color: #374151; margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; }
+    .card-wide { grid-column: 1 / -1; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .stat { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 18px 20px; }
+    .stat .label { font-size: 0.78rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat .value { font-size: 1.8rem; font-weight: 800; color: #0a5c91; margin-top: 4px; }
+    .stat .sub { font-size: 0.8rem; color: #6b7280; margin-top: 2px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .CONTROLADA { background: #dcfce7; color: #15803d; }
+    .PARCIALMENTE_CONTROLADA { background: #fef9c3; color: #a16207; }
+    .NAO_CONTROLADA { background: #fee2e2; color: #b91c1c; }
+    .NOVO { background: #dbeafe; color: #1d4ed8; }
+    .VISTO { background: #f3f4f6; color: #374151; }
+    .EM_SEGUIMENTO { background: #fef9c3; color: #a16207; }
+    .FECHADO { background: #dcfce7; color: #15803d; }
+
+    .empty { color: #9ca3af; font-size: 0.85rem; padding: 12px 0; }
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 SAUDINOB — Dashboard</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_carat.html">CARAT</a>
+      <a href="index_alertas.html">Alertas</a>
+      <a href="index_utentes.html">Utentes</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="msg"></div>
+
+    <div class="selector" id="selectorBox">
+      <label>Utente:</label>
+      <select id="utenteSelect"><option value="">— selecionar —</option></select>
+      <button class="btn" onclick="carregar()">Ver Dashboard</button>
+    </div>
+
+    <div id="conteudo" style="display:none">
+      <div class="stat-grid">
+        <div class="stat"><div class="label">Último Score CARAT</div><div class="value" id="statScore">—</div><div class="sub" id="statNivel">—</div></div>
+        <div class="stat"><div class="label">Alertas Ativos</div><div class="value" id="statAlertas">—</div><div class="sub">por resolver</div></div>
+        <div class="stat"><div class="label">Medicação Ativa</div><div class="value" id="statMed">—</div><div class="sub">fármacos</div></div>
+      </div>
+
+      <div class="card card-wide" style="margin-bottom:20px">
+        <h2>Evolução CARAT ao longo do tempo</h2>
+        <canvas id="grafico" height="80"></canvas>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h2>Avaliações CARAT</h2>
+          <table>
+            <thead><tr><th>Data</th><th>Score</th><th>Controlo</th></tr></thead>
+            <tbody id="tblCarat"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h2>Alertas Ativos</h2>
+          <table>
+            <thead><tr><th>Tipo</th><th>Prioridade</th><th>Estado</th></tr></thead>
+            <tbody id="tblAlertas"></tbody>
+          </table>
+        </div>
+        <div class="card card-wide">
+          <h2>Medicação Ativa</h2>
+          <table>
+            <thead><tr><th>Fármaco</th><th>Dosagem</th><th>Posologia</th><th>Início</th></tr></thead>
+            <tbody id="tblMed"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+    let chart   = null;
+
+    if (!token) window.location.href = 'index_login.html';
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear();
+      window.location.href = 'index_login.html';
+    }
+
+    function hdrs() { return { Authorization: 'Bearer ' + token }; }
+
+    function showErro(txt) {
+      const el = document.getElementById('msg');
+      el.className = 'msg erro';
+      el.textContent = txt;
+    }
+
+    async function init() {
+      const sel = document.getElementById('utenteSelect');
+      if (user.perfil === 'UTENTE') {
+        document.getElementById('selectorBox').style.display = 'none';
+        await carregar(user.id);
+      } else {
+        const res = await fetch(`${API}/utentes`, { headers: hdrs() });
+        const lista = await res.json();
+        lista.forEach(u => {
+          const o = document.createElement('option');
+          o.value = u.id; o.textContent = u.nome;
+          sel.appendChild(o);
+        });
+      }
+    }
+
+    async function carregar(forceId) {
+      const utenteId = forceId || document.getElementById('utenteSelect').value;
+      if (!utenteId) { showErro('Seleciona um utente.'); return; }
+
+      const res  = await fetch(`${API}/dashboard/${utenteId}`, { headers: hdrs() });
+      const data = await res.json();
+      if (!res.ok) { showErro(data.erro || 'Erro ao carregar dashboard.'); return; }
+
+      document.getElementById('conteudo').style.display = 'block';
+      document.getElementById('msg').textContent = '';
+
+      const av = data.grafico_carat.avaliacoes;
+      const limiar = data.grafico_carat.limiar_controlo_insuficiente;
+
+      // Stats
+      const ult = data.ultima_avaliacao;
+      document.getElementById('statScore').textContent   = ult ? ult.score : '—';
+      document.getElementById('statNivel').textContent   = ult ? nivelLabel(ult.nivel_controlo) : '—';
+      document.getElementById('statAlertas').textContent = data.alertas_ativos.length;
+      document.getElementById('statMed').textContent     = data.medicacao_ativa.length;
+
+      // Gráfico
+      if (chart) chart.destroy();
+      const ctx = document.getElementById('grafico').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: av.map(a => a.data),
+          datasets: [
+            {
+              label: 'Score CARAT',
+              data: av.map(a => a.score),
+              borderColor: '#0a5c91', backgroundColor: 'rgba(10,92,145,0.1)',
+              tension: 0.3, fill: true, pointRadius: 5,
+            },
+            {
+              label: `Limiar (${limiar})`,
+              data: av.map(() => limiar),
+              borderColor: '#ef4444', borderDash: [6, 4],
+              pointRadius: 0, fill: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: { y: { min: 0, max: 40, title: { display: true, text: 'Score (0-40)' } } },
+          plugins: { legend: { position: 'bottom' } },
+        },
+      });
+
+      // Tabela CARAT
+      const tCarat = document.getElementById('tblCarat');
+      tCarat.innerHTML = av.length ? '' : '<tr><td colspan="3" class="empty">Sem avaliações</td></tr>';
+      [...av].reverse().forEach(a => {
+        tCarat.innerHTML += `<tr>
+          <td>${a.data}</td>
+          <td><strong>${a.score}</strong></td>
+          <td><span class="badge ${a.nivel_controlo}">${nivelLabel(a.nivel_controlo)}</span></td>
+        </tr>`;
+      });
+
+      // Tabela Alertas
+      const tAl = document.getElementById('tblAlertas');
+      tAl.innerHTML = data.alertas_ativos.length ? '' : '<tr><td colspan="3" class="empty">Sem alertas</td></tr>';
+      data.alertas_ativos.forEach(a => {
+        tAl.innerHTML += `<tr>
+          <td>${tipoLabel(a.tipo)}</td>
+          <td>${a.prioridade}</td>
+          <td><span class="badge ${a.estado}">${a.estado}</span></td>
+        </tr>`;
+      });
+
+      // Tabela Medicação
+      const tMed = document.getElementById('tblMed');
+      tMed.innerHTML = data.medicacao_ativa.length ? '' : '<tr><td colspan="4" class="empty">Sem medicação ativa</td></tr>';
+      data.medicacao_ativa.forEach(m => {
+        tMed.innerHTML += `<tr>
+          <td><strong>${m.farmaco}</strong></td>
+          <td>${m.dosagem}</td>
+          <td>${m.posologia}</td>
+          <td>${m.data_inicio}</td>
+        </tr>`;
+      });
+    }
+
+    function nivelLabel(n) {
+      return { CONTROLADA: 'Controlada', PARCIALMENTE_CONTROLADA: 'Parcialmente controlada', NAO_CONTROLADA: 'Não controlada' }[n] || n;
+    }
+    function tipoLabel(t) {
+      return { SCORE_BAIXO: 'Score baixo', DETERIORACAO: 'Deterioração', SINTOMA: 'Sintoma', MEDICACAO: 'Medicação' }[t] || t;
+    }
+
+    init();
+  </script>
+</body>
+</html>

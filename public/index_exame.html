@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exames — SAUDINOB</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 960px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .selector { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 18px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .selector label { font-weight: 600; font-size: 0.9rem; }
+    .selector select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; }
+
+    .btn { padding: 8px 18px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #074870; }
+    .btn-success { background: #16a34a; }
+    .btn-success:hover { background: #15803d; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; }
+    .card-header h2 { font-size: 0.95rem; font-weight: 700; color: #374151; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .td-acoes { display: flex; gap: 6px; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .PENDENTE   { background: #fef9c3; color: #a16207; }
+    .REALIZADO  { background: #dcfce7; color: #15803d; }
+    .CANCELADO  { background: #fee2e2; color: #b91c1c; }
+
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+    .msg.ok   { background: #dcfce7; color: #15803d; }
+
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; border-radius: 12px; padding: 28px; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
+    .modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: #374151; }
+    .modal label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #374151; }
+    .modal input, .modal select, .modal textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; margin-bottom: 14px; }
+    .modal textarea { min-height: 80px; resize: vertical; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+    .modal p { font-size: 0.88rem; color: #374151; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🩺 SAUDINOB — Exames</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_utentes.html">Utentes</a>
+      <a href="index_dashboard.html">Dashboard</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="msg"></div>
+
+    <div class="selector" id="selectorBox">
+      <label>Utente:</label>
+      <select id="utenteSelect"><option value="">— selecionar —</option></select>
+      <button class="btn" onclick="carregar()">Carregar</button>
+    </div>
+
+    <div id="conteudo" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <h2>Exames Complementares</h2>
+          <button class="btn" id="btnNovo" onclick="abrirModalNovo()" style="display:none">+ Prescrever Exame</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Tipo</th><th>Descrição</th><th>Data Prescrição</th><th>Estado</th><th>Resultado</th><th></th></tr>
+          </thead>
+          <tbody id="tblExames"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal prescrever -->
+  <div class="modal-backdrop" id="modalForm">
+    <div class="modal">
+      <h3>Prescrever Exame</h3>
+      <label>Tipo de Exame *</label>
+      <select id="fTipo">
+        <option value="ESPIROMETRIA">Espirometria</option>
+        <option value="PEAK_FLOW">Peak Flow</option>
+        <option value="RX_TORAX">Rx Tórax</option>
+        <option value="TAC_TORAX">TAC Tórax</option>
+        <option value="OXIMETRIA">Oximetria</option>
+        <option value="GASOMETRIA">Gasometria</option>
+        <option value="HEMOGRAMA">Hemograma</option>
+        <option value="OUTRO">Outro</option>
+      </select>
+      <label>Descrição / Indicação</label>
+      <textarea id="fDescricao" placeholder="Indicação clínica ou notas adicionais…"></textarea>
+      <label>Data de Prescrição</label>
+      <input type="date" id="fData" />
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalForm')">Cancelar</button>
+        <button class="btn" onclick="guardarExame()">Prescrever</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal resultado -->
+  <div class="modal-backdrop" id="modalResultado">
+    <div class="modal">
+      <h3>Registar Resultado</h3>
+      <p id="resultadoInfo" style="font-size:0.88rem;color:#374151;margin-bottom:14px"></p>
+      <label>Resultado *</label>
+      <textarea id="fResultado" placeholder="Descreve o resultado do exame…"></textarea>
+      <label>Data de Realização</label>
+      <input type="date" id="fDataRealizacao" />
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalResultado')">Cancelar</button>
+        <button class="btn btn-success" onclick="guardarResultado()">Registar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) window.location.href = 'index_login.html';
+
+    let utenteAtualId = null;
+    let exameAtual    = null;
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear(); window.location.href = 'index_login.html';
+    }
+    function hdrs(json = true) {
+      const h = { Authorization: 'Bearer ' + token };
+      if (json) h['Content-Type'] = 'application/json';
+      return h;
+    }
+    function showMsg(txt, tipo = 'erro') {
+      const el = document.getElementById('msg');
+      el.textContent = txt; el.className = 'msg ' + tipo; el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3500);
+    }
+    function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    async function init() {
+      if (user.perfil === 'UTENTE') {
+        document.getElementById('selectorBox').style.display = 'none';
+        utenteAtualId = user.id;
+        await carregar();
+      } else {
+        const res   = await fetch(`${API}/utentes`, { headers: hdrs(false) });
+        const lista = await res.json();
+        const sel   = document.getElementById('utenteSelect');
+        lista.forEach(u => { sel.innerHTML += `<option value="${u.id}">${u.nome}</option>`; });
+        if (user.perfil === 'MEDICO') {
+          document.getElementById('btnNovo').style.display = 'inline-block';
+        }
+      }
+    }
+
+    async function carregar() {
+      const id = utenteAtualId || document.getElementById('utenteSelect').value;
+      if (!id) { showMsg('Seleciona um utente.'); return; }
+      utenteAtualId = id;
+
+      const res   = await fetch(`${API}/utentes/${id}/exames`, { headers: hdrs(false) });
+      const lista = await res.json();
+
+      document.getElementById('conteudo').style.display = 'block';
+      if (user.perfil === 'MEDICO') document.getElementById('btnNovo').style.display = 'inline-block';
+
+      const tbody = document.getElementById('tblExames');
+      tbody.innerHTML = '';
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#9ca3af;padding:12px 0">Sem exames prescritos.</td></tr>';
+        return;
+      }
+
+      lista.forEach(e => {
+        const podeResultado = user.perfil === 'MEDICO' && e.estado === 'PENDENTE';
+        tbody.innerHTML += `<tr>
+          <td><strong>${e.tipo}</strong></td>
+          <td>${e.descricao || '—'}</td>
+          <td>${e.data_prescricao ? e.data_prescricao.substring(0,10) : '—'}</td>
+          <td><span class="badge ${e.estado}">${estadoLabel(e.estado)}</span></td>
+          <td style="max-width:200px;white-space:pre-wrap;font-size:0.8rem">${e.resultado || '—'}</td>
+          <td><div class="td-acoes">
+            ${podeResultado ? `<button class="btn btn-sm btn-success" onclick="abrirModalResultado('${e.id}','${e.tipo}')">Resultado</button>` : ''}
+          </div></td>
+        </tr>`;
+      });
+    }
+
+    function estadoLabel(s) {
+      return { PENDENTE: 'Pendente', REALIZADO: 'Realizado', CANCELADO: 'Cancelado' }[s] || s;
+    }
+
+    function abrirModalNovo() {
+      document.getElementById('fDescricao').value = '';
+      document.getElementById('fData').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    async function guardarExame() {
+      const body = {
+        tipo:             document.getElementById('fTipo').value,
+        descricao:        document.getElementById('fDescricao').value.trim() || null,
+        data_prescricao:  document.getElementById('fData').value || null,
+      };
+
+      const res  = await fetch(`${API}/utentes/${utenteAtualId}/exames`, {
+        method: 'POST', headers: hdrs(), body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao prescrever.'); return; }
+      fecharModal('modalForm');
+      await carregar();
+      showMsg('Exame prescrito com sucesso.', 'ok');
+    }
+
+    function abrirModalResultado(id, tipo) {
+      exameAtual = { id };
+      document.getElementById('resultadoInfo').textContent = `Exame: ${tipo}`;
+      document.getElementById('fResultado').value = '';
+      document.getElementById('fDataRealizacao').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modalResultado').classList.add('open');
+    }
+
+    async function guardarResultado() {
+      const resultado       = document.getElementById('fResultado').value.trim();
+      const data_realizacao = document.getElementById('fDataRealizacao').value;
+      if (!resultado) { showMsg('O resultado é obrigatório.'); return; }
+
+      const res  = await fetch(`${API}/utentes/${utenteAtualId}/exames/${exameAtual.id}/resultado`, {
+        method: 'PATCH', headers: hdrs(), body: JSON.stringify({ resultado, data_realizacao }),
+      });
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao registar resultado.'); return; }
+      fecharModal('modalResultado');
+      await carregar();
+      showMsg('Resultado registado com sucesso.', 'ok');
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>Alertas</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 960px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .toolbar select, .toolbar input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.88rem; }
+    .btn { padding: 8px 18px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #074870; }
+    .btn-danger { background: #ef4444; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; color: #374151; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr.alerta-row { cursor: pointer; }
+    tr.alerta-row:hover td { background: #f9fafb; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .NOVO { background: #dbeafe; color: #1d4ed8; }
+    .VISTO { background: #f3f4f6; color: #374151; }
+    .EM_SEGUIMENTO { background: #fef9c3; color: #a16207; }
+    .FECHADO { background: #dcfce7; color: #15803d; }
+    .BAIXA { background: #f3f4f6; color: #374151; }
+    .MEDIA { background: #fef9c3; color: #a16207; }
+    .ALTA { background: #fed7aa; color: #c2410c; }
+    .CRITICA { background: #fee2e2; color: #b91c1c; }
+
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+    .msg.ok   { background: #dcfce7; color: #15803d; }
+
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; border-radius: 12px; padding: 28px; width: 100%; max-width: 520px; max-height: 80vh; overflow-y: auto; }
+    .modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: #374151; }
+    .modal label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #374151; }
+    .modal select, .modal textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; margin-bottom: 14px; }
+    .modal textarea { min-height: 80px; resize: vertical; }
+    .modal-info { font-size: 0.85rem; color: #374151; line-height: 1.6; margin-bottom: 12px; }
+    .modal-info strong { color: #0a5c91; }
+    .modal-acoes { background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.82rem; }
+    .modal-acoes h4 { font-size: 0.82rem; font-weight: 700; color: #374151; margin-bottom: 8px; }
+    .acao-item { border-bottom: 1px solid #e5e7eb; padding: 6px 0; }
+    .acao-item:last-child { border-bottom: none; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+    .limiar-card { background: #fff0f0; border: 1px solid #fca5a5; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .limiar-card h2 { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: #b91c1c; }
+    .limiar-form { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+    .limiar-form > div { display: flex; flex-direction: column; gap: 4px; }
+    .limiar-form label { font-size: 0.82rem; font-weight: 600; color: #374151; }
+    .limiar-form input { padding: 8px 12px; border: 1px solid #fca5a5; border-radius: 6px; font-size: 0.9rem; width: 120px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Alertas Clínicos</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_dashboard.html">Dashboard</a>
+      <a href="index_utentes.html">Utentes</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="msg"></div>
+
+    <!-- Limiares (Admin) -->
+    <div class="limiar-carat" id="limiarCarat" style="display:none">
+      <h2>Configurar Limiares de Alerta</h2>
+      <div class="limiar-form">
+        <div><label>Score mínimo</label><input type="number" id="lScoreMin" min="0" max="30" /></div>
+        <div><label>Deterioração (pontos)</label><input type="number" id="lDeteriora" min="1" /></div>
+        <button class="btn" onclick="guardarLimiares()">Guardar</button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="toolbar">
+      <select id="filtroEstado" onchange="carregar()">
+        <option value="">Todos os estados</option>
+        <option value="NOVO">Novo</option>
+        <option value="VISTO">Visto</option>
+        <option value="EM_SEGUIMENTO">Em seguimento</option>
+        <option value="FECHADO">Fechado</option>
+      </select>
+      <select id="filtroPrioridade" onchange="carregar()">
+        <option value="">Todas as prioridades</option>
+        <option value="CRITICA">Crítica</option>
+        <option value="ALTA">Alta</option>
+        <option value="MEDIA">Média</option>
+        <option value="BAIXA">Baixa</option>
+      </select>
+      <button class="btn" onclick="carregar()">Atualizar</button>
+    </div>
+
+    <div class="carat">
+      <h2>Lista de Alertas</h2>
+      <table>
+        <thead>
+          <tr><th>Utente</th><th>Tipo</th><th>Prioridade</th><th>Estado</th><th>Data</th><th></th></tr>
+        </thead>
+        <tbody id="idAlertas"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal detalhe -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <h3 id="modalTitulo">Detalhe do Alerta</h3>
+      <div class="modal-info" id="modalInfo"></div>
+      <div class="modal-acoes" id="modalAcoes"></div>
+      <div id="formEstado">
+        <label>Novo Estado</label>
+        <select id="novoEstado">
+          <option value="VISTO">Visto</option>
+          <option value="EM_SEGUIMENTO">Em Seguimento</option>
+          <option value="FECHADO">Fechado</option>
+        </select>
+        <label>Nota (obrigatória)</label>
+        <textarea id="notaTexto" placeholder="Descreve a ação tomada..."></textarea>
+      </div>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal()">Cancelar</button>
+        <button class="btn" onclick="atualizarEstado()">Guardar Atualização</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+    let alertaAtual = null;
+
+    if (!token) window.location.href = 'index_login.html';
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear(); window.location.href = 'index_login.html';
+    }
+   function headers(json = true) {
+      const h = { Authorization: 'Bearer ' + token };
+      if (json) h['Content-Type'] = 'application/json';
+      return h;
+    }
+    function mostrarMensagem(txt, tipo = 'erro') {
+      const el = document.getElementById('msg');
+      el.textContent = txt; el.className = 'msg ' + tipo; el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+
+    function tipoAlerta(t) {
+      return { SCORE_BAIXO: 'Score baixo', DETERIORACAO: 'Deterioração', SINTOMA: 'Sintoma', MEDICACAO: 'Medicação' }[t] || t;
+    }
+
+    async function init() {
+      if (user.perfil === 'ADMINISTRADOR') {
+        document.getElementById('limiarCarat').style.display = 'block';
+        const r = await fetch(`${API}/alertas/limiares`, { headers: headers(false) });
+        const l = await r.json();
+        document.getElementById('lScoreMin').value  = l.score_minimo;
+        document.getElementById('lDeteriora').value = l.deterioracao_pontos;
+      }
+      carregar();
+    }
+
+    async function carregar() {
+      const estado     = document.getElementById('filtroEstado').value;
+      const prioridade = document.getElementById('filtroPrioridade').value;
+      let url = `${API}/alertas?`;
+      if (estado) url += `estado=${estado}&`;
+      if (prioridade) url += `prioridade=${prioridade}&`;
+
+      const res   = await fetch(url, { headers: headers(false) });
+      const lista = await res.json();
+      const tbody = document.getElementById('idAlertas');
+      tbody.innerHTML = '';
+
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#9ca3af;padding:12px 0">Sem alertas para apresentar.</td></tr>';
+        return;
+      }
+
+      lista.forEach(a => {
+        const tr = document.createElement('tr');
+        tr.className = 'alerta-row';
+        tr.innerHTML = `
+          <td>${a.utente_nome || '—'}</td>
+          <td>${tipoAlerta(a.tipo)}</td>
+          <td><span class="badge ${a.prioridade}">${a.prioridade}</span></td>
+          <td><span class="badge ${a.estado}">${a.estado}</span></td>
+          <td>${a.criado_em.substring(0, 10)}</td>
+          <td><button class="btn btn-sm" onclick="abrirModal('${a.id}')">Abrir</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function abrirModal(id) {
+      const res = await fetch(`${API}/alertas/${id}`, { headers: headers(false) });
+      const a   = await res.json();
+      alertaAtual = a;
+
+      document.getElementById('modalTitulo').textContent = `Alerta — ${tipoAlerta(a.tipo)}`;
+      document.getElementById('modalInfo').innerHTML = `
+        <strong>Utente:</strong> ${a.utente_nome || '—'}<br>
+        <strong>Motivo:</strong> ${a.motivo}<br>
+        <strong>Prioridade:</strong> <span class="badge ${a.prioridade}">${a.prioridade}</span>
+        &nbsp; <strong>Estado:</strong> <span class="badge ${a.estado}">${a.estado}</span><br>
+        <strong>Criado em:</strong> ${a.criado_em.substring(0, 10)}
+      `;
+
+      // Histórico de ações
+      const acDiv = document.getElementById('modalAcoes');
+      if (a.acoes && a.acoes.length) {
+        acDiv.innerHTML = '<h4>Ações registadas</h4>' + a.acoes.map(ac => `
+          <div class="acao-item">
+            <strong>${ac.estado_novo}</strong> — ${ac.data.substring(0,10)}<br>
+            <span style="color:#6b7280">${ac.nota}</span>
+          </div>`).join('');
+        acDiv.style.display = 'block';
+      } else {
+        acDiv.style.display = 'none';
+      }
+
+      // Opções de transição válidas
+      const transicoes = { NOVO: ['VISTO'], VISTO: ['EM_SEGUIMENTO', 'FECHADO'], EM_SEGUIMENTO: ['FECHADO'], FECHADO: [] };
+      const opts = transicoes[a.estado] || [];
+      const sel  = document.getElementById('novoEstado');
+      sel.innerHTML = opts.map(o => `<option value="${o}">${o}</option>`).join('');
+      document.getElementById('formEstado').style.display = opts.length ? 'block' : 'none';
+
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function fecharModal() {
+      document.getElementById('modal').classList.remove('open');
+      carregar();
+    }
+
+    async function atualizarEstado() {
+      const estado_novo = document.getElementById('novoEstado').value;
+      const nota        = document.getElementById('notaTexto').value.trim();
+      if (!nota) { mostrarMensagem('A nota é obrigatória.'); return; }
+
+      const res = await fetch(`${API}/alertas/${alertaAtual.id}/estado`, {
+        method: 'PATCH',
+        headers: headers(),
+        body: JSON.stringify({ estado_novo, nota }),
+      });
+      const data = await res.json();
+      if (!res.ok) { mostrarMensagem(data.erro || 'Erro ao atualizar.'); return; }
+      document.getElementById('notaTexto').value = '';
+      fecharModal();
+      mostrarMensagem('Alerta atualizado com sucesso.', 'ok');
+    }
+
+    async function guardarLimiares() {
+      const score_minimo       = parseInt(document.getElementById('lScoreMin').value);
+      const deterioracao_pontos = parseInt(document.getElementById('lDeteriora').value);
+      const res = await fetch(`${API}/alertas/limiares`, {
+        method: 'PUT',
+        headers: headers(),
+        body: JSON.stringify({ score_minimo, deterioracao_pontos }),
+      });
+      const data = await res.json();
+      if (!res.ok) { mostrarMensagem(data.erro || 'Erro.'); return; }
+      mostrarMensagem('Limiares atualizados.', 'ok');
+    }
+
+    init();
+  </script>
+</body>
+</html>

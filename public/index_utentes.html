@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utentes — SAUDINOB</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 1000px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .toolbar input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.88rem; flex: 1; min-width: 180px; }
+    .btn { padding: 8px 18px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #074870; }
+    .btn-danger { background: #ef4444; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; color: #374151; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .td-acoes { display: flex; gap: 6px; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .CONTROLADA { background: #dcfce7; color: #15803d; }
+    .PARCIALMENTE_CONTROLADA { background: #fef9c3; color: #a16207; }
+    .NAO_CONTROLADA { background: #fee2e2; color: #b91c1c; }
+
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+    .msg.ok   { background: #dcfce7; color: #15803d; }
+
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; border-radius: 12px; padding: 28px; width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto; }
+    .modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: #374151; }
+    .modal label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #374151; }
+    .modal input, .modal select, .modal textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; margin-bottom: 14px; }
+    .modal textarea { min-height: 70px; resize: vertical; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .hist-section { margin-top: 16px; }
+    .hist-section h4 { font-size: 0.88rem; font-weight: 700; color: #374151; margin-bottom: 10px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; }
+    .hist-item { font-size: 0.83rem; padding: 6px 0; border-bottom: 1px solid #f3f4f6; }
+    .hist-item:last-child { border-bottom: none; }
+    .empty { color: #9ca3af; font-size: 0.83rem; padding: 8px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧑‍⚕️ SAUDINOB — Utentes</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_dashboard.html">Dashboard</a>
+      <a href="index_alertas.html">Alertas</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="msg"></div>
+
+    <div class="toolbar">
+      <input type="text" id="pesquisa" placeholder="Pesquisar por nome ou email…" oninput="filtrar()" />
+      <button class="btn" id="btnNovo" onclick="abrirModalNovo()" style="display:none">+ Novo Utente</button>
+    </div>
+
+    <div class="card">
+      <h2>Lista de Utentes</h2>
+      <table>
+        <thead>
+          <tr><th>Nome</th><th>Email</th><th>Data Nasc.</th><th>Médico</th><th></th></tr>
+        </thead>
+        <tbody id="tblUtentes"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal criar/editar -->
+  <div class="modal-backdrop" id="modalForm">
+    <div class="modal">
+      <h3 id="modalFormTitulo">Novo Utente</h3>
+      <div class="grid2">
+        <div>
+          <label>Nome *</label>
+          <input type="text" id="fNome" />
+        </div>
+        <div>
+          <label>Email *</label>
+          <input type="email" id="fEmail" />
+        </div>
+        <div>
+          <label>Password *</label>
+          <input type="password" id="fPassword" placeholder="(deixar vazio = não alterar)" />
+        </div>
+        <div>
+          <label>Data de Nascimento *</label>
+          <input type="date" id="fNasc" />
+        </div>
+        <div>
+          <label>NIF</label>
+          <input type="text" id="fNif" maxlength="9" />
+        </div>
+        <div>
+          <label>SNS</label>
+          <input type="text" id="fSns" />
+        </div>
+      </div>
+      <label>Diagnóstico Principal</label>
+      <input type="text" id="fDiag" />
+      <label>Médico Responsável</label>
+      <select id="fMedico"><option value="">— sem médico —</option></select>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalForm')">Cancelar</button>
+        <button class="btn" onclick="guardarUtente()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal remover -->
+  <div class="modal-backdrop" id="modalRemover">
+    <div class="modal">
+      <h3>Remover Utente</h3>
+      <p style="font-size:0.88rem;color:#374151;margin-bottom:14px">Esta operação anonimiza os dados pessoais do utente (RGPD). Os dados clínicos são preservados.</p>
+      <label>Motivo *</label>
+      <select id="motivoRemocao">
+        <option value="FALECIDO">Falecido</option>
+        <option value="PEDIDO_UTENTE">Pedido do Utente</option>
+        <option value="DUPLICACAO_REGISTO">Duplicação de Registo</option>
+        <option value="OUTRO">Outro</option>
+      </select>
+      <label>Observação</label>
+      <textarea id="motivoObs" placeholder="Detalhes adicionais (opcional)…"></textarea>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalRemover')">Cancelar</button>
+        <button class="btn btn-danger" onclick="confirmarRemocao()">Remover</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal histórico -->
+  <div class="modal-backdrop" id="modalHist">
+    <div class="modal">
+      <h3 id="modalHistTitulo">Histórico Clínico</h3>
+
+      <div class="hist-section">
+        <h4>Avaliações CARAT</h4>
+        <table>
+          <thead><tr><th>Data</th><th>Score</th><th>Controlo</th></tr></thead>
+          <tbody id="histCarat"></tbody>
+        </table>
+      </div>
+
+      <div class="hist-section">
+        <h4>Alertas</h4>
+        <table>
+          <thead><tr><th>Tipo</th><th>Estado</th><th>Data</th></tr></thead>
+          <tbody id="histAlertas"></tbody>
+        </table>
+      </div>
+
+      <div class="hist-section">
+        <h4>Medicação</h4>
+        <table>
+          <thead><tr><th>Fármaco</th><th>Dosagem</th><th>Estado</th></tr></thead>
+          <tbody id="histMed"></tbody>
+        </table>
+      </div>
+
+      <div class="hist-section">
+        <h4>Exames</h4>
+        <table>
+          <thead><tr><th>Tipo</th><th>Data</th><th>Resultado</th></tr></thead>
+          <tbody id="histExames"></tbody>
+        </table>
+      </div>
+
+      <div class="modal-btns" style="margin-top:16px">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalHist')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) window.location.href = 'index_login.html';
+
+    let todosUtentes = [];
+    let utenteAtual  = null;
+    let medicos      = [];
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear(); window.location.href = 'index_login.html';
+    }
+    function hdrs(json = true) {
+      const h = { Authorization: 'Bearer ' + token };
+      if (json) h['Content-Type'] = 'application/json';
+      return h;
+    }
+    function showMsg(txt, tipo = 'erro') {
+      const el = document.getElementById('msg');
+      el.textContent = txt; el.className = 'msg ' + tipo; el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3500);
+    }
+    function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function nivelLabel(n) {
+      return { CONTROLADA: 'Controlada', PARCIALMENTE_CONTROLADA: 'Parcialmente controlada', NAO_CONTROLADA: 'Não controlada' }[n] || n;
+    }
+    function tipoLabel(t) {
+      return { SCORE_BAIXO: 'Score baixo', DETERIORACAO: 'Deterioração', SINTOMA: 'Sintoma', MEDICACAO: 'Medicação' }[t] || t;
+    }
+
+    async function init() {
+      if (user.perfil === 'ADMINISTRADOR') {
+        document.getElementById('btnNovo').style.display = 'inline-block';
+        const r = await fetch(`${API}/medicos`, { headers: hdrs(false) });
+        medicos = await r.json();
+        const sel = document.getElementById('fMedico');
+        medicos.forEach(m => { sel.innerHTML += `<option value="${m.id}">${m.nome}</option>`; });
+      }
+      await carregar();
+    }
+
+    async function carregar() {
+      const res  = await fetch(`${API}/utentes`, { headers: hdrs(false) });
+      todosUtentes = await res.json();
+      renderTabela(todosUtentes);
+    }
+
+    function filtrar() {
+      const q = document.getElementById('pesquisa').value.toLowerCase();
+      renderTabela(todosUtentes.filter(u => u.nome.toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q)));
+    }
+
+    function renderTabela(lista) {
+      const tbody = document.getElementById('tblUtentes');
+      tbody.innerHTML = '';
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="color:#9ca3af;padding:12px 0">Sem utentes para apresentar.</td></tr>';
+        return;
+      }
+      lista.forEach(u => {
+        const podeEditar = user.perfil === 'ADMINISTRADOR';
+        tbody.innerHTML += `<tr>
+          <td>${u.nome}</td>
+          <td>${u.email || '—'}</td>
+          <td>${u.data_nascimento || '—'}</td>
+          <td>${u.medico_nome || '—'}</td>
+          <td><div class="td-acoes">
+            <button class="btn btn-sm" onclick="verHistorico('${u.id}','${u.nome}')">Histórico</button>
+            ${podeEditar ? `<button class="btn btn-sm" onclick="abrirModalEditar('${u.id}')">Editar</button>` : ''}
+            ${podeEditar ? `<button class="btn btn-sm btn-danger" onclick="abrirModalRemover('${u.id}')">Remover</button>` : ''}
+          </div></td>
+        </tr>`;
+      });
+    }
+
+    function abrirModalNovo() {
+      utenteAtual = null;
+      document.getElementById('modalFormTitulo').textContent = 'Novo Utente';
+      ['fNome','fEmail','fPassword','fNasc','fNif','fSns','fDiag'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('fMedico').value = '';
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    function abrirModalEditar(id) {
+      utenteAtual = todosUtentes.find(u => u.id === id);
+      if (!utenteAtual) return;
+      document.getElementById('modalFormTitulo').textContent = 'Editar Utente';
+      document.getElementById('fNome').value  = utenteAtual.nome || '';
+      document.getElementById('fEmail').value = utenteAtual.email || '';
+      document.getElementById('fPassword').value = '';
+      document.getElementById('fNasc').value  = utenteAtual.data_nascimento || '';
+      document.getElementById('fNif').value   = utenteAtual.nif || '';
+      document.getElementById('fSns').value   = utenteAtual.sns || '';
+      document.getElementById('fDiag').value  = utenteAtual.diagnostico_principal || '';
+      document.getElementById('fMedico').value = utenteAtual.medico_id || '';
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    async function guardarUtente() {
+      const body = {
+        nome:                  document.getElementById('fNome').value.trim(),
+        email:                 document.getElementById('fEmail').value.trim(),
+        data_nascimento:       document.getElementById('fNasc').value,
+        nif:                   document.getElementById('fNif').value.trim(),
+        sns:                   document.getElementById('fSns').value.trim(),
+        diagnostico_principal: document.getElementById('fDiag').value.trim(),
+        medico_id:             document.getElementById('fMedico').value || null,
+      };
+      const pw = document.getElementById('fPassword').value;
+      if (pw) body.password = pw;
+
+      if (!body.nome) { showMsg('O nome é obrigatório.'); return; }
+
+      let res;
+      if (utenteAtual) {
+        res = await fetch(`${API}/utentes/${utenteAtual.id}`, { method: 'PUT', headers: hdrs(), body: JSON.stringify(body) });
+      } else {
+        if (!body.email || !pw) { showMsg('Email e password são obrigatórios para novo utente.'); return; }
+        res = await fetch(`${API}/utentes`, { method: 'POST', headers: hdrs(), body: JSON.stringify(body) });
+      }
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao guardar.'); return; }
+      fecharModal('modalForm');
+      await carregar();
+      showMsg(utenteAtual ? 'Utente atualizado.' : 'Utente criado.', 'ok');
+    }
+
+    function abrirModalRemover(id) {
+      utenteAtual = todosUtentes.find(u => u.id === id);
+      document.getElementById('motivoObs').value = '';
+      document.getElementById('modalRemover').classList.add('open');
+    }
+
+    async function confirmarRemocao() {
+      const motivo = document.getElementById('motivoRemocao').value;
+      const obs    = document.getElementById('motivoObs').value.trim();
+      const body   = { motivo };
+      if (obs) body.observacao = obs;
+
+      const res  = await fetch(`${API}/utentes/${utenteAtual.id}`, { method: 'DELETE', headers: hdrs(), body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao remover.'); return; }
+      fecharModal('modalRemover');
+      await carregar();
+      showMsg('Utente anonimizado com sucesso (RGPD).', 'ok');
+    }
+
+    async function verHistorico(id, nome) {
+      const res  = await fetch(`${API}/utentes/${id}/historico-clinico`, { headers: hdrs(false) });
+      const h    = await res.json();
+      document.getElementById('modalHistTitulo').textContent = `Histórico — ${nome}`;
+
+      const avs = h.avaliacoes_carat || [];
+      document.getElementById('histCarat').innerHTML = avs.length
+        ? avs.map(a => `<tr><td>${a.data}</td><td><strong>${a.score}</strong></td><td><span class="badge ${a.nivel_controlo}">${nivelLabel(a.nivel_controlo)}</span></td></tr>`).join('')
+        : `<tr><td colspan="3" class="empty">Sem avaliações</td></tr>`;
+
+      const als = h.alertas || [];
+      document.getElementById('histAlertas').innerHTML = als.length
+        ? als.map(a => `<tr><td>${tipoLabel(a.tipo)}</td><td>${a.estado}</td><td>${a.criado_em ? a.criado_em.substring(0,10) : ''}</td></tr>`).join('')
+        : `<tr><td colspan="3" class="empty">Sem alertas</td></tr>`;
+
+      const meds = h.medicacao || [];
+      document.getElementById('histMed').innerHTML = meds.length
+        ? meds.map(m => `<tr><td>${m.farmaco}</td><td>${m.dosagem}</td><td>${m.estado}</td></tr>`).join('')
+        : `<tr><td colspan="3" class="empty">Sem medicação</td></tr>`;
+
+      const exs = h.exames || [];
+      document.getElementById('histExames').innerHTML = exs.length
+        ? exs.map(e => `<tr><td>${e.tipo}</td><td>${e.data_prescricao ? e.data_prescricao.substring(0,10) : ''}</td><td>${e.resultado || '—'}</td></tr>`).join('')
+        : `<tr><td colspan="3" class="empty">Sem exames</td></tr>`;
+
+      document.getElementById('modalHist').classList.add('open');
+    }
+
+    init();
+  </script>
+</body>
+</html>
