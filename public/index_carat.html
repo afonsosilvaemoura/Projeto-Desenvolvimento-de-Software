@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo CARAT — SAUDINOB</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 860px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+    .tab { padding: 10px 22px; border: 1px solid #dde3ea; border-radius: 8px 8px 0 0; background: #fff; cursor: pointer; font-size: 0.9rem; color: #6b7280; }
+    .tab.ativo { background: #0a5c91; color: #fff; border-color: #0a5c91; }
+
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 0 10px 10px 10px; padding: 28px; }
+    .card h2 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: #374151; }
+    .card .sub { color: #6b7280; font-size: 0.85rem; margin-bottom: 24px; }
+
+    .pergunta { margin-bottom: 22px; }
+    .pergunta p { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; color: #374151; }
+    .opcoes { display: flex; gap: 8px; flex-wrap: wrap; }
+    .opcao input[type=radio] { display: none; }
+    .opcao label {
+      padding: 7px 14px; border: 1px solid #d1d5db; border-radius: 6px;
+      cursor: pointer; font-size: 0.82rem; color: #374151; transition: all 0.15s;
+    }
+    .opcao input:checked + label { background: #0a5c91; color: #fff; border-color: #0a5c91; }
+    .opcao label:hover { border-color: #0a5c91; }
+
+    .btn { padding: 10px 24px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; margin-top: 10px; }
+    .btn:hover { background: #074870; }
+    .btn-sec { background: #fff; color: #0a5c91; border: 1px solid #0a5c91; margin-left: 10px; }
+    .btn-sec:hover { background: #f0f7ff; }
+
+    .resultado {
+      display: none; margin-top: 24px;
+      padding: 20px 24px; border-radius: 10px; border: 1px solid #dde3ea; background: #f0f9ff;
+    }
+    .resultado h3 { font-size: 1.1rem; margin-bottom: 12px; }
+    .resultado .score-val { font-size: 2.4rem; font-weight: 800; color: #0a5c91; }
+    .resultado .nivel { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; margin: 8px 0 14px; }
+    .CONTROLADA { background: #dcfce7; color: #15803d; }
+    .PARCIALMENTE_CONTROLADA { background: #fef9c3; color: #a16207; }
+    .NAO_CONTROLADA { background: #fee2e2; color: #b91c1c; }
+
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+
+    .detail-box { display: none; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-top: 12px; }
+
+    .sel-utente { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .sel-utente label { font-weight: 600; font-size: 0.9rem; }
+    .sel-utente select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📋 SAUDINOB — Módulo CARAT</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_dashboard.html">Dashboard</a>
+      <a href="index_alertas.html">Alertas</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <div class="tab ativo" onclick="mudarTab('submeter')">Nova Avaliação</div>
+      <div class="tab" onclick="mudarTab('historico')">Histórico</div>
+    </div>
+
+    <!-- SUBMETER -->
+    <div id="tabSubmeter" class="card">
+      <h2>Questionário CARAT</h2>
+      <p class="sub">Responde às 10 perguntas sobre as últimas 4 semanas.</p>
+      <div id="msg"></div>
+      <div id="perguntas"></div>
+      <div>
+        <button class="btn" onclick="submeter()">Submeter Avaliação</button>
+        <button class="btn btn-sec" onclick="limpar()">Limpar</button>
+      </div>
+      <div class="resultado" id="resultado"></div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="tabHistorico" class="card" style="display:none">
+      <h2>Histórico de Avaliações CARAT</h2>
+      <div class="sel-utente" id="selUtenteBox">
+        <label>Utente:</label>
+        <select id="utenteSelect"><option value="">— selecionar —</option></select>
+        <button class="btn" onclick="carregarHistorico()">Carregar</button>
+      </div>
+      <div id="msgHist"></div>
+      <table>
+        <thead><tr><th>Data</th><th>Score</th><th>Controlo</th><th>Próximo passo</th><th></th></tr></thead>
+        <tbody id="tblHistorico"></tbody>
+      </table>
+      <div class="detail-box" id="detalhe"></div>
+    </div>
+  </main>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+
+    const OPCOES = [
+      { valor: 4, label: 'Nunca / Muito bem' },
+      { valor: 3, label: 'Raramente (1-2x)' },
+      { valor: 2, label: 'Algumas vezes (3-7x)' },
+      { valor: 1, label: 'Frequentemente (8-14x)' },
+      { valor: 0, label: 'Sempre / Muito mal' },
+    ];
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear(); window.location.href = 'index_login.html';
+    }
+    function hdrs() { return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (token || '') }; }
+
+    function mudarTab(nome) {
+      document.getElementById('tabSubmeter').style.display  = nome === 'submeter'  ? 'block' : 'none';
+      document.getElementById('tabHistorico').style.display = nome === 'historico' ? 'block' : 'none';
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('ativo', (nome === 'submeter') === (i === 0)));
+      if (nome === 'historico') initHistorico();
+    }
+
+    async function init() {
+      const res  = await fetch(`${API}/carat/perguntas`);
+      const data = await res.json();
+      const div  = document.getElementById('perguntas');
+      data.perguntas.forEach((p, i) => {
+        div.innerHTML += `
+          <div class="pergunta">
+            <p>${i + 1}. ${p}</p>
+            <div class="opcoes">
+              ${OPCOES.map(o => `
+                <div class="opcao">
+                  <input type="radio" name="q${i}" id="q${i}_${o.valor}" value="${o.valor}" />
+                  <label for="q${i}_${o.valor}">${o.label}</label>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      });
+    }
+
+    async function submeter() {
+      const msg = document.getElementById('msg');
+      msg.style.display = 'none';
+      const respostas = [];
+      for (let i = 0; i < 10; i++) {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!sel) {
+          msg.textContent = `Responde à pergunta ${i + 1}.`;
+          msg.className = 'msg erro'; msg.style.display = 'block'; return;
+        }
+        respostas.push(parseInt(sel.value));
+      }
+
+      const body = { respostas };
+      if (user.perfil === 'MEDICO') {
+        const uid = prompt('ID do utente para associar a avaliação:');
+        if (!uid) return;
+        body.utente_id = uid;
+      }
+
+      const res  = await fetch(`${API}/carat/avaliacoes`, {
+        method: 'POST',
+        headers: hdrs(),
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) { msg.textContent = data.erro; msg.className = 'msg erro'; msg.style.display = 'block'; return; }
+
+      const res2 = document.getElementById('resultado');
+      res2.style.display = 'block';
+      res2.innerHTML = `
+        <h3>Resultado da Avaliação</h3>
+        <div class="score-val">${data.score} <span style="font-size:1rem;color:#6b7280">/ 40</span></div>
+        <div><span class="nivel ${data.nivel_controlo}">${nivelLabel(data.nivel_controlo)}</span></div>
+        <p><strong>Recomendação:</strong> ${data.recomendacoes}</p>
+        <p style="margin-top:8px"><strong>Próxima avaliação em:</strong> ${data.proximo_passo_semanas} semana(s)</p>
+        ${data.anonima ? '<p style="margin-top:10px;color:#6b7280;font-size:0.82rem">⚠️ Avaliação anónima — não foi guardada no sistema.</p>' : ''}
+      `;
+    }
+
+    function limpar() {
+      document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+      document.getElementById('resultado').style.display = 'none';
+      document.getElementById('msg').style.display = 'none';
+    }
+
+    async function initHistorico() {
+      if (!token) return;
+      const box = document.getElementById('selUtenteBox');
+      if (user.perfil === 'UTENTE') {
+        box.style.display = 'none';
+        await carregarHistorico(user.id);
+      } else {
+        const res = await fetch(`${API}/utentes`, { headers: hdrs() });
+        const lista = await res.json();
+        const sel = document.getElementById('utenteSelect');
+        sel.innerHTML = '<option value="">— selecionar —</option>';
+        lista.forEach(u => { sel.innerHTML += `<option value="${u.id}">${u.nome}</option>`; });
+      }
+    }
+
+    async function carregarHistorico(forceId) {
+      const utenteId = forceId || document.getElementById('utenteSelect').value;
+      if (!utenteId) return;
+      const res  = await fetch(`${API}/carat/avaliacoes/utente/${utenteId}`, { headers: hdrs() });
+      const lista = await res.json();
+      const tbody = document.getElementById('tblHistorico');
+      tbody.innerHTML = lista.length ? '' : '<tr><td colspan="5" style="color:#9ca3af;padding:12px 0">Sem avaliações registadas.</td></tr>';
+      lista.forEach(a => {
+        tbody.innerHTML += `<tr>
+          <td>${a.data}</td>
+          <td><strong>${a.score}</strong></td>
+          <td><span class="badge ${a.nivel_controlo}">${nivelLabel(a.nivel_controlo)}</span></td>
+          <td>${a.proximo_passo_semanas} sem.</td>
+          <td><button class="btn" style="padding:4px 10px;font-size:0.78rem" onclick="verDetalhe('${a.id}')">Ver</button></td>
+        </tr>`;
+      });
+    }
+
+    async function verDetalhe(id) {
+      const res  = await fetch(`${API}/carat/avaliacoes/${id}`, { headers: hdrs() });
+      const a    = await res.json();
+      const box  = document.getElementById('detalhe');
+      box.style.display = 'block';
+      box.innerHTML = `
+        <h3 style="margin-bottom:10px">Detalhe — ${a.data}</h3>
+        <p><strong>Score:</strong> ${a.score} / 40 &nbsp; <span class="badge ${a.nivel_controlo}">${nivelLabel(a.nivel_controlo)}</span></p>
+        <p style="margin-top:8px"><strong>Recomendações:</strong> ${a.recomendacoes}</p>
+        <p style="margin-top:8px"><strong>Respostas:</strong> ${JSON.stringify(a.respostas)}</p>
+      `;
+    }
+
+    function nivelLabel(n) {
+      return { CONTROLADA: 'Controlada', PARCIALMENTE_CONTROLADA: 'Parcialmente controlada', NAO_CONTROLADA: 'Não controlada' }[n] || n;
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Médicos — SAUDINOB</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 960px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .toolbar input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.88rem; flex: 1; min-width: 180px; }
+    .btn { padding: 8px 18px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #074870; }
+    .btn-warn { background: #f59e0b; }
+    .btn-warn:hover { background: #d97706; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; color: #374151; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .td-acoes { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .ativo-sim { background: #dcfce7; color: #15803d; }
+    .ativo-nao { background: #fee2e2; color: #b91c1c; }
+
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+    .msg.ok   { background: #dcfce7; color: #15803d; }
+
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; border-radius: 12px; padding: 28px; width: 100%; max-width: 520px; max-height: 85vh; overflow-y: auto; }
+    .modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: #374151; }
+    .modal label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #374151; }
+    .modal input, .modal select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; margin-bottom: 14px; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+    .modal p { font-size: 0.88rem; color: #374151; margin-bottom: 14px; line-height: 1.5; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .utentes-pendentes { background: #fff8f0; border: 1px solid #fcd34d; border-radius: 8px; padding: 14px; margin-bottom: 16px; font-size: 0.85rem; }
+    .utentes-pendentes h4 { font-weight: 700; color: #92400e; margin-bottom: 8px; }
+    .utente-linha { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #fde68a; }
+    .utente-linha:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>👨‍💼 SAUDINOB — Gestão de Médicos</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_utentes.html">Utentes</a>
+      <a href="index_alertas.html">Alertas</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="msg"></div>
+
+    <div class="toolbar">
+      <input type="text" id="pesquisa" placeholder="Pesquisar por nome…" oninput="filtrar()" />
+      <button class="btn" onclick="abrirModalNovo()">+ Novo Médico</button>
+    </div>
+
+    <div class="card">
+      <h2>Lista de Médicos</h2>
+      <table>
+        <thead>
+          <tr><th>Nome</th><th>Email</th><th>Especialidade</th><th>Nº Ordem</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody id="tblMedicos"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal criar/editar -->
+  <div class="modal-backdrop" id="modalForm">
+    <div class="modal">
+      <h3 id="modalFormTitulo">Novo Médico</h3>
+      <div class="grid2">
+        <div>
+          <label>Nome *</label>
+          <input type="text" id="fNome" />
+        </div>
+        <div>
+          <label>Email *</label>
+          <input type="email" id="fEmail" />
+        </div>
+        <div>
+          <label>Password *</label>
+          <input type="password" id="fPassword" placeholder="(deixar vazio = não alterar)" />
+        </div>
+        <div>
+          <label>Nº Ordem</label>
+          <input type="text" id="fOrdem" />
+        </div>
+      </div>
+      <label>Especialidade</label>
+      <input type="text" id="fEspec" />
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalForm')">Cancelar</button>
+        <button class="btn" onclick="guardarMedico()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal inativar -->
+  <div class="modal-backdrop" id="modalInativar">
+    <div class="modal">
+      <h3>Inativar Médico</h3>
+      <p>O médico será marcado como inativo. Os utentes atribuídos ficarão sem médico e terão de ser reassociados.</p>
+      <div class="utentes-pendentes" id="utentesPendentes" style="display:none">
+        <h4>Utentes sem médico após inativação:</h4>
+        <div id="listaUtentesPendentes"></div>
+      </div>
+      <div id="reassocBox"></div>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalInativar')">Fechar</button>
+        <button class="btn btn-warn" id="btnInativar" onclick="confirmarInativar()">Inativar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal reassociar -->
+  <div class="modal-backdrop" id="modalReassoc">
+    <div class="modal">
+      <h3>Reassociar Utente</h3>
+      <p id="reassocInfo" style="font-size:0.88rem;color:#374151;margin-bottom:14px"></p>
+      <label>Novo Médico *</label>
+      <select id="novoMedico"><option value="">— selecionar —</option></select>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalReassoc')">Cancelar</button>
+        <button class="btn" onclick="confirmarReassoc()">Reassociar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token || user.perfil !== 'ADMINISTRADOR') window.location.href = 'index_login.html';
+
+    let todosMedicos  = [];
+    let medicoAtual   = null;
+    let utenteReassoc = null;
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear(); window.location.href = 'index_login.html';
+    }
+    function hdrs(json = true) {
+      const h = { Authorization: 'Bearer ' + token };
+      if (json) h['Content-Type'] = 'application/json';
+      return h;
+    }
+    function showMsg(txt, tipo = 'erro') {
+      const el = document.getElementById('msg');
+      el.textContent = txt; el.className = 'msg ' + tipo; el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3500);
+    }
+    function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    async function init() {
+      await carregar();
+    }
+
+    async function carregar() {
+      const res = await fetch(`${API}/medicos`, { headers: hdrs(false) });
+      todosMedicos = await res.json();
+      renderTabela(todosMedicos);
+    }
+
+    function filtrar() {
+      const q = document.getElementById('pesquisa').value.toLowerCase();
+      renderTabela(todosMedicos.filter(m => m.nome.toLowerCase().includes(q)));
+    }
+
+    function renderTabela(lista) {
+      const tbody = document.getElementById('tblMedicos');
+      tbody.innerHTML = '';
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#9ca3af;padding:12px 0">Sem médicos para apresentar.</td></tr>';
+        return;
+      }
+      lista.forEach(m => {
+        const ativo = m.ativo !== 0;
+        tbody.innerHTML += `<tr>
+          <td>${m.nome}</td>
+          <td>${m.email || '—'}</td>
+          <td>${m.especialidade || '—'}</td>
+          <td>${m.numero_ordem || '—'}</td>
+          <td><span class="badge ${ativo ? 'ativo-sim' : 'ativo-nao'}">${ativo ? 'Ativo' : 'Inativo'}</span></td>
+          <td><div class="td-acoes">
+            <button class="btn btn-sm" onclick="abrirModalEditar('${m.id}')">Editar</button>
+            ${ativo ? `<button class="btn btn-sm btn-warn" onclick="abrirModalInativar('${m.id}')">Inativar</button>` : ''}
+          </div></td>
+        </tr>`;
+      });
+    }
+
+    function abrirModalNovo() {
+      medicoAtual = null;
+      document.getElementById('modalFormTitulo').textContent = 'Novo Médico';
+      ['fNome','fEmail','fPassword','fOrdem','fEspec'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    function abrirModalEditar(id) {
+      medicoAtual = todosMedicos.find(m => m.id === id);
+      if (!medicoAtual) return;
+      document.getElementById('modalFormTitulo').textContent = 'Editar Médico';
+      document.getElementById('fNome').value  = medicoAtual.nome || '';
+      document.getElementById('fEmail').value = medicoAtual.email || '';
+      document.getElementById('fPassword').value = '';
+      document.getElementById('fOrdem').value = medicoAtual.numero_ordem || '';
+      document.getElementById('fEspec').value = medicoAtual.especialidade || '';
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    async function guardarMedico() {
+      const body = {
+        nome:          document.getElementById('fNome').value.trim(),
+        email:         document.getElementById('fEmail').value.trim(),
+        numero_ordem:  document.getElementById('fOrdem').value.trim(),
+        especialidade: document.getElementById('fEspec').value.trim(),
+      };
+      const pw = document.getElementById('fPassword').value;
+      if (pw) body.password = pw;
+
+      if (!body.nome) { showMsg('O nome é obrigatório.'); return; }
+
+      let res;
+      if (medicoAtual) {
+        res = await fetch(`${API}/medicos/${medicoAtual.id}`, { method: 'PUT', headers: hdrs(), body: JSON.stringify(body) });
+      } else {
+        if (!body.email || !pw) { showMsg('Email e password são obrigatórios para novo médico.'); return; }
+        res = await fetch(`${API}/medicos`, { method: 'POST', headers: hdrs(), body: JSON.stringify(body) });
+      }
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao guardar.'); return; }
+      fecharModal('modalForm');
+      await carregar();
+      showMsg(medicoAtual ? 'Médico atualizado.' : 'Médico criado.', 'ok');
+    }
+
+    async function abrirModalInativar(id) {
+      medicoAtual = todosMedicos.find(m => m.id === id);
+      document.getElementById('utentesPendentes').style.display = 'none';
+      document.getElementById('listaUtentesPendentes').innerHTML = '';
+      document.getElementById('reassocBox').innerHTML = '';
+      document.getElementById('btnInativar').style.display = 'inline-block';
+      document.getElementById('modalInativar').classList.add('open');
+    }
+
+    async function confirmarInativar() {
+      const res  = await fetch(`${API}/medicos/${medicoAtual.id}/inativar`, { method: 'PATCH', headers: hdrs() });
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao inativar.'); return; }
+
+      document.getElementById('btnInativar').style.display = 'none';
+      const utentes = data.utentes_sem_medico || [];
+      if (utentes.length) {
+        const lista = document.getElementById('listaUtentesPendentes');
+        lista.innerHTML = '';
+        utentes.forEach(u => {
+          lista.innerHTML += `<div class="utente-linha">
+            <span>${u.nome}</span>
+            <button class="btn btn-sm" onclick="abrirReassoc('${u.id}','${u.nome}')">Reassociar</button>
+          </div>`;
+        });
+        document.getElementById('utentesPendentes').style.display = 'block';
+      }
+
+      await carregar();
+      showMsg('Médico inativado.', 'ok');
+    }
+
+    async function abrirReassoc(utenteId, utenteNome) {
+      utenteReassoc = { id: utenteId, nome: utenteNome };
+      document.getElementById('reassocInfo').textContent = `Utente: ${utenteNome}`;
+      const sel = document.getElementById('novoMedico');
+      const ativos = todosMedicos.filter(m => m.ativo !== 0 && m.id !== medicoAtual?.id);
+      sel.innerHTML = '<option value="">— selecionar —</option>';
+      ativos.forEach(m => { sel.innerHTML += `<option value="${m.id}">${m.nome}</option>`; });
+      document.getElementById('modalReassoc').classList.add('open');
+    }
+
+    async function confirmarReassoc() {
+      const novoMedicoId = document.getElementById('novoMedico').value;
+      if (!novoMedicoId) { showMsg('Seleciona um médico.'); return; }
+
+      const res  = await fetch(`${API}/medicos/${medicoAtual.id}/utentes/${utenteReassoc.id}/reassociar`, {
+        method: 'PATCH',
+        headers: hdrs(),
+        body: JSON.stringify({ novo_medico_id: novoMedicoId }),
+      });
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao reassociar.'); return; }
+      fecharModal('modalReassoc');
+      showMsg(`${utenteReassoc.nome} reassociado com sucesso.`, 'ok');
+
+      const linha = document.querySelector(`button[onclick="abrirReassoc('${utenteReassoc.id}','${utenteReassoc.nome}')"]`);
+      if (linha) linha.closest('.utente-linha').remove();
+    }
+
+    init();
+  </script>
+</body>
+</html>

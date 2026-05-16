@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAUDINOB — Sistema de Gestão Clínica</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #0a5c91;
+      color: #fff;
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; }
+    header p  { font-size: 0.9rem; opacity: 0.8; margin-top: 2px; }
+
+    main { max-width: 960px; margin: 40px auto; padding: 0 24px 60px; }
+
+    .login-banner {
+      background: #fff;
+      border: 1px solid #dde3ea;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .login-banner p { color: #555; font-size: 0.95rem; }
+    .login-banner a {
+      background: #0a5c91;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .login-banner a:hover { background: #074870; }
+
+    section { margin-bottom: 36px; }
+    section h2 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #dde3ea;
+      border-radius: 10px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.09); border-color: #0a5c91; }
+
+    .card-icon { font-size: 1.6rem; margin-bottom: 4px; }
+    .card h3 { font-size: 1rem; font-weight: 600; color: #0a5c91; }
+    .card p  { font-size: 0.82rem; color: #6b7280; line-height: 1.4; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      width: fit-content;
+    }
+    .badge-all    { background: #e0f2fe; color: #0369a1; }
+    .badge-utente { background: #dcfce7; color: #15803d; }
+    .badge-medico { background: #fef9c3; color: #a16207; }
+    .badge-admin  { background: #fce7f3; color: #9d174d; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>SAUDINOB</h1>
+      <p>Sistema de prevenção e acompanhamento de doenças respiratórias crónicas</p>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Acesso -->
+    <div class="login-banner">
+      <p>Para aceder às funcionalidades do sistema, inicia sessão com as tuas credenciais.</p>
+      <a href="index_login.html">Iniciar Sessão</a>
+    </div>
+
+    <!-- Módulos do Utente -->
+    <section>
+      <h2>Área do Utente</h2>
+      <div class="grid">
+
+        <a class="card" href="index_dashboard.html">
+          <div class="card-icon">📊</div>
+          <h3>Dashboard</h3>
+          <p>Evolução dos scores CARAT, alertas ativos e medicação em curso.</p>
+          <span class="badge badge-utente">Utente · Médico</span>
+        </a>
+
+        <a class="card" href="index_carat.html">
+          <div class="card-icon">📋</div>
+          <h3>Módulo CARAT</h3>
+          <p>Responder ao questionário, consultar histórico e detalhe de avaliações.</p>
+          <span class="badge badge-all">Todos (incl. anónimo)</span>
+        </a>
+
+        <a class="card" href="index_alertas.html">
+          <div class="card-icon">🔔</div>
+          <h3>Alertas Clínicos</h3>
+          <p>Consultar e gerir alertas gerados automaticamente pelo sistema.</p>
+          <span class="badge badge-medico">Médico · Admin</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Módulos do Médico -->
+    <section>
+      <h2>Área do Médico</h2>
+      <div class="grid">
+
+        <a class="card" href="index_utentes.html">
+          <div class="card-icon">🧑‍⚕️</div>
+          <h3>Utentes</h3>
+          <p>Consultar lista de utentes atribuídos, histórico clínico e dados associados.</p>
+          <span class="badge badge-medico">Médico · Admin</span>
+        </a>
+
+        <a class="card" href="index_medicacao.html">
+          <div class="card-icon">💊</div>
+          <h3>Medicação</h3>
+          <p>Registar, atualizar e suspender medicação dos utentes.</p>
+          <span class="badge badge-medico">Médico</span>
+        </a>
+
+        <a class="card" href="index_exame.html">
+          <div class="card-icon">🩺</div>
+          <h3>Exames</h3>
+          <p>Prescrever exames complementares e registar resultados.</p>
+          <span class="badge badge-medico">Médico</span>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Módulos do Administrador -->
+    <section>
+      <h2>Área do Administrador</h2>
+      <div class="grid">
+
+        <a class="card" href="index_medicos.html">
+          <div class="card-icon">👨‍💼</div>
+          <h3>Gestão de Médicos</h3>
+          <p>Criar, atualizar e inativar médicos. Reassociar utentes.</p>
+          <span class="badge badge-admin">Admin</span>
+        </a>
+
+        <a class="card" href="index_utentes.html">
+          <div class="card-icon">📁</div>
+          <h3>Gestão de Utentes</h3>
+          <p>Criar utentes, associar médico, remover e anonimizar dados.</p>
+          <span class="badge badge-admin">Admin</span>
+        </a>
+
+        <a class="card" href="index_alertas.html">
+          <div class="card-icon">⚙️</div>
+          <h3>Limiares de Alerta</h3>
+          <p>Configurar os limiares de geração de alertas clínicos.</p>
+          <span class="badge badge-admin">Admin</span>
+        </a>
+
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

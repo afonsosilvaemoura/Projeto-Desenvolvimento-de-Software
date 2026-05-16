@@ -119,19 +119,4 @@ async function seed() {
   console.log('  Utente: joao.silva@email.pt / utente123');
 }
 
-
-const utentesExemplo = [
-  { id: 1, nome: "Ana Silva", condicao: "Asma", ultima_avaliacao: "2026-05-01" },
-  { id: 2, nome: "João Pereira", condicao: "DPOC", ultima_avaliacao: "2026-04-28" }
-];
-
-const alertasExemplo = [
-  { id: 101, utente: "Ana Silva", gravidade: "Alta", mensagem: "Frequência respiratória elevada" },
-  { id: 102, utente: "João Pereira", gravidade: "Média", mensagem: "Uso de medicação de resgate" }
-];
 seed().catch(console.error);
-
-console.log("\n🌱 A semear dados no sistema SAUDINOB...");
-console.table(utentesExemplo);
-console.table(alertasExemplo);
-console.log("✅ Dados carregados com sucesso (simulação).\n");

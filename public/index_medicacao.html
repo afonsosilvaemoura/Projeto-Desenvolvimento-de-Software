@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicação — SAUDINOB</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+    header { background: #0a5c91; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #fff; text-decoration: none; margin-left: 18px; font-size: 0.88rem; opacity: 0.85; }
+    nav a:hover { opacity: 1; }
+    .btn-logout { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    main { max-width: 960px; margin: 32px auto; padding: 0 24px 60px; }
+
+    .selector { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 18px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .selector label { font-weight: 600; font-size: 0.9rem; }
+    .selector select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; }
+
+    .btn { padding: 8px 18px; background: #0a5c91; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
+    .btn:hover { background: #074870; }
+    .btn-warn { background: #f59e0b; }
+    .btn-warn:hover { background: #d97706; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
+
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; }
+    .card-header h2 { font-size: 0.95rem; font-weight: 700; color: #374151; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 10px; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .td-acoes { display: flex; gap: 6px; }
+
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .ATIVA    { background: #dcfce7; color: #15803d; }
+    .SUSPENSA { background: #fee2e2; color: #b91c1c; }
+    .ALTERADA { background: #fef9c3; color: #a16207; }
+
+    .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.88rem; }
+    .msg.erro { background: #fee2e2; color: #b91c1c; }
+    .msg.ok   { background: #dcfce7; color: #15803d; }
+
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; border-radius: 12px; padding: 28px; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; }
+    .modal h3 { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: #374151; }
+    .modal label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #374151; }
+    .modal input, .modal select, .modal textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; margin-bottom: 14px; }
+    .modal textarea { min-height: 70px; resize: vertical; }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>💊 SAUDINOB — Medicação</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="index_utentes.html">Utentes</a>
+      <a href="index_dashboard.html">Dashboard</a>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="msg"></div>
+
+    <div class="selector" id="selectorBox">
+      <label>Utente:</label>
+      <select id="utenteSelect"><option value="">— selecionar —</option></select>
+      <button class="btn" onclick="carregar()">Carregar</button>
+    </div>
+
+    <div id="conteudo" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <h2>Medicação do Utente</h2>
+          <button class="btn" id="btnNova" onclick="abrirModalNova()" style="display:none">+ Registar Medicação</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Fármaco</th><th>Dosagem</th><th>Posologia</th><th>Início</th><th>Estado</th><th></th></tr>
+          </thead>
+          <tbody id="tblMed"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal registar/editar -->
+  <div class="modal-backdrop" id="modalForm">
+    <div class="modal">
+      <h3 id="modalFormTitulo">Registar Medicação</h3>
+      <label>Fármaco *</label>
+      <input type="text" id="fFarmaco" />
+      <div class="grid2">
+        <div>
+          <label>Dosagem *</label>
+          <input type="text" id="fDosagem" placeholder="ex: 200mg" />
+        </div>
+        <div>
+          <label>Posologia *</label>
+          <input type="text" id="fPosologia" placeholder="ex: 1x/dia" />
+        </div>
+        <div>
+          <label>Data de Início</label>
+          <input type="date" id="fInicio" />
+        </div>
+        <div>
+          <label>Data de Fim</label>
+          <input type="date" id="fFim" />
+        </div>
+      </div>
+      <label>Notas</label>
+      <textarea id="fNotas" placeholder="Observações clínicas (opcional)…"></textarea>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalForm')">Cancelar</button>
+        <button class="btn" onclick="guardarMedicacao()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal suspender -->
+  <div class="modal-backdrop" id="modalSuspender">
+    <div class="modal">
+      <h3>Suspender Medicação</h3>
+      <p style="font-size:0.88rem;color:#374151;margin-bottom:14px" id="suspenderInfo"></p>
+      <label>Motivo de Suspensão *</label>
+      <textarea id="motivoSuspensao" placeholder="Descreve o motivo da suspensão…"></textarea>
+      <div class="modal-btns">
+        <button class="btn" style="background:#6b7280" onclick="fecharModal('modalSuspender')">Cancelar</button>
+        <button class="btn btn-warn" onclick="confirmarSuspender()">Suspender</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API   = 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const user  = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) window.location.href = 'index_login.html';
+
+    let utenteAtualId = null;
+    let medicacaoAtual = null;
+
+    function logout() {
+      fetch(`${API}/auth/logout`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+      localStorage.clear(); window.location.href = 'index_login.html';
+    }
+    function hdrs(json = true) {
+      const h = { Authorization: 'Bearer ' + token };
+      if (json) h['Content-Type'] = 'application/json';
+      return h;
+    }
+    function showMsg(txt, tipo = 'erro') {
+      const el = document.getElementById('msg');
+      el.textContent = txt; el.className = 'msg ' + tipo; el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3500);
+    }
+    function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    async function init() {
+      if (user.perfil === 'UTENTE') {
+        document.getElementById('selectorBox').style.display = 'none';
+        utenteAtualId = user.id;
+        await carregar();
+      } else {
+        const res   = await fetch(`${API}/utentes`, { headers: hdrs(false) });
+        const lista = await res.json();
+        const sel   = document.getElementById('utenteSelect');
+        lista.forEach(u => { sel.innerHTML += `<option value="${u.id}">${u.nome}</option>`; });
+        if (user.perfil === 'MEDICO') {
+          document.getElementById('btnNova').style.display = 'inline-block';
+        }
+      }
+    }
+
+    async function carregar() {
+      const id = utenteAtualId || document.getElementById('utenteSelect').value;
+      if (!id) { showMsg('Seleciona um utente.'); return; }
+      utenteAtualId = id;
+
+      const res   = await fetch(`${API}/utentes/${id}/medicacao`, { headers: hdrs(false) });
+      const lista = await res.json();
+
+      document.getElementById('conteudo').style.display = 'block';
+      if (user.perfil === 'MEDICO') document.getElementById('btnNova').style.display = 'inline-block';
+
+      const tbody = document.getElementById('tblMed');
+      tbody.innerHTML = '';
+      if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="color:#9ca3af;padding:12px 0">Sem medicação registada.</td></tr>';
+        return;
+      }
+      lista.forEach(m => {
+        const podeEditar = user.perfil === 'MEDICO';
+        const ativa = m.estado === 'ATIVA';
+        tbody.innerHTML += `<tr>
+          <td><strong>${m.farmaco}</strong></td>
+          <td>${m.dosagem}</td>
+          <td>${m.posologia}</td>
+          <td>${m.data_inicio || '—'}</td>
+          <td><span class="badge ${m.estado}">${m.estado}</span></td>
+          <td><div class="td-acoes">
+            ${podeEditar ? `<button class="btn btn-sm" onclick="abrirModalEditar('${m.id}')">Editar</button>` : ''}
+            ${podeEditar && ativa ? `<button class="btn btn-sm btn-warn" onclick="abrirModalSuspender('${m.id}','${m.farmaco}')">Suspender</button>` : ''}
+          </div></td>
+        </tr>`;
+      });
+    }
+
+    function abrirModalNova() {
+      medicacaoAtual = null;
+      document.getElementById('modalFormTitulo').textContent = 'Registar Medicação';
+      ['fFarmaco','fDosagem','fPosologia','fNotas'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('fInicio').value = new Date().toISOString().split('T')[0];
+      document.getElementById('fFim').value = '';
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    function abrirModalEditar(id) {
+      // pesquisa a medicação na tabela (sem estado carregado, usa fetch simples)
+      medicacaoAtual = { id };
+      document.getElementById('modalFormTitulo').textContent = 'Editar Medicação';
+      document.getElementById('modalForm').classList.add('open');
+    }
+
+    async function guardarMedicacao() {
+      const body = {
+        farmaco:    document.getElementById('fFarmaco').value.trim(),
+        dosagem:    document.getElementById('fDosagem').value.trim(),
+        posologia:  document.getElementById('fPosologia').value.trim(),
+        data_inicio: document.getElementById('fInicio').value || null,
+        data_fim:    document.getElementById('fFim').value || null,
+        notas:       document.getElementById('fNotas').value.trim() || null,
+      };
+      if (!body.farmaco || !body.dosagem || !body.posologia) {
+        showMsg('Fármaco, dosagem e posologia são obrigatórios.'); return;
+      }
+
+      let res;
+      if (medicacaoAtual?.id && medicacaoAtual.id.length > 5) {
+        res = await fetch(`${API}/utentes/${utenteAtualId}/medicacao/${medicacaoAtual.id}`, {
+          method: 'PUT', headers: hdrs(), body: JSON.stringify(body),
+        });
+      } else {
+        res = await fetch(`${API}/utentes/${utenteAtualId}/medicacao`, {
+          method: 'POST', headers: hdrs(), body: JSON.stringify(body),
+        });
+      }
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao guardar.'); return; }
+      fecharModal('modalForm');
+      await carregar();
+      showMsg('Medicação guardada com sucesso.', 'ok');
+    }
+
+    function abrirModalSuspender(id, farmaco) {
+      medicacaoAtual = { id };
+      document.getElementById('suspenderInfo').textContent = `Fármaco: ${farmaco}`;
+      document.getElementById('motivoSuspensao').value = '';
+      document.getElementById('modalSuspender').classList.add('open');
+    }
+
+    async function confirmarSuspender() {
+      const motivo = document.getElementById('motivoSuspensao').value.trim();
+      if (!motivo) { showMsg('O motivo é obrigatório.'); return; }
+
+      const res  = await fetch(`${API}/utentes/${utenteAtualId}/medicacao/${medicacaoAtual.id}/suspender`, {
+        method: 'PATCH', headers: hdrs(), body: JSON.stringify({ motivo }),
+      });
+      const data = await res.json();
+      if (!res.ok) { showMsg(data.erro || 'Erro ao suspender.'); return; }
+      fecharModal('modalSuspender');
+      await carregar();
+      showMsg('Medicação suspensa.', 'ok');
+    }
+
+    init();
+  </script>
+</body>
+</html>
