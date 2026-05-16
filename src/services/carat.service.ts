@@ -1,5 +1,5 @@
 import { NivelControlo, PrioridadeAlerta, TipoAlerta } from '../models/todos.entity';
-import { getdatabase } from '../database/database';
+import { getDb } from '../database/database';
 import { v4 as uuidv4 } from 'uuid';
 
 export const CARAT_NUM_PERGUNTAS = 10;

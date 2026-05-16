@@ -6,12 +6,13 @@ import medicoRoutes from './routes/medico';
 import caratRoutes from './routes/carat';
 import alertaRoutes from './routes/alerta';
 import dashboardRoutes from './routes/dashboard';
+import medicacaoRoutes from './routes/medicacao';
 
 console.log('✓ Imports carregados');
 console.log('Iniciando aplicação...');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // ── Middleware global ──────────────────────────────────
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // ── Rotas ──────────────────────────────────────────────
 app.use('/auth', authRoutes);
 app.use('/utentes', utenteRoutes);
+app.use('/utentes/:utenteId', medicacaoRoutes);
 app.use('/medicos', medicoRoutes);
 app.use('/carat', caratRoutes);
 app.use('/alertas', alertaRoutes);
@@ -69,8 +71,8 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 });
 
 // ── Arranque ───────────────────────────────────────────
-app.listen(3000, () => {
-  console.log(`\n🏥 SAUDINOB API a correr em http://localhost:3000`);
+app.listen(PORT, () => {
+  console.log(`\n🏥 SAUDINOB API a correr em http://localhost:${PORT}`);
   console.log(`   Executar seed: npm run seed\n`);
 });
 
