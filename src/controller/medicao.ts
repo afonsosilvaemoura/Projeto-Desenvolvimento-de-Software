@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ExameService } from '../services/medicacao.service';
+import { MedicacaoService } from '../services/medicacao.service';
 
 export class MedicacaoController {
     private service = new MedicacaoService();

@@ -389,3 +389,14 @@ INSERT OR IGNORE INTO alerta_acao (id_alerta, estado_anterior, estado_novo, nota
 (5, 'NOVO',         'VISTO',        'Sintoma comunicado ao médico.',                         '2026-02-11 08:00:00'),
 (5, 'VISTO',        'EM_SEGUIMENTO','Medicação de alívio prescrita.',                        '2026-02-15 14:00:00'),
 (5, 'EM_SEGUIMENTO','FECHADO',      'Pieira resolvida após início de terapêutica.',           '2026-03-01 10:00:00');
+
+-- Medicacoes
+db.exec(`
+  CREATE TABLE IF NOT EXISTS medicacoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    codigo TEXT NOT NULL UNIQUE,
+    medico_nome TEXT NOT NULL,
+    dataCriacao DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);

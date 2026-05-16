@@ -16,24 +16,23 @@ export const CARAT_MIN_VALOR = 0;
 export const CARAT_MAX_VALOR = 4;
 
 export const PERGUNTAS_CARAT = [
-  'Nas últimas 4 semanas, quantas vezes teve sintomas nasais (corrimento, obstrução, espirros)?',
-  'Nas últimas 4 semanas, quantas vezes os sintomas nasais afetaram o seu sono?',
-  'Nas últimas 4 semanas, quantas vezes os sintomas nasais afetaram as suas atividades diárias?',
-  'Nas últimas 4 semanas, quantas vezes teve olhos vermelhos, lacrimejantes ou com comichão?',
-  'Nas últimas 4 semanas, quantas vezes usou medicação para a rinite?',
-  'Nas últimas 4 semanas, quantas vezes acordou de noite devido a sintomas de asma?',
-  'Nas últimas 4 semanas, quantas vezes teve pieira ou aperto no peito?',
-  'Nas últimas 4 semanas, quantas vezes a asma limitou as suas atividades físicas?',
-  'Nas últimas 4 semanas, quantas vezes teve crises de falta de ar?',
-  'Nas últimas 4 semanas, como avalia o seu controlo geral da doença respiratória?',
+  'Nas últimas 4 semanas, quantas vezes teve o nariz entupido?',
+  'Nas últimas 4 semanas, quantas vezes teve espirros?',
+  'Nas últimas 4 semanas, quantas vezes teve comichão no nariz?',
+  'Nas últimas 4 semanas, quantas vezes teve corrimento/pingo do nariz?',
+  'Nas últimas 4 semanas, quantas vezes teve falta de ar/dispeneia?',
+  'Nas últimas 4 semanas, quantas vezes teve chiadeira no peito/pieira?',
+  'Nas últimas 4 semanas, quantas vezes teve aperto no peito com esforço físico?',
+  'Nas últimas 4 semanas, quantas vezes sentiu cansaço/dificuldade em fazer tarefas do dia-a-dia?',
+  'Nas últimas 4 semanas, quantas vezes acordou durante a noite devido a sintomas?',
+  'Nas últimas 4 semanas, teve de aumentar a utilização dos seus medicamentos, por causa das suas doenças alérgicas/rinite/asma?',
 ];
 
 export const OPCOES_RESPOSTA = [
-  { valor: 4, label: 'Nunca / Muito bem controlada' },
-  { valor: 3, label: 'Raramente (1-2x)' },
-  { valor: 2, label: 'Algumas vezes (3-7x)' },
-  { valor: 1, label: 'Frequentemente (8-14x)' },
-  { valor: 0, label: 'Sempre / Muito mal controlada' },
+  { valor: 3, label: 'Nunca' },
+  { valor: 2, label: '1 a 2x por semana' },
+  { valor: 1, label: 'Mais de 2 dias por semana' },
+  { valor: 0, label: 'Quase ou todos os dias' },
 ];
 
 export function calcularScore(respostas: number[]): number {

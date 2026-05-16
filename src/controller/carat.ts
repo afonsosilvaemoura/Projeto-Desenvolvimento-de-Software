@@ -4,7 +4,7 @@ import { getDb } from '../database/database';
 import {
   calcularScore, interpretarScore, gerarRecomendacoes,
   calcularProximoPasso, gerarAlertasSeNecessario, PERGUNTAS_CARAT
-} from '../services/carat';
+} from '../services/carat.service';
 import { registarAuditoria } from '../services/auditoria';
 import { PerfilUtilizador } from '../models/todos.entity';
 import { environment } from '../environment/environment';
