@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { PerfilUtilizador } from '../models/entities';
-import { getDb } from '../database/db';
+import { PerfilUtilizador } from '../models/todos.entity';
+import { getDb } from '../database/database';
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'saudinob-secret-key-2026';
 export const JWT_EXPIRES_IN = '8h';

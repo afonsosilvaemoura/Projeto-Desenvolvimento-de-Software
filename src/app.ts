@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import authRoutes from './routes/auth';
 import utenteRoutes from './routes/utente';
 import medicoRoutes from './routes/medico';
@@ -24,6 +25,9 @@ app.use((_req, res, next) => {
   next();
 });
 
+// ── Ficheiros estáticos ───────────────────────────────
+app.use(express.static(path.join(__dirname, '../public')));
+
 // ── Rotas ──────────────────────────────────────────────
 app.use('/auth', authRoutes);
 app.use('/utentes', utenteRoutes);
@@ -34,6 +38,11 @@ app.use('/dashboard', dashboardRoutes);
 
 // ── Rota raiz ──────────────────────────────────────────
 app.get('/', (_req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+// ── API Info ────────────────────────────────────────────
+app.get('/api/info', (_req: express.Request, res: express.Response) => {
   res.json({
     sistema: 'SAUDINOB',
     descricao: 'Sistema de prevenção e acompanhamento de doenças respiratórias crónicas',

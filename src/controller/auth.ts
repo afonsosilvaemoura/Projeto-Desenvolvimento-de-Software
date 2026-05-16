@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { getDb } from '../database/db';
+import { getDb } from '../database/database';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../middleware/auth';
 import { registarAuditoria } from '../services/auditoria';
-import { PerfilUtilizador } from '../models/entities';
+import { PerfilUtilizador } from '../models/todos.entity';
 import { AlertaController } from '../controller/alerta';
 
 export class AuthController {

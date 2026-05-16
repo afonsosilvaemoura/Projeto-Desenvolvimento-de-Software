@@ -1,5 +1,5 @@
-import { NivelControlo, PrioridadeAlerta, TipoAlerta } from '../models/entities';
-import { getDb } from '../database/db';
+import { NivelControlo, PrioridadeAlerta, TipoAlerta } from '../models/todos.entity';
+import { getDb } from '../database/database';
 import { v4 as uuidv4 } from 'uuid';
 
 // =============================================

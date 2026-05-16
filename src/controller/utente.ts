@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import { getDb } from '../database/db';
+import { getDb } from '../database/database';
 import { registarAuditoria } from '../services/auditoria';
-import { PerfilUtilizador, MotivoRemocaoUtente } from '../models/entities';
+import { PerfilUtilizador, MotivoRemocaoUtente } from '../models/todos.entity';
 
 export class UtenteController {
   // GET /utentes

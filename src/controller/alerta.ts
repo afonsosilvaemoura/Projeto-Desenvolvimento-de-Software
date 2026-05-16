@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { getDb } from '../database/db';
+import { getDb } from '../database/database';
 import { registarAuditoria } from '../services/auditoria';
-import { EstadoAlerta, PerfilUtilizador } from '../models/entities';
+import { EstadoAlerta, PerfilUtilizador } from '../models/todos.entity';
 import { v4 as uuidv4 } from 'uuid';
 
 // Transições válidas no ciclo de vida do alerta

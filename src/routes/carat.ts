@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { CaratController } from '../controller/carat';
 import { autenticar, autorizar, verificarAcessoUtente } from '../middleware/auth';
-import { PerfilUtilizador } from '../models/entities';
+import { PerfilUtilizador } from '../models/todos.entity';
 
 const router = Router();
 const ctrl = new CaratController();

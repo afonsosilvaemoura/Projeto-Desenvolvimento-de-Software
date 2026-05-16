@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { getDb } from '../database/db';
+import { getDb } from '../database/database';
 import { registarAuditoria } from '../services/auditoria';
-import { PerfilUtilizador } from '../models/entities';
+import { PerfilUtilizador } from '../models/todos.entity';
 
 export class DashboardController {
   // GET /dashboard/:utenteId

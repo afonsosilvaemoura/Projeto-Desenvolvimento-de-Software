@@ -1,4 +1,4 @@
-import { getDb } from '../database/db';
+import { getDb } from '../database/database';
 import { v4 as uuidv4 } from 'uuid';
 
 export function registarAuditoria(

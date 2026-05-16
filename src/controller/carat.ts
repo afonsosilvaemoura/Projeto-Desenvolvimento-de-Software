@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { getDb } from '../database/db';
+import { getDb } from '../database/database';
 import {
   calcularScore, interpretarScore, gerarRecomendacoes,
   calcularProximoPasso, gerarAlertasSeNecessario, PERGUNTAS_CARAT
 } from '../services/carat';
 import { registarAuditoria } from '../services/auditoria';
-import { PerfilUtilizador } from '../models/entities';
+import { PerfilUtilizador } from '../models/todos.entity';
 import { environment } from '../environment/environment';
 
 type RequestWithUtilizador = Request & { utilizador?: { id: string; perfil: PerfilUtilizador } };

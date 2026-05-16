@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AlertaController } from '../controller/alerta';
 import { autenticar, autorizar } from '../middleware/auth';
-import { PerfilUtilizador } from '../models/entities';
+import { PerfilUtilizador } from '../models/todos.entity';
 
 const router = Router();
 const ctrl = new AlertaController();
