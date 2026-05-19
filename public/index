@@ -95,8 +95,8 @@
             {exames.map(exam => (
               <tr key={exam.id}>
                 <td>{exam.id}</td>
-                <td>{exam.nome}</td>
-                <td>{exam.codigo}</td>
+                <td>{exam.tipo_exame}</td>
+                <td>{exam.exame}</td>
                 <td>{exam.medico_nome}</td>
                 <td>{exam.dataCriacao || 'não exposta'}</td>
               </tr>
