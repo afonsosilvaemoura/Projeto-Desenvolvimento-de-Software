@@ -1,17 +1,14 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 import { CaratController } from '../controller/carat';
-import { autenticar, autorizar, verificarAcessoUtente } from '../middleware/auth';
-import { PerfilUtilizador } from '../models/todos.entity';
 
 const router = Router();
 const ctrl = new CaratController();
-const { MEDICO, UTENTE } = PerfilUtilizador;
 
 // GET /carat/perguntas  — público
 router.get('/perguntas', (req, res) => ctrl.perguntas(req, res));
 
 // POST /carat/avaliacoes  — autenticado OU anónimo
-router.post('/avaliacoes', (req: Request, res: Response, next: NextFunction) => {
+/*router.post('/avaliacoes', (req: Request, res: Response, next: NextFunction) => {
   // Tenta autenticar mas não bloqueia se não houver token
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {

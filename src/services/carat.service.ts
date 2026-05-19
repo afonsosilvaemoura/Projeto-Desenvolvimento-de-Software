@@ -1,6 +1,5 @@
-import { NivelControlo, PrioridadeAlerta, TipoAlerta } from '../models/todos.entity';
-import { getDb } from '../database/database';
-import { v4 as uuidv4 } from 'uuid';
+import { AppDataSource } from '../database/database';
+import { Carat } from 'models/carat.entity';
 
 export const CARAT_NUM_PERGUNTAS = 10;
 export const CARAT_MIN_VALOR = 0;
