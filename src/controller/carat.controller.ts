@@ -1,11 +1,18 @@
 import { Request, Response } from 'express';
-import { CaratService } from '../services/carat.service';
+import { CaratService, PERGUNTAS_CARAT } from '../services/carat.service';
 
 export class CaratController {
     private service = new CaratService();
 
+    perguntas(req: Request, res: Response) {
+        return res.json({
+            num_perguntas: PERGUNTAS_CARAT.length,
+            perguntas: PERGUNTAS_CARAT,
+        });
+    }
+
     async listar(req: Request, res: Response) {
-        const carat = await this.service.listarCarat();
+        const carat = await this.service.listarCarats();
         return res.json(carat);
     }
 

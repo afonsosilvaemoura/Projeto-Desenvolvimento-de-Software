@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardController = void 0;
-const db_1 = require("../database/db");
+const database_1 = require("../database/database");
 const auditoria_1 = require("../services/auditoria");
 class DashboardController {
     // GET /dashboard/:utenteId
     obter(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const user = req.utilizador;
         const utenteId = req.params.utenteId;
         // Dados do utente

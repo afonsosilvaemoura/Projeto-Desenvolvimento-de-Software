@@ -99,6 +99,7 @@
     <button onclick="mostrarPagina('pagina-prescricoes')">Prescrições</button>
     <button onclick="mostrarPagina('pagina-exames')">Exames</button>
     <button onclick="mostrarPagina('pagina-fhir')">Consulta FHIR</button>
+    <button onclick="mostrarPagina('pagina-carat')">Questionário CARAT</button>
   </nav>
 
   <main>
@@ -150,6 +151,25 @@
 
       </div>
     </section>
+
+    <section id="pagina-carat" class="pagina">
+      <h1>Questionário CARAT</h1>
+      
+      <h2>Responder ao Questionário</h2>
+      <form id="formCarat">
+        <div id="perguntasContainer">
+          <p>A carregar perguntas...</p>
+        </div>
+        <button class="form-btn" type="submit">Submeter Respostas</button>
+        <p id="erroCarat" class="erro"></p>
+      </form>
+
+      <h2>Histórico de Avaliações</h2>
+      <button onclick="buscarCARAT()">Atualizar CARAT</button>
+      <div id="listaCARAT">
+        <p>A carregar questionários CARAT...</p>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -164,7 +184,6 @@
     }
 
     async function buscarPrescricoes() {
-      alert('Aqui');
       const container = document.getElementById('listaPrescricoes');
       container.innerHTML = '<p>A carregar prescrições...</p>';
 
@@ -303,11 +322,10 @@ async function buscarCARAT() {
             <thead>
               <tr>
                 <th>#</th>
-                <th>ID_carat</th>
-                <th>Data</th>
-                <th>Pontuação Total</th>
-                <th>Score Rinite</th>
-                <th>Score Asma</th>
+                <th>Nome</th>
+                <th>Código</th>
+                <th>Médico</th>
+                <th>Data de Criação</th>
               </tr>
             </thead>
             <tbody>
@@ -316,11 +334,11 @@ async function buscarCARAT() {
         for (const carat of dados) {
           html += `
             <tr>
-              <td>${carat.id_carat?? ''}</td>
-              <td>${carat.data ?? ''}</td>
-              <td>${carat.pontuacaoTotal ?? ''}</td>
-              <td>${carat.scoreRinite ?? ''}</td>
-              <td>${carat.scoreAsma ?? ''}</td>
+              <td>${carat.id ?? ''}</td>
+              <td>${carat.nome ?? ''}</td>
+              <td>${carat.codigo ?? ''}</td>
+              <td>${carat.medico_nome ?? ''}</td>
+              <td>${carat.dataCriacao ?? ''}</td>
             </tr>
           `;
         }
@@ -443,10 +461,97 @@ async function buscarCARAT() {
 
     }
 
+    async function carregarPerguntasCarat() {
+      try {
+        const resposta = await fetch('/carat/perguntas');
+        const dados = await resposta.json();
+
+        const container = document.getElementById('perguntasContainer');
+        let html = '';
+
+        dados.perguntas.forEach((pergunta, idx) => {
+          html += `
+            <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+              <label><strong>${idx + 1}. ${pergunta}</strong></label><br>
+          `;
+          
+          dados.opcoes.forEach(opcao => {
+            html += `
+              <label style="display: block; margin: 8px 0;">
+                <input type="radio" name="pergunta_${idx}" value="${opcao.valor}" required>
+                ${opcao.label}
+              </label>
+            `;
+          });
+          
+          html += `</div>`;
+        });
+
+        container.innerHTML = html;
+      } catch (erro) {
+        console.error('Erro ao carregar perguntas CARAT:', erro);
+        document.getElementById('perguntasContainer').innerHTML = '<p class="erro">Erro ao carregar perguntas.</p>';
+      }
+    }
+
+    async function submeterRespostasCarat(event) {
+      event.preventDefault();
+
+      const erroCarat = document.getElementById('erroCarat');
+      erroCarat.textContent = '';
+
+      const respostas = [];
+      for (let i = 0; i < 10; i++) {
+        const radioButtons = document.getElementsByName(`pergunta_${i}`);
+        const selecionada = Array.from(radioButtons).find(r => r.checked);
+        
+        if (!selecionada) {
+          erroCarat.textContent = `Por favor, responda à pergunta ${i + 1}.`;
+          return;
+        }
+        
+        respostas.push(parseInt(selecionada.value));
+      }
+
+      try {
+        const resposta = await fetch('/carat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            perg1: respostas[0],
+            perg2: respostas[1],
+            perg3: respostas[2],
+            perg4: respostas[3],
+            perg5: respostas[4],
+            perg6: respostas[5],
+            perg7: respostas[6],
+            perg8: respostas[7],
+            perg9: respostas[8],
+            perg10: respostas[9]
+          })
+        });
+
+        if (!resposta.ok) {
+          const dados = await resposta.json();
+          throw new Error(dados.erro || 'Erro ao submeter respostas');
+        }
+
+        document.getElementById('formCarat').reset();
+        erroCarat.textContent = '✅ Respostas submetidas com sucesso!';
+        erroCarat.style.color = 'green';
+        await buscarCARAT();
+      } catch (erro) {
+        erroCarat.textContent = erro.message;
+      }
+    }
+
     document.getElementById('formPrescricao').addEventListener('submit', criarPrescricao);
     document.getElementById('formFhir').addEventListener('submit', pesquisarFhir);
+    document.getElementById('formCarat').addEventListener('submit', submeterRespostasCarat);
 
     buscarPrescricoes();
+    carregarPerguntasCarat();
+    buscarCARAT();
   </script>
 </body>
 

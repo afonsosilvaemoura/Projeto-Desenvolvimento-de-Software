@@ -6,16 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UtenteController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const uuid_1 = require("uuid");
-const db_1 = require("../database/db");
+const database_1 = require("../database/database");
 const auditoria_1 = require("../services/auditoria");
-const entities_1 = require("../models/entities");
+const todos_entity_1 = require("../models/todos.entity");
 class UtenteController {
     // GET /utentes
     listar(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const user = req.utilizador;
         let utentes;
-        if (user.perfil === entities_1.PerfilUtilizador.ADMINISTRADOR) {
+        if (user.perfil === todos_entity_1.PerfilUtilizador.ADMINISTRADOR) {
             utentes = db.prepare(`
         SELECT u.id, u.nome, u.email, u.ativo, u.criado_em,
                ut.data_nascimento, ut.nif, ut.telefone, ut.medico_id,
@@ -42,7 +42,7 @@ class UtenteController {
     }
     // GET /utentes/:id
     obter(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const user = req.utilizador;
         const utente = db.prepare(`
       SELECT u.id, u.nome, u.email, u.ativo, u.criado_em, u.atualizado_em,
@@ -58,7 +58,7 @@ class UtenteController {
             return;
         }
         // Administrador só vê dados administrativos (sem dados clínicos)
-        if (user.perfil === entities_1.PerfilUtilizador.ADMINISTRADOR) {
+        if (user.perfil === todos_entity_1.PerfilUtilizador.ADMINISTRADOR) {
             const { data_nascimento, nif, telefone, medico_id, medico_nome, ...dadosAdmin } = utente;
             (0, auditoria_1.registarAuditoria)(user.id, 'VER_DETALHE_ADMIN', 'utentes', utente.id);
             res.json({ ...dadosAdmin, data_nascimento, nif, telefone, medico_id, medico_nome });
@@ -75,7 +75,7 @@ class UtenteController {
             res.status(400).json({ erro: 'Todos os campos são obrigatórios.' });
             return;
         }
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         // Verificar que o médico existe
         const medico = db.prepare("SELECT id FROM utilizadores WHERE id = ? AND perfil = 'MEDICO'")
             .get(medico_id);
@@ -100,7 +100,7 @@ class UtenteController {
       VALUES (?,?,?,?,?)
     `);
         db.transaction(() => {
-            inserirUtil.run(id, nome, email, hash, entities_1.PerfilUtilizador.UTENTE, now, now);
+            inserirUtil.run(id, nome, email, hash, todos_entity_1.PerfilUtilizador.UTENTE, now, now);
             inserirUtente.run(id, data_nascimento, nif, telefone, medico_id);
         })();
         (0, auditoria_1.registarAuditoria)(req.utilizador.id, 'CRIAR', 'utentes', id, { nome, email });
@@ -108,7 +108,7 @@ class UtenteController {
     }
     // PUT /utentes/:id
     atualizar(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const utenteId = req.params.id;
         const { nome, telefone, data_nascimento } = req.body;
         const now = new Date().toISOString();
@@ -127,11 +127,11 @@ class UtenteController {
     }
     // DELETE /utentes/:id  (Admin only — anonimização)
     remover(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const utenteId = req.params.id;
         const { motivo } = req.body;
-        if (!motivo || !Object.values(entities_1.MotivoRemocaoUtente).includes(motivo)) {
-            res.status(400).json({ erro: `Motivo inválido. Use: ${Object.values(entities_1.MotivoRemocaoUtente).join(', ')}` });
+        if (!motivo || !Object.values(todos_entity_1.MotivoRemocaoUtente).includes(motivo)) {
+            res.status(400).json({ erro: `Motivo inválido. Use: ${Object.values(todos_entity_1.MotivoRemocaoUtente).join(', ')}` });
             return;
         }
         if (!db.prepare('SELECT id FROM utilizadores WHERE id = ?').get(utenteId)) {
@@ -152,7 +152,7 @@ class UtenteController {
     }
     // GET /utentes/:id/historico-clinico
     historicoClinico(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const utenteId = req.params.id;
         const avaliacoes = db.prepare('SELECT * FROM avaliacoes_carat WHERE utente_id = ? ORDER BY data DESC').all(utenteId);
         const medicacao = db.prepare('SELECT * FROM medicacao WHERE utente_id = ? ORDER BY data_inicio DESC').all(utenteId);

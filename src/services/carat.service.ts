@@ -1,9 +1,53 @@
-import { AppDataSource } from '../database/database';
-import { Carat } from 'models/carat.entity';
+// import { AppDataSource } from '../database/database';
+// import { Carat } from '../models/carat.entity';
+// import { CreateCaratDto } from '../dtos/carat/create-carat.dto';
+// import { CaratResponseDto } from '../dtos/carat/carat-response.dto';
 
-export const CARAT_NUM_PERGUNTAS = 10;
-export const CARAT_MIN_VALOR = 0;
-export const CARAT_MAX_VALOR = 3;
+// Classe comentada - usando mock data em app.ts
+/*
+export class CaratService {
+
+    private repo = AppDataSource.getRepository(Carat);
+
+    async criarCarat(dados: { perg1: number, perg2: number, perg3: number, perg4: number, perg5: number, perg6: number, perg7: number, perg8: number, perg9: number, perg10: number }): Promise<Carat> {
+
+        const nova = this.repo.create({
+            ...dados, // espalha os campos perg1, perg2, ..., perg10
+            dataCriacao: new Date(),
+        });
+        return this.repo.save(nova);
+    }
+
+    async listarCarats(): Promise<Carat[]> {
+        return this.repo.find();
+    }
+
+    async listarCaratComDTO(): Promise<CaratResponseDto[]> {
+        const carats = await this.repo.find();
+        return carats.map((carat) => this.toResponseDto(carat));
+    }
+
+    async listarComFiltro(pontuacao: number): Promise<Carat[]> {
+        const carats = await this.repo.find();
+        return carats.filter(carat => {
+            const score = carat.perg1 + carat.perg2 + carat.perg3 + carat.perg4 + carat.perg5 + 
+                         carat.perg6 + carat.perg7 + carat.perg8 + carat.perg9 + carat.perg10;
+            return score <= pontuacao;
+        });
+    }
+
+    private toResponseDto(carat: Carat): CaratResponseDto {
+      return {
+          id: carat.id,
+          scoreTotal: carat.perg1 + carat.perg2 + carat.perg3 + carat.perg4 + carat.perg5 + 
+                       carat.perg6 + carat.perg7 + carat.perg8 + carat.perg9 + carat.perg10,
+          scoreRinite: carat.perg1 + carat.perg2 + carat.perg3 + carat.perg4,
+          scoreAsma: carat.perg5 + carat.perg6 + carat.perg7 + carat.perg8 + carat.perg9 + carat.perg10,
+          dataCriacao: carat.dataCriacao
+      };
+  }
+}
+*/
 
 export const PERGUNTAS_CARAT = [
   'Nas últimas 4 semanas, quantas vezes teve o nariz entupido?',
@@ -24,23 +68,23 @@ export const OPCOES_RESPOSTA = [
   { valor: 1, label: 'Mais de 2 dias por semana' },
   { valor: 0, label: 'Quase ou todos os dias' },
 ];
-export const CARAT = {
 
+export const CARAT = {
   NUM_PERGUNTAS: 10,
   VALOR_MIN_RESPOSTA: 0,
   VALOR_MAX_RESPOSTA: 3,
 
   // Limiares Globais
   SCORE_MAXIMO_GLOBAL: 30,
-  LIMIAR_BAIXO_CONTROLO_GLOBAL: 24, // <= 24 é baixo controlo
+  LIMIAR_BAIXO_CONTROLO_GLOBAL: 24,
 
   // Limiares Rinite (Perguntas 1 a 4)
   SCORE_MAXIMO_RINITE: 12,
-  LIMIAR_MAX_RINITE_MAL_CONTROLADA: 8,  // <= 8 é mal controlada
+  LIMIAR_MAX_RINITE_MAL_CONTROLADA: 8,
 
   // Limiares Asma (Perguntas 5 a 10)
   SCORE_MAXIMO_ASMA: 18,
-  LIMIAR_MAX_ASMA_MAL_CONTROLADA: 16,   // < 16 é mal controlada
+  LIMIAR_MAX_ASMA_MAL_CONTROLADA: 16,
 
   // Semanas até próxima avaliação
   SEMANAS_BOM_CONTROLO: 12,
@@ -56,9 +100,9 @@ export interface ResultadoCARAT {
   asmaControlada: boolean;
 }
 
-/**
- * Calcula e classifica os resultados com base num array de 10 respostas (valores de 0 a 3)
- */
+
+//Calcula e classifica os resultados com base num array de 10 respostas (valores de 0 a 3)
+
 export function calcularCARAT(respostas: number[]): ResultadoCARAT {
   if (respostas.length !== CARAT.NUM_PERGUNTAS) {
     throw new Error(`O questionário deve ter exatamente ${CARAT.NUM_PERGUNTAS} respostas.`);
@@ -88,7 +132,7 @@ export function calcularCARAT(respostas: number[]): ResultadoCARAT {
   };
 }
 
-// Funções Auxiliares de Visualização
+/* Funções Auxiliares de Visualização
 export function corDoScoreGlobal(scoreGlobal: number): string {
   return scoreGlobal <= CARAT.LIMIAR_BAIXO_CONTROLO_GLOBAL ? '#DC3545' : '#28A745'; 
 }
@@ -98,12 +142,6 @@ export function semanasProximaAvaliacao(scoreGlobal: number): number {
     ? CARAT.SEMANAS_BAIXO_CONTROLO 
     : CARAT.SEMANAS_BOM_CONTROLO;
 }
-
-
-
-
-
-
 
 
 export function calcularScore(respostas: number[]): number {
@@ -184,4 +222,5 @@ export function gerarAlertasSeNecessario(
       );
     }
   }
-}
+*/
+

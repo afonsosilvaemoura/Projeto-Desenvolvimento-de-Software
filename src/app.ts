@@ -1,12 +1,6 @@
 import express from 'express';
 import path from 'path';
-import authRoutes from './routes/auth';
-import utenteRoutes from './routes/utente';
-import medicoRoutes from './routes/medico';
-import caratRoutes from './routes/carat';
-import alertaRoutes from './routes/alerta';
-import dashboardRoutes from './routes/dashboard';
-import medicacaoRoutes from './routes/medicacao';
+import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
 
 console.log('✓ Imports carregados');
 console.log('Iniciando aplicação...');
@@ -30,13 +24,88 @@ app.use((_req, res, next) => {
 app.use(express.static(path.join(__dirname, '../public')));
 
 // ── Rotas ──────────────────────────────────────────────
-app.use('/auth', authRoutes);
-app.use('/utentes', utenteRoutes);
-app.use('/utentes/:utenteId', medicacaoRoutes);
-app.use('/medicos', medicoRoutes);
-app.use('/carat', caratRoutes);
-app.use('/alertas', alertaRoutes);
-app.use('/dashboard', dashboardRoutes);
+
+// Mock data para as rotas
+const mockPrescricoes: any[] = [];
+const mockExames: any[] = [];
+const mockCarat: any[] = [];
+
+// GET /prescricoes
+app.get('/prescricoes', (_req, res) => {
+  res.json(mockPrescricoes);
+});
+
+// POST /prescricoes
+app.post('/prescricoes', (req, res) => {
+  const { medicamento, dose, medico_nome } = req.body;
+  const novaPrescricao = {
+    id: mockPrescricoes.length + 1,
+    medicamento,
+    dose,
+    medico_nome,
+    dataCriacao: new Date().toISOString()
+  };
+  mockPrescricoes.push(novaPrescricao);
+  res.status(201).json({ mensagem: `Prescrição para ${medicamento} criada`, prescricao: novaPrescricao });
+});
+
+// GET /exames
+app.get('/exames', (_req, res) => {
+  res.json(mockExames);
+});
+
+// GET /carat
+app.get('/carat', (_req, res) => {
+  res.json(mockCarat);
+});
+
+// GET /carat/perguntas
+app.get('/carat/perguntas', (_req, res) => {
+  res.json({
+    perguntas: PERGUNTAS_CARAT,
+    opcoes: OPCOES_RESPOSTA,
+    totalPerguntas: PERGUNTAS_CARAT.length
+  });
+});
+
+// POST /carat - Submeter respostas
+app.post('/carat', (req, res) => {
+  try {
+    const { perg1, perg2, perg3, perg4, perg5, perg6, perg7, perg8, perg9, perg10 } = req.body;
+    
+    const novaAvaliacao = {
+      id: mockCarat.length + 1,
+      perg1, perg2, perg3, perg4, perg5, perg6, perg7, perg8, perg9, perg10,
+      scoreTotal: perg1 + perg2 + perg3 + perg4 + perg5 + perg6 + perg7 + perg8 + perg9 + perg10,
+      scoreRinite: perg1 + perg2 + perg3 + perg4,
+      scoreAsma: perg5 + perg6 + perg7 + perg8 + perg9 + perg10,
+      dataCriacao: new Date().toISOString()
+    };
+    
+    mockCarat.push(novaAvaliacao);
+    res.status(201).json({ mensagem: 'Avaliação CARAT registada com sucesso', avaliacao: novaAvaliacao });
+  } catch (error: any) {
+    res.status(400).json({ erro: error.message });
+  }
+});
+
+// GET /fhir/observations
+app.get('/fhir/observations', (req, res) => {
+  const code = req.query.code as string || '8310-5';
+  const mockObservations = [
+    {
+      id: '1',
+      code: code,
+      display: 'Temperatura corporal',
+      value: 36.5,
+      unit: 'Celsius',
+      effectiveDateTime: new Date().toISOString(),
+      subject: 'Paciente 001',
+      status: 'final'
+    }
+  ];
+  res.json(mockObservations);
+});
 
 // ── Rota raiz ──────────────────────────────────────────
 app.get('/', (_req: express.Request, res: express.Response) => {
@@ -50,12 +119,10 @@ app.get('/api/info', (_req: express.Request, res: express.Response) => {
     descricao: 'Sistema de prevenção e acompanhamento de doenças respiratórias crónicas',
     versao: '1.0.0',
     endpoints: {
-      auth: '/auth/login | /auth/logout | /auth/me',
-      utentes: '/utentes',
-      medicos: '/medicos',
-      carat: '/carat/perguntas | /carat/avaliacoes',
-      alertas: '/alertas',
-      dashboard: '/dashboard/:utenteId',
+      prescricoes: '/prescricoes',
+      exames: '/exames',
+      carat: '/carat',
+      fhir: '/fhir/observations'
     },
   });
 });
@@ -73,7 +140,4 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 // ── Arranque ───────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n🏥 SAUDINOB API a correr em http://localhost:${PORT}`);
-  console.log(`   Executar seed: npm run seed\n`);
 });
-
-export default app;

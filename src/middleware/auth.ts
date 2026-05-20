@@ -2,7 +2,7 @@
 // Interceta pedidos antes de chegarem ao controller, verifica se existe um
 // token JWT no header Authorization, valida esse token e, se for válido,
 // guarda os dados do utilizador em req.user e permite continuar para a rota.
-// Se o token estiver ausente, mal formatado ou inválido, devolve erro 401.
+/* Se o token estiver ausente, mal formatado ou inválido, devolve erro 401.
 
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';

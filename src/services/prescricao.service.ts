@@ -53,25 +53,31 @@ export class PrescricaoService {
         return this.toResponseDto(guardada);
     }
 
-
+    // Busca todas as prescrições
     async listarPrescricoes(): Promise<Prescricao[]> {
         return this.repo.find();
     }
 
+    // Busca com transformação em DTO (sem expor a data de criação)
     async listarPrescricoesComDTO(): Promise<PrescricaoResponseDto[]> {
         const prescricoes = await this.repo.find();
         return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
     }
 
-   async listarComFiltro(nomeMedico: string): Promise<PrescricaoResponseDto[]> {
-    const prescricoes = await this.repo.find({
-        where: { medico_nome: nomeMedico },
-    });
-
-    return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
+    // Busca por filtro (médico específico)
+    async listarComFiltro(nomeMedico: string): Promise<PrescricaoResponseDto[]> {
+        const prescricoes = await this.repo.find({
+            where: { medico_nome: nomeMedico },
+        });
+        return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
     }
 
+    // Usando DTO, podemos controlar os campos devolvidos ao cliente.
+    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao,
+    // mas não é enviada na resposta.
 
+    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais 
+    // complexa ou reutilizada em vários pontos do código.
 
     private toResponseDto(prescricao: Prescricao): PrescricaoResponseDto {
         return {

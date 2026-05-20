@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const utente_1 = require("../controller/utente");
 const auth_1 = require("../middleware/auth");
-const entities_1 = require("../models/entities");
+const todos_entity_1 = require("../models/todos.entity");
 const router = (0, express_1.Router)();
 const ctrl = new utente_1.UtenteController();
-const { ADMINISTRADOR, MEDICO, UTENTE } = entities_1.PerfilUtilizador;
+const { ADMINISTRADOR, MEDICO, UTENTE } = todos_entity_1.PerfilUtilizador;
 // GET /utentes
 router.get('/', auth_1.autenticar, (0, auth_1.autorizar)(ADMINISTRADOR, MEDICO), (req, res) => ctrl.listar(req, res));
 // POST /utentes

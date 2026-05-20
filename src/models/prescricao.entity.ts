@@ -1,4 +1,3 @@
-// @ts-ignore: typeorm module may not be resolved in this environment
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()

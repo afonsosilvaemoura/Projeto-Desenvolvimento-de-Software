@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import { getDb } from '../database/database';
 import { registarAuditoria } from '../services/auditoria';
 import { EstadoAlerta, PerfilUtilizador } from '../models/todos.entity';
-import { v4 as uuidv4 } from 'uuid';
 
 // Transições válidas no ciclo de vida do alerta
 const TRANSICOES_VALIDAS: Record<EstadoAlerta, EstadoAlerta[]> = {
@@ -16,7 +16,7 @@ export class AlertaController {
   // GET /alertas  (médico vê os seus, admin vê todos)
   listar(req: Request, res: Response): void {
     const db = getDb();
-    const user = req.utilizador!;
+    // const user = req.utilizador!;
     const { estado, prioridade, utente_id } = req.query;
 
     let query = `
@@ -28,12 +28,13 @@ export class AlertaController {
     `;
     const params: any[] = [];
 
-    if (user.perfil === PerfilUtilizador.MEDICO) {
-      query += ' AND a.medico_id = ?'; params.push(user.id);
-    }
-    if (user.perfil === PerfilUtilizador.UTENTE) {
-      query += ' AND a.utente_id = ?'; params.push(user.id);
-    }
+    // TODO: Implementar autenticação e acesso por perfil
+    // if (user.perfil === PerfilUtilizador.MEDICO) {
+    //   query += ' AND a.medico_id = ?'; params.push(user.id);
+    // }
+    // if (user.perfil === PerfilUtilizador.UTENTE) {
+    //   query += ' AND a.utente_id = ?'; params.push(user.id);
+    // }
     if (estado) { query += ' AND a.estado = ?'; params.push(estado); }
     if (prioridade) { query += ' AND a.prioridade = ?'; params.push(prioridade); }
     if (utente_id) { query += ' AND a.utente_id = ?'; params.push(utente_id); }

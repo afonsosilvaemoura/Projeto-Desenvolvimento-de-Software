@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicoController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const uuid_1 = require("uuid");
-const db_1 = require("../database/db");
+const database_1 = require("../database/database");
 const auditoria_1 = require("../services/auditoria");
-const entities_1 = require("../models/entities");
+const todos_entity_1 = require("../models/todos.entity");
 class MedicoController {
     // GET /medicos
     listar(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const medicos = db.prepare(`
       SELECT u.id, u.nome, u.email, u.ativo, u.criado_em,
              m.numero_cedula, m.especialidade,
@@ -28,7 +28,7 @@ class MedicoController {
     }
     // GET /medicos/:id
     obter(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const medico = db.prepare(`
       SELECT u.id, u.nome, u.email, u.ativo, u.criado_em, u.atualizado_em,
              m.numero_cedula, m.especialidade
@@ -57,7 +57,7 @@ class MedicoController {
             res.status(400).json({ erro: 'Todos os campos são obrigatórios.' });
             return;
         }
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         if (db.prepare('SELECT id FROM utilizadores WHERE email = ?').get(email)) {
             res.status(409).json({ erro: 'Já existe um utilizador com esse email.' });
             return;
@@ -71,7 +71,7 @@ class MedicoController {
         const hash = bcryptjs_1.default.hashSync(password, 10);
         db.transaction(() => {
             db.prepare(`INSERT INTO utilizadores (id,nome,email,password_hash,perfil,ativo,criado_em,atualizado_em)
-        VALUES (?,?,?,?,?,1,?,?)`).run(id, nome, email, hash, entities_1.PerfilUtilizador.MEDICO, now, now);
+        VALUES (?,?,?,?,?,1,?,?)`).run(id, nome, email, hash, todos_entity_1.PerfilUtilizador.MEDICO, now, now);
             db.prepare(`INSERT INTO medicos (id,numero_cedula,especialidade) VALUES (?,?,?)`)
                 .run(id, numero_cedula, especialidade);
         })();
@@ -80,7 +80,7 @@ class MedicoController {
     }
     // PUT /medicos/:id  (Admin only)
     atualizar(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const medicoId = req.params.id;
         const { nome, especialidade } = req.body;
         const now = new Date().toISOString();
@@ -97,7 +97,7 @@ class MedicoController {
     }
     // PATCH /medicos/:id/inativar  (Admin only)
     inativar(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const medicoId = req.params.id;
         if (!db.prepare("SELECT id FROM utilizadores WHERE id = ? AND perfil='MEDICO'").get(medicoId)) {
             res.status(404).json({ erro: 'Médico não encontrado.' });
@@ -124,7 +124,7 @@ class MedicoController {
     reassociarUtente(req, res) {
         const { utenteId } = req.params;
         const { novo_medico_id } = req.body;
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         if (!db.prepare("SELECT id FROM utilizadores WHERE id = ? AND perfil='MEDICO' AND ativo=1").get(novo_medico_id)) {
             res.status(400).json({ erro: 'Novo médico não encontrado ou inativo.' });
             return;

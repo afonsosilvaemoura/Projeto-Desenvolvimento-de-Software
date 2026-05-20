@@ -1,21 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlertaController = void 0;
-const db_1 = require("../database/db");
+const database_1 = require("../database/database");
 const auditoria_1 = require("../services/auditoria");
-const entities_1 = require("../models/entities");
+const todos_entity_1 = require("../models/todos.entity");
 const uuid_1 = require("uuid");
 // Transições válidas no ciclo de vida do alerta
 const TRANSICOES_VALIDAS = {
-    [entities_1.EstadoAlerta.NOVO]: [entities_1.EstadoAlerta.VISTO],
-    [entities_1.EstadoAlerta.VISTO]: [entities_1.EstadoAlerta.EM_SEGUIMENTO, entities_1.EstadoAlerta.FECHADO],
-    [entities_1.EstadoAlerta.EM_SEGUIMENTO]: [entities_1.EstadoAlerta.FECHADO],
-    [entities_1.EstadoAlerta.FECHADO]: [],
+    [todos_entity_1.EstadoAlerta.NOVO]: [todos_entity_1.EstadoAlerta.VISTO],
+    [todos_entity_1.EstadoAlerta.VISTO]: [todos_entity_1.EstadoAlerta.EM_SEGUIMENTO, todos_entity_1.EstadoAlerta.FECHADO],
+    [todos_entity_1.EstadoAlerta.EM_SEGUIMENTO]: [todos_entity_1.EstadoAlerta.FECHADO],
+    [todos_entity_1.EstadoAlerta.FECHADO]: [],
 };
 class AlertaController {
     // GET /alertas  (médico vê os seus, admin vê todos)
     listar(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const user = req.utilizador;
         const { estado, prioridade, utente_id } = req.query;
         let query = `
@@ -26,11 +26,11 @@ class AlertaController {
       WHERE 1=1
     `;
         const params = [];
-        if (user.perfil === entities_1.PerfilUtilizador.MEDICO) {
+        if (user.perfil === todos_entity_1.PerfilUtilizador.MEDICO) {
             query += ' AND a.medico_id = ?';
             params.push(user.id);
         }
-        if (user.perfil === entities_1.PerfilUtilizador.UTENTE) {
+        if (user.perfil === todos_entity_1.PerfilUtilizador.UTENTE) {
             query += ' AND a.utente_id = ?';
             params.push(user.id);
         }
@@ -53,7 +53,7 @@ class AlertaController {
     }
     // GET /alertas/:id
     obter(req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const alerta = db.prepare(`
       SELECT a.*, u.nome AS utente_nome, m.nome AS medico_nome
       FROM alertas a
@@ -66,12 +66,12 @@ class AlertaController {
             return;
         }
         // Marcar automaticamente como VISTO ao abrir (se NOVO)
-        if (alerta.estado === entities_1.EstadoAlerta.NOVO) {
+        if (alerta.estado === todos_entity_1.EstadoAlerta.NOVO) {
             const now = new Date().toISOString();
             db.prepare(`UPDATE alertas SET estado='VISTO', atualizado_em=? WHERE id=?`).run(now, alerta.id);
             db.prepare(`INSERT INTO alertas_acoes (id,alerta_id,utilizador_id,estado_novo,nota,data) VALUES (?,?,?,?,?,?)`)
-                .run((0, uuid_1.v4)(), alerta.id, req.utilizador.id, entities_1.EstadoAlerta.VISTO, 'Alerta aberto automaticamente.', now);
-            alerta.estado = entities_1.EstadoAlerta.VISTO;
+                .run((0, uuid_1.v4)(), alerta.id, req.utilizador.id, todos_entity_1.EstadoAlerta.VISTO, 'Alerta aberto automaticamente.', now);
+            alerta.estado = todos_entity_1.EstadoAlerta.VISTO;
         }
         const acoes = db.prepare(`
       SELECT aa.*, u.nome AS utilizador_nome
@@ -88,11 +88,11 @@ class AlertaController {
             res.status(400).json({ erro: 'Estado novo e nota são obrigatórios.' });
             return;
         }
-        if (!Object.values(entities_1.EstadoAlerta).includes(estado_novo)) {
+        if (!Object.values(todos_entity_1.EstadoAlerta).includes(estado_novo)) {
             res.status(400).json({ erro: 'Estado inválido.' });
             return;
         }
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const alerta = db.prepare('SELECT * FROM alertas WHERE id=?').get(req.params.id);
         if (!alerta) {
             res.status(404).json({ erro: 'Alerta não encontrado.' });
@@ -114,7 +114,7 @@ class AlertaController {
     }
     // GET /alertas/limiares
     obterLimiares(_req, res) {
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         const limiar = db.prepare('SELECT * FROM limiares_alerta LIMIT 1').get();
         res.json(limiar);
     }
@@ -129,7 +129,7 @@ class AlertaController {
             res.status(400).json({ erro: 'Valores inválidos para os limiares.' });
             return;
         }
-        const db = (0, db_1.getDb)();
+        const db = (0, database_1.getDb)();
         db.prepare(`UPDATE limiares_alerta SET score_minimo=?, deterioracao_pontos=?, atualizado_em=?`)
             .run(score_minimo, deterioracao_pontos, new Date().toISOString());
         (0, auditoria_1.registarAuditoria)(req.utilizador.id, 'ATUALIZAR_LIMIARES', 'limiares_alerta', null, { score_minimo, deterioracao_pontos });

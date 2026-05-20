@@ -4,10 +4,34 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 export class Carat {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    perg1!: number;
 
     @Column()
-    nome!: string;
+    perg2!: number;
+
+    @Column()
+    perg3!: number;
+
+    @Column()
+    perg4!: number;
+
+    @Column()
+    perg5!: number;
+
+    @Column()
+    perg6!: number;
+
+    @Column()
+    perg7!: number;
+
+    @Column()
+    perg8!: number;
+
+    @Column()
+    perg9!: number;
+
+    @Column()
+    perg10!: number;
 
     @Column()
     codigo!: string;
