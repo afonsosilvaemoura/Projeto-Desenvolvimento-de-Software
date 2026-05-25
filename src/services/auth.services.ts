@@ -14,7 +14,7 @@ Se tudo correr bem, gera um token JWT que poderá depois ser usado nas rotas pro
 
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { baseDeDadosUsers } from '../database/local-storage';
+import { baseDeDadosUsers } from '../database/database';
 import { appConfig } from '../config/app.config';
 
 export class AuthService {

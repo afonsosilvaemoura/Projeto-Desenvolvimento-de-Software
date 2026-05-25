@@ -2,7 +2,7 @@
 // Responsável por expor o endpoint de login e ligar a rota ao controller
 
 import { Router } from 'express';
-import { LoginController } from '../controllers/login.controller';
+import { LoginController } from '../controller/login.controller';
 
 const router = Router();
 const controller = new LoginController();
