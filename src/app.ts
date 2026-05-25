@@ -11,6 +11,7 @@ const PORT = Number(process.env.PORT) || 3000;
 // ── Middleware global ──────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.listen(3000, () => console.log("Servidor Local (Em Memória) a correr na porta 3000"));
 
 // CORS básico para desenvolvimento
 app.use((_req, res, next) => {
@@ -23,7 +24,6 @@ app.use((_req, res, next) => {
 // ── Ficheiros estáticos ───────────────────────────────
 app.use(express.static(path.join(__dirname, '../public')));
 
-// ── Rotas ──────────────────────────────────────────────
 
 // Mock data para as rotas
 const mockPrescricoes: any[] = [];
