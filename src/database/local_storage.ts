@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 
 
 -- UTILIZADOR
--- perfil: 1=UTENTE, 2=MEDICO, 3=ADMINISTRADOR
+-- perfil: 3=UTENTE, 1=MEDICO, 2=ADMINISTRADOR
 
 CREATE TABLE IF NOT EXISTS utilizador (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -264,33 +264,6 @@ CREATE INDEX IF NOT EXISTS idx_alerta_estado       ON alerta(estado);
 CREATE INDEX IF NOT EXISTS idx_prescricao_utente   ON prescricao(id_utente);
 CREATE INDEX IF NOT EXISTS idx_sintoma_utente      ON sintoma(id_utente);
 
--- =============================================================
--- SEED - PERGUNTAS CARAT (10 perguntas fixas)
--- Subescala RINITE: perguntas 1 a 6
--- Subescala ASMA  : perguntas 7 a 10
--- Pontuação: 0 = Sempre, 1 = Muitas vezes, 2 = Algumas vezes, 3 = Nunca
--- =============================================================
-INSERT OR IGNORE INTO pergunta_carat (id, texto, subescala, opcao0, opcao1, opcao2, opcao3, ordem) VALUES
-(1,  'Nas últimas 4 semanas, teve problemas para dormir devido aos seus sintomas nasais?',
-     'RINITE', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 1),
-(2,  'Nas últimas 4 semanas, teve sintomas nasais (escorrimento, obstrução, espirros) durante o dia?',
-     'RINITE', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 2),
-(3,  'Nas últimas 4 semanas, os seus sintomas nasais perturbaram as suas atividades diárias?',
-     'RINITE', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 3),
-(4,  'Nas últimas 4 semanas, teve sintomas oculares (comichão, lacrimejo, vermelhidão)?',
-     'RINITE', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 4),
-(5,  'Nas últimas 4 semanas, classificaria os seus sintomas nasais como?',
-     'RINITE', 'Muito graves', 'Graves', 'Moderados', 'Ligeiros ou nenhuns', 5),
-(6,  'Nas últimas 4 semanas, o tratamento para a rinite foi eficaz?',
-     'RINITE', 'Nada eficaz', 'Pouco eficaz', 'Eficaz', 'Muito eficaz', 6),
-(7,  'Nas últimas 4 semanas, teve problemas para dormir devido à sua asma?',
-     'ASMA', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 7),
-(8,  'Nas últimas 4 semanas, teve sintomas de asma durante o dia (pieira, falta de ar, aperto no peito)?',
-     'ASMA', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 8),
-(9,  'Nas últimas 4 semanas, a sua asma limitou as suas atividades físicas ou desportivas?',
-     'ASMA', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 9),
-(10, 'Nas últimas 4 semanas, usou medicação de alívio (broncodilatador) para a sua asma?',
-     'ASMA', 'Sempre', 'Muitas vezes', 'Algumas vezes', 'Nunca', 10);
 
 -- =============================================================
 -- SEED - DADOS SIMULADOS

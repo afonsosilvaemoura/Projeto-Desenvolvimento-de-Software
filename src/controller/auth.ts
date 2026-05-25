@@ -1,80 +1,28 @@
+// Controller responsável pelo login.
+// Recebe as credenciais enviadas no pedido HTTP, chama o AuthService
+// para validar o utilizador e devolve o token JWT em caso de sucesso.
+// Se a autenticação falhar, responde com erro 401.
+
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { getDb } from '../database/database';
-import { registarAuditoria } from '../services/auditoria';
-import { PerfilUtilizador } from '../models/todos.entity';
+import { AuthService } from '../services/auth.services';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'seu_secret_aqui';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+export class LoginController {
+    private authService = new AuthService();
 
-export class AuthController {
-  // POST /auth/login
-  login(req: Request, res: Response): void {
-    const { email, password } = req.body;
+    login(req: Request, res: Response) {
+        try {
+            const { username, password } = req.body;
 
-    if (!email || !password) {
-      res.status(400).json({ erro: 'Email e password são obrigatórios.' });
-      return;
+            const token = this.authService.login(username, password);
+
+            return res.status(200).json({
+                mensagem: 'Login com sucesso',
+                token
+            });
+        } catch (error: any) {
+            return res.status(401).json({
+                erro: error.message
+            });
+        }
     }
-
-    const db = getDb();
-    const utilizador = db.prepare(
-      'SELECT * FROM utilizadores WHERE email = ?'
-    ).get(email) as any;
-
-    if (!utilizador) {
-      res.status(401).json({ erro: 'Credenciais inválidas.' });
-      return;
-    }
-
-    if (!utilizador.ativo) {
-      registarAuditoria(null, 'LOGIN_FALHOU_CONTA_INATIVA', 'utilizadores', utilizador.id);
-      res.status(401).json({ erro: 'Conta inativa. Contacte o Administrador.' });
-      return;
-    }
-
-    const passwordValida = bcrypt.compareSync(password, utilizador.password_hash);
-    if (!passwordValida) {
-      res.status(401).json({ erro: 'Credenciais inválidas.' });
-      return;
-    }
-
-    const payload = {
-      id: utilizador.id,
-      email: utilizador.email,
-      perfil: utilizador.perfil as PerfilUtilizador,
-      nome: utilizador.nome,
-    };
-
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-
-    registarAuditoria(utilizador.id, 'LOGIN', 'utilizadores', utilizador.id);
-
-    res.json({
-      token,
-      utilizador: {
-        id: utilizador.id,
-        nome: utilizador.nome,
-        email: utilizador.email,
-        perfil: utilizador.perfil,
-      },
-    });
-  }
-
-  // POST /auth/logout
-  logout(req: Request, res: Response): void {
-    registarAuditoria(req.utilizador?.id ?? null, 'LOGOUT', 'utilizadores', req.utilizador?.id);
-    res.json({ mensagem: 'Sessão terminada com sucesso.' });
-  }
-
-  // GET /auth/me
-  me(req: Request, res: Response): void {
-    const db = getDb();
-    const u = db.prepare('SELECT id,nome,email,perfil,ativo FROM utilizadores WHERE id = ?')
-      .get(req.utilizador!.id) as any;
-    if (!u) { res.status(404).json({ erro: 'Utilizador não encontrado.' }); return; }
-    res.json(u);
-  }
 }
-

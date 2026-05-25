@@ -18,6 +18,7 @@ export const baseDeDadosLocal: Prescricao[] = [
 export const baseDeDadosUsers: User[] = [
     { id: 1, username: "medico", password: bcrypt.hashSync("1234", 1), role: "medico" },
     { id: 2, username: "admin", password: bcrypt.hashSync("admin1234", 1), role: "admin" }
+    { id: 3, username: "utente", password: bcrypt.hashSync("utente1234", 1), role: "utente" }
 ];
 
 // ── better-sqlite3 connection ──────────────────────────
