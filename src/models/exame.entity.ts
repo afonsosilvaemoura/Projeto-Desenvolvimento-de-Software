@@ -17,5 +17,8 @@ export class Exame {
     medico_nome!: string;
 
     @Column()
-    dataCriacao!: Date;
+    dataCriacao!: Date; // Data de criação do registro
+
+      @Column()
+    dataMarcacao!: Date; // Data em que o exame está marcado para acontecer
 }
