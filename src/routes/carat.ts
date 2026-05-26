@@ -4,13 +4,13 @@ import { criarAvaliacaoCarat } from '../controller/carat.controller';
 // import CaratController from '../controller/carat.controller';
 
 
-const router = Router();
+const routes = Router();
 
 // Esta rota passa primeiro pelo authMiddleware, se falhar nem chega ao buscarCARAT
 // router.get('/carat', authMiddleware, buscarCARAT); // buscarCARAT not exported
-router.post('/carat', authMiddleware, criarAvaliacaoCarat);
+routes.post('/carat', authMiddleware, criarAvaliacaoCarat);
 
-export default router;
+export default routes;
 
 
 

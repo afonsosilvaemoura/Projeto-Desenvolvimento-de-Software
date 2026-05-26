@@ -4,6 +4,9 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 export class Carat {
 
     @PrimaryGeneratedColumn()
+    id!: number;
+
+    @Column()
     perg1!: number;
 
     @Column()

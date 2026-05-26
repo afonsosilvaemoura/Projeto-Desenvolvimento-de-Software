@@ -4,7 +4,7 @@ import { ExameController } from '../controller/exame.controller';
 const routes = Router();
 const controller = new ExameController();
 
-routes.get('/', controller.listar.bind(controller));
-routes.post('/', controller.criar.bind(controller));
+routes.get('/exame', controller.listar.bind(controller));
+routes.post('/exame', controller.criar.bind(controller));
 
 export default routes;

@@ -22,7 +22,7 @@
 }
     */
 import { Request, Response } from 'express';
-import { ExamesService } from '../services/exames.service';
+import { ExamesService } from '../services/exame.service';
 
 const service = new ExamesService();
 
