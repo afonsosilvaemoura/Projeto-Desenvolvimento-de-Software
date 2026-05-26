@@ -10,8 +10,6 @@ e verifica se:
 
 Se tudo correr bem, gera um token JWT que poderá depois ser usado nas rotas protegidas.*/
 
-
-
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { baseDeDadosUsers } from '../database/database';

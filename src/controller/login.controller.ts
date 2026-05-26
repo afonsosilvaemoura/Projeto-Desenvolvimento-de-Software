@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.services';
+import { baseDeDadosUsers } from '../database/database';
+
 
 export class LoginController {
     private authService = new AuthService();

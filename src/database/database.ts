@@ -41,3 +41,23 @@ export const AppDataSource = new DataSource({
 });
  
 
+export const baseDeDadosUsers = [
+    {
+        id: "1",
+        username: "joao_silva",
+        password: "1234", 
+        role: "utente"
+    },
+    {
+        id: "2",
+        username: "admin",
+        password: "1234.", 
+        role: "administrador"
+    },
+    {
+        id: "3",
+        username: "medico1",
+        password: "1234.", 
+        role: "medico"
+    }
+];
