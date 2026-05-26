@@ -61,3 +61,5 @@ export const baseDeDadosUsers = [
         role: "medico"
     }
 ];
+
+

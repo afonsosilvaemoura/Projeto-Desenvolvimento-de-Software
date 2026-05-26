@@ -19,3 +19,4 @@ export class Administrador {
     dataCriacao!: Date;
 }
  
+

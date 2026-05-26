@@ -35,3 +35,5 @@ export async function getObservationsFromFhir(
   //return bundle.entry?.map((entry: any) => mapObservationHumanData(entry.resource)) || [];
 
 }
+
+

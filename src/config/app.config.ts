@@ -4,3 +4,5 @@ export const appConfig = {
     jwtSecret: 'uma-chave-local-simples-para-desenvolvimento' // Em produção, usar uma variável de ambiente segura
   }
 };
+
+

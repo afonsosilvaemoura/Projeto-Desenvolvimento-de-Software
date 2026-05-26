@@ -22,3 +22,8 @@ export function registarAuditoria(
     console.error('Erro ao registar auditoria:', error);
   }
 }*/
+
+
+
+
+

@@ -32,3 +32,6 @@ export class Auditoria {
     @Column()
     dataCriacao!: Date;
 }
+
+
+

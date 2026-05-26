@@ -26,3 +26,7 @@ router.get('/observations', async (req, res) => {
 });
 
 export default router;
+
+
+
+

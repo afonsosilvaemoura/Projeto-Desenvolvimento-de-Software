@@ -40,3 +40,6 @@ export class Alerta {
     @Column()
     dataAtualizacao!: Date;
 }
+
+
+

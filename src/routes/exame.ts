@@ -8,3 +8,6 @@ routes.get('/', controller.listar.bind(controller));
 routes.post('/', controller.criar.bind(controller));
 
 export default routes;
+
+
+

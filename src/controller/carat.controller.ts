@@ -31,3 +31,7 @@ console.log('Respostas recebidas:', arrayRespostas);
     return res.status(400).json({ erro: erro.message || 'Erro ao processar o CARAT' });
   }
 }
+
+
+
+

@@ -7,7 +7,6 @@ import { AppDataSource } from './database';
 import { Utente } from '../models/utente.entity';
 import { Medico } from '../models/medico.entity';
 import { Administrador } from '../models/administrador.entity';
-import { LimiarAlerta } from '../models/limiar-alerta.entity';
  
 async function seed() {
     await AppDataSource.initialize();
@@ -15,7 +14,7 @@ async function seed() {
     const medicoRepo = AppDataSource.getRepository(Medico);
     const utenteRepo = AppDataSource.getRepository(Utente);
     const adminRepo = AppDataSource.getRepository(Administrador);
-    const limiarRepo = AppDataSource.getRepository(LimiarAlerta);
+    // const limiarRepo = AppDataSource.getRepository(LimiarAlerta);
  
     // Médico de teste
     const medicoExiste = await medicoRepo.findOneBy({ email: 'joaosilva@gmail.com' });
@@ -67,16 +66,16 @@ async function seed() {
     }
  
     // Limiares de alerta por defeito
-    const limiarExiste = await limiarRepo.findOneBy({ id: 1 });
-    if (!limiarExiste) {
-        const limiar = limiarRepo.create({
-            scoreMinimo: 24,
-            deterioracaoPontos: 3,
-            dataAtualizacao: new Date(),
-        });
-        await limiarRepo.save(limiar);
-        console.log('Limiares de alerta criados');
-    }
+    // const limiarExiste = await limiarRepo.findOneBy({ id: 1 });
+    // if (!limiarExiste) {
+    //     const limiar = limiarRepo.create({
+    //         scoreMinimo: 24,
+    //         deterioracaoPontos: 3,
+    //         dataAtualizacao: new Date(),
+    //     });
+    //     await limiarRepo.save(limiar);
+    //     console.log('Limiares de alerta criados');
+    // }
  
     console.log('\nSeed concluído!');
     await AppDataSource.destroy();

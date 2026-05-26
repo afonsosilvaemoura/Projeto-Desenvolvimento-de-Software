@@ -46,3 +46,6 @@ export function authMiddleware(
         return res.status(401).json({ erro: 'Token inválido ou expirado.' });
     }
 }
+
+
+

@@ -141,3 +141,6 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 app.listen(PORT, () => {
   console.log(`\nSAUDINOB API a correr em http://localhost:${PORT}`);
 });
+
+
+
