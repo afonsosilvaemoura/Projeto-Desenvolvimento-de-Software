@@ -3,19 +3,19 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Sistema Clínico</title>
+  <title>Sistema Clínico de Controlo de Doenças Respiratórias</title>
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
       min-height: 100vh;
     }
 
     nav {
       width: 220px;
-      background: #1f2937;
-      color: white;
+      background: #f2f6f2;
+      color: rgb(1, 1, 14);
       padding: 20px;
       box-sizing: border-box;
     }
@@ -30,7 +30,7 @@
       width: 100%;
       margin-bottom: 10px;
       padding: 10px;
-      background: #374151;
+      background: #4b5563;
       color: white;
       border: none;
       border-radius: 6px;
@@ -39,7 +39,7 @@
     }
 
     nav button:hover {
-      background: #4b5563;
+      background: #374151;
     }
 
     main {
@@ -89,6 +89,10 @@
     .erro {
       color: red;
     }
+
+    .sucesso {
+      color: green;
+    }
   </style>
 </head>
 
@@ -104,7 +108,7 @@
 
   <main>
     <section id="pagina-inicio" class="pagina ativa">
-      <h1>Sistema Clínico</h1>
+      <h1>Sistema Clínico de Controlo de Doenças Respiratórias</h1>
       <p>Escolha uma funcionalidade no menu.</p>
     </section>
 
@@ -115,7 +119,7 @@
       <form id="formPrescricao">
         <input id="medicamento" placeholder="Medicamento" required />
         <input id="dose" placeholder="Dose" required />
-        <input id="medicoNome" placeholder="Nome do médico" required />
+        <input id="prescricaoMedicoNome" placeholder="Nome do médico" required />
         <button class="form-btn" type="submit">Criar prescrição</button>
         <p id="erroPrescricao" class="erro"></p>
       </form>
@@ -132,6 +136,15 @@
       <div id="listaExames">
         <p>Nenhum exame carregado.</p>
       </div>
+
+      <h2>Novo Exame</h2>
+      <form id="formExame">
+        <input id="tipoExame" placeholder="Tipo de Exame" required />
+        <input id="dataExame" type="date" required />
+        <input id="exameMedicoNome" placeholder="Nome do médico" required />
+        <button class="form-btn" type="submit">Criar exame</button>
+        <p id="erroExame" class="erro"></p>
+      </form>
     </section>
 
     <section id="pagina-fhir" class="pagina">
@@ -142,19 +155,14 @@
       </form>
 
       <h2>Resultado</h2>
-
       <div id="resultadoFhir">
-
         <p>Sem resultados.</p>
-
-      </div>
-
       </div>
     </section>
 
     <section id="pagina-carat" class="pagina">
       <h1>Questionário CARAT</h1>
-      
+
       <h2>Responder ao Questionário</h2>
       <form id="formCarat">
         <div id="perguntasContainer">
@@ -225,7 +233,7 @@
         html += '</tbody></table>';
         container.innerHTML = html;
       } catch (erro) {
-        container.innerHTML = '<p>Erro ao carregar prescrições.</p>';
+        container.innerHTML = '<p class="erro">Erro ao carregar prescrições.</p>';
       }
     }
 
@@ -271,7 +279,7 @@
         html += '</tbody></table>';
         container.innerHTML = html;
       } catch (erro) {
-        container.innerHTML = '<p>Erro ao carregar exames.</p>';
+        container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>';
       }
     }
 
@@ -280,10 +288,11 @@
 
       const erroPrescricao = document.getElementById('erroPrescricao');
       erroPrescricao.textContent = '';
+      erroPrescricao.className = 'erro';
 
       const medicamento = document.getElementById('medicamento').value.trim();
       const dose = document.getElementById('dose').value.trim();
-      const medico_nome = document.getElementById('medicoNome').value.trim();
+      const medico_nome = document.getElementById('prescricaoMedicoNome').value.trim();
 
       try {
         const resposta = await fetch('/prescricoes', {
@@ -299,21 +308,116 @@
 
         document.getElementById('formPrescricao').reset();
         await buscarPrescricoes();
+        erroPrescricao.textContent = '✅ Prescrição criada com sucesso!';
+        erroPrescricao.className = 'sucesso';
       } catch (erro) {
         erroPrescricao.textContent = erro.message;
+        erroPrescricao.className = 'erro';
       }
     }
 
-async function buscarCARAT() {
-      const container = document.getElementById('listaCARAT');
-      container.innerHTML = '<p>A carregar Questionário CARAT...</p>';
+    async function criarExame(event) {
+      if (event) event.preventDefault();
+
+      const erroExame = document.getElementById('erroExame');
+      erroExame.textContent = '';
+      erroExame.className = 'erro';
+
+      const tipoExame = document.getElementById('tipoExame').value.trim();
+      const dataExame = document.getElementById('dataExame').value.trim();
+      const medico_nome = document.getElementById('exameMedicoNome').value.trim();
 
       try {
-        const resposta = await fetch('/carat');
+        const resposta = await fetch('/exames', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipoExame, dataExame, medico_nome })
+        });
+
+        if (!resposta.ok) {
+          const dados = await resposta.json();
+          throw new Error(dados.erro || 'Erro ao criar exame');
+        }
+
+        document.getElementById('formExame').reset();
+        await buscarExames();
+        erroExame.textContent = '✅ Exame criado com sucesso!';
+        erroExame.className = 'sucesso';
+      } catch (erro) {
+        erroExame.textContent = erro.message;
+        erroExame.className = 'erro';
+      }
+    }
+
+    async function buscarCARAT() {
+  const container = document.getElementById('listaCARAT');
+  container.innerHTML = '<p>A carregar Questionário CARAT...</p>';
+
+  try {
+    const resposta = await fetch('/carat');
+    const dados = await resposta.json();
+
+    if (!Array.isArray(dados) || dados.length === 0) {
+      container.innerHTML = '<p>Nenhum questionário CARAT registado.</p>';
+      return;
+    }
+
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome do Doente</th>
+            <th>Score Total</th>
+            <th>Score Rinite</th>
+            <th>Score Asma</th>
+            <th>Estado de Controlo</th> <th>Data de Criação</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for (const carat of dados) {
+      // Cria um badge visual dependendo do estado retornado pelo servidor
+      const éControlada = carat.controloTotal === 'CONTROLADA';
+      const classeBadge = éControlada ? 'badge badge-sucesso' : 'badge badge-erro';
+      const textoBadge = éControlada ? 'Controlada ✨' : 'Não Controlada ⚠️';
+
+      html += `
+        <tr>
+          <td>${carat.id ?? ''}</td>
+          <td>${carat.nome ?? 'Doente'}</td>
+          <td><strong>${carat.scoreTotal ?? 0}</strong> / 30</td>
+          <td>${carat.scoreRinite ?? 0} / 12</td>
+          <td>${carat.scoreAsma ?? 0} / 18</td>
+          <td><span class="${classeBadge}">${textoBadge}</span></td>
+          <td>${carat.dataCriacao ?? ''}</td>
+        </tr>
+      `;
+    }
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  } catch (erro) {
+    container.innerHTML = '<p>Erro ao carregar questionários CARAT.</p>';
+  }
+}
+
+    async function pesquisarFhir(event) {
+      event.preventDefault();
+      const codigo = document.getElementById('codigoLoinc').value.trim();
+      const resultado = document.getElementById('resultadoFhir');
+      resultado.innerHTML = '<p>A pesquisar...</p>';
+
+      try {
+        const resposta = await fetch(`/fhir/observations?code=${encodeURIComponent(codigo)}`);
+        if (!resposta.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
         const dados = await resposta.json();
 
         if (!Array.isArray(dados) || dados.length === 0) {
-          container.innerHTML = '<p>Nenhum questionário CARAT registado.</p>';
+          resultado.innerHTML = '<p>Nenhuma Observation encontrada para esse código LOINC.</p>';
           return;
         }
 
@@ -321,151 +425,45 @@ async function buscarCARAT() {
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Nome</th>
-                <th>Código</th>
-                <th>Médico</th>
-                <th>Data de Criação</th>
+                <th>ID</th>
+                <th>Código LOINC</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Unidade</th>
+                <th>Data/Hora</th>
+                <th>Doente</th>
+                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
         `;
 
-        for (const carat of dados) {
+        for (const obs of dados) {
           html += `
             <tr>
-              <td>${carat.id ?? ''}</td>
-              <td>${carat.nome ?? ''}</td>
-              <td>${carat.codigo ?? ''}</td>
-              <td>${carat.medico_nome ?? ''}</td>
-              <td>${carat.dataCriacao ?? ''}</td>
+              <td>${obs.id ?? ''}</td>
+              <td>${obs.code ?? ''}</td>
+              <td>${obs.display ?? ''}</td>
+              <td>${obs.value ?? ''}</td>
+              <td>${obs.unit ?? ''}</td>
+              <td>${obs.effectiveDateTime ?? ''}</td>
+              <td>${obs.subject ?? ''}</td>
+              <td>${obs.status ?? ''}</td>
             </tr>
           `;
         }
-
         html += '</tbody></table>';
-        container.innerHTML = html;
-      } catch (erro) {
-        container.innerHTML = '<p>Erro ao carregar questionários CARAT.</p>';
-      }
-    }
-
-
-    async function pesquisarFhir(event) {
-
-      event.preventDefault();
-
-      const codigo = document.getElementById('codigoLoinc').value.trim();
-
-      const resultado = document.getElementById('resultadoFhir');
-
-      resultado.innerHTML = '<p>A pesquisar...</p>';
-
-      try {
-
-        const resposta = await fetch(`/fhir/observations?code=${encodeURIComponent(codigo)}`);
-
-        if (!resposta.ok) {
-
-          throw new Error('Erro na resposta do servidor');
-
-        }
-
-        const dados = await resposta.json();
-
-        if (!Array.isArray(dados) || dados.length === 0) {
-
-          resultado.innerHTML = '<p>Nenhuma Observation encontrada para esse código LOINC.</p>';
-
-          return;
-
-        }
-
-        let html = `
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>ID</th>
-
-            <th>Código LOINC</th>
-
-            <th>Descrição</th>
-
-            <th>Valor</th>
-
-            <th>Unidade</th>
-
-            <th>Data/Hora</th>
-
-            <th>Doente</th>
-
-            <th>Estado</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-    `;
-
-        for (const obs of dados) {
-
-          html += `
-
-        <tr>
-
-          <td>${obs.id ?? ''}</td>
-
-          <td>${obs.code ?? ''}</td>
-
-          <td>${obs.display ?? ''}</td>
-
-          <td>${obs.value ?? ''}</td>
-
-          <td>${obs.unit ?? ''}</td>
-
-          <td>${obs.effectiveDateTime ?? ''}</td>
-
-          <td>${obs.subject ?? ''}</td>
-
-          <td>${obs.status ?? ''}</td>
-
-        </tr>
-
-      `;
-
-        }
-
-        html += `
-
-        </tbody>
-
-      </table>
-
-    `;
-
         resultado.innerHTML = html;
-
       } catch (erro) {
-
         console.error(erro);
-
         resultado.innerHTML = '<p class="erro">Erro ao consultar servidor FHIR.</p>';
-
       }
-
     }
 
     async function carregarPerguntasCarat() {
       try {
         const resposta = await fetch('/carat/perguntas');
         const dados = await resposta.json();
-
         const container = document.getElementById('perguntasContainer');
         let html = '';
 
@@ -496,12 +494,13 @@ async function buscarCARAT() {
 
     async function submeterRespostasCarat(event) {
       event.preventDefault();
-
       const erroCarat = document.getElementById('erroCarat');
       erroCarat.textContent = '';
+      erroCarat.className = 'erro';
 
       const respostas = [];
-      for (let i = 0; i < 10; i++) {
+      const totalPerguntas = 10;
+      for (let i = 0; i < totalPerguntas; i++) {
         const radioButtons = document.getElementsByName(`pergunta_${i}`);
         const selecionada = Array.from(radioButtons).find(r => r.checked);
         
@@ -509,7 +508,6 @@ async function buscarCARAT() {
           erroCarat.textContent = `Por favor, responda à pergunta ${i + 1}.`;
           return;
         }
-        
         respostas.push(parseInt(selecionada.value));
       }
 
@@ -538,18 +536,23 @@ async function buscarCARAT() {
 
         document.getElementById('formCarat').reset();
         erroCarat.textContent = '✅ Respostas submetidas com sucesso!';
-        erroCarat.style.color = 'green';
+        erroCarat.className = 'sucesso';
         await buscarCARAT();
       } catch (erro) {
         erroCarat.textContent = erro.message;
+        erroCarat.className = 'erro';
       }
     }
 
+    // Event Listeners
     document.getElementById('formPrescricao').addEventListener('submit', criarPrescricao);
     document.getElementById('formFhir').addEventListener('submit', pesquisarFhir);
     document.getElementById('formCarat').addEventListener('submit', submeterRespostasCarat);
-
+    document.getElementById('formExame').addEventListener('submit', criarExame);
+    
+    // Inicialização
     buscarPrescricoes();
+    buscarExames();
     carregarPerguntasCarat();
     buscarCARAT();
   </script>

@@ -108,25 +108,29 @@ export function calcularCARAT(respostas: number[]): ResultadoCARAT {
     throw new Error(`O questionário deve ter exatamente ${CARAT.NUM_PERGUNTAS} respostas.`);
   }
 
-  // Separar as respostas por secções 
-  const respostasRinite = respostas.slice(1, 4);
-  const respostasAsma = respostas.slice(5, 10);
+  // Separar as respostas por secções (corrigido para índice 0)
+  const respostasRinite = respostas.slice(0, 4); // Pega nos índices 0, 1, 2, 3
+  const respostasAsma = respostas.slice(4, 10);  // Pega nos índices 4, 5, 6, 7, 8, 9
 
   // Somar as pontuações
   const scoreRinite = respostasRinite.reduce((acc, val) => acc + val, 0);
   const scoreAsma = respostasAsma.reduce((acc, val) => acc + val, 0);
   const scoreTotal = scoreRinite + scoreAsma;
 
-
-  const controloTotal = scoreTotal <= CARAT.LIMIAR_BAIXO_CONTROLO_GLOBAL ? 'CONTROLADA' : 'NAO_CONTROLADA';
-  const riniteControlada = scoreRinite > CARAT.LIMIAR_MAX_RINITE_MAL_CONTROLADA; // <= 8 é mal controlada
-  const asmaControlada = scoreAsma >= CARAT.LIMIAR_MAX_ASMA_MAL_CONTROLADA;     // < 16 é mal controlada
+  // Lógica corrigida: > 24 é Controlada, <= 24 é Não Controlada
+  const controloTotal = scoreTotal > CARAT.LIMIAR_BAIXO_CONTROLO_GLOBAL ? 'CONTROLADA' : 'NAO_CONTROLADA';
+  
+  // Rinite: > 8 é bem controlada
+  const riniteControlada = scoreRinite > CARAT.LIMIAR_MAX_RINITE_MAL_CONTROLADA; 
+  
+  // Asma: >= 16 é bem controlada
+  const asmaControlada = scoreAsma >= CARAT.LIMIAR_MAX_ASMA_MAL_CONTROLADA;
 
   return {
-    scoreTotal: scoreTotal,
+    scoreTotal,
     scoreRinite,
     scoreAsma,
-    controloTotal: controloTotal,
+    controloTotal,
     riniteControlada,
     asmaControlada
   };
