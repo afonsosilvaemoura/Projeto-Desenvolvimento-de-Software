@@ -1,3 +1,4 @@
+/*
 import { AppDataSource } from '../database/database';
 import { Exame } from '../models/exame.entity';
 
@@ -28,4 +29,40 @@ export class ExameService {
         return this.repo.find();
     }
 }
+*/
 
+import { AppDataSource } from '../data-source';
+import { Exame } from '../entity/Exame';
+
+export class ExamesService {
+
+    private repository = AppDataSource.getRepository(Exame);
+
+    async listarExames() {
+        return await this.repository.find();
+    }
+
+    async criarExame(data: {
+        tipo_exame: string;
+        exame: string;
+        medico_nome: string;
+        dataMarcacao: string | Date;
+    }) {
+
+        const { tipo_exame, exame, medico_nome, dataMarcacao } = data;
+
+        if (!tipo_exame || !exame || !medico_nome || !dataMarcacao) {
+            throw new Error('Campos obrigatórios em falta');
+        }
+
+        const novoExame = this.repository.create({
+            tipo_exame,
+            exame,
+            medico_nome,
+            dataMarcacao: new Date(dataMarcacao),
+            dataCriacao: new Date()
+        });
+
+        return await this.repository.save(novoExame);
+    }
+}

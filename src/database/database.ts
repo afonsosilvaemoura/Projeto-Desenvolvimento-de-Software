@@ -37,7 +37,7 @@ export async function initializeDatabase() {
     try {
         if (!AppDataSource.isInitialized) {
             await AppDataSource.initialize();
-            console.log('✓ Base de dados inicializada');
+            console.log('Base de dados inicializada');
         }
     } catch (error) {
         console.error('Erro ao inicializar a base de dados:', error);
