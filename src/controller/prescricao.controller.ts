@@ -4,12 +4,12 @@ import { baseDeDadosLocalPrescricao } from '../database/database';
 import { PrescricaoService } from '../services/prescricao.service';
 import { Prescricao } from '../models/prescricao.entity';
 export class PrescricaoController {
-/*
+
         async listar(req: Request, res: Response) {
         // Retorna tudo o que está na nossa lista
-        return res.json(baseDeDadosLocal);
+        return res.json(baseDeDadosLocalPrescricao);
     }
-*/
+
     async listarComDTO(req: Request, res: Response) {
         return res.json(baseDeDadosLocalPrescricao.map(p => ({
             id: p.id,
@@ -23,16 +23,16 @@ export class PrescricaoController {
     }
 
         async criar(req: Request, res: Response) {
-        const { id, } = req.body;
+        const { id, medico_nome, utente_id, farmaco, dosagem, posologia } = req.body;
 
         // Criamos o objeto manualmente
         const nova: Prescricao = {
             id: baseDeDadosLocalPrescricao.length + 1,
-            utente_id: req.body.utente_id,
-            medico_nome: req.body.medico_nome,
-            farmaco: req.body.farmaco,
-            dosagem: req.body.dosagem,
-            posologia: req.body.posologia,
+            utente_id,
+            medico_nome,
+            farmaco,
+            dosagem,
+            posologia,
             data_criacao: new Date().toISOString()  
         };
 

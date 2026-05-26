@@ -4,7 +4,7 @@ import { PrescricaoController } from '../controller/prescricao.controller';
 const routes = Router();
 const controller = new PrescricaoController();
 
-routes.get('/', controller.listarComDTO.bind(controller));
-routes.post('/', controller.criar.bind(controller));
+routes.get('/', controller.listarComDTO.bind);
+routes.post('/', controller.criar);
 
 export default routes;

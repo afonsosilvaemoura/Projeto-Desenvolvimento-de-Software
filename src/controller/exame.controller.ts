@@ -5,11 +5,11 @@ import { ExameService } from '../services/exame.service';
 import { CreateExameDto } from '../dtos/exame/create-exame.dto';
 
 export class ExameController {
-  /*  
+ 
     async listar(req: Request, res: Response) {
-        return res.json(baseDeDadosLocal);
+        return res.json(baseDeDadosLocalExames);
     }
-*/
+
     async listarComDTO(req: Request, res: Response) {
         return res.json(baseDeDadosLocalExames.map(e => ({
             id: e.id,
@@ -26,7 +26,7 @@ export class ExameController {
 
     async criar(req: Request, res: Response) {
         try {
-            const { id, utente_id, medico_nome, tipo, justificacao, data_criacao, data_marcacao } = req.body;
+            const { utente_id, medico_nome, tipo, justificacao, data_criacao, data_marcacao } = req.body;
             const nova: Exame = {
                 id: baseDeDadosLocalExames.length + 1,
                 utente_id,
