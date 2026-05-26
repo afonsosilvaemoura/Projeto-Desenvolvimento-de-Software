@@ -87,6 +87,4 @@ export class PrescricaoService {
             medico_nome: prescricao.medico_nome,
         };
     }
-
-
 }

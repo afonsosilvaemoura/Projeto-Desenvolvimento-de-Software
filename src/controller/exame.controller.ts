@@ -39,8 +39,8 @@ export class ExameController {
 
     async criar(req: Request, res: Response) {
         try {
-            const { tipo_exame, exame, medico_nome, dataMarcacao } = req.body;
-            const novoExame = await this.service.criarExame({ tipo_exame, exame, medico_nome, dataMarcacao });
+            const { tipo_exame, exame, medico_nome, data_marcacao } = req.body;
+            const novoExame = await this.service.criarExame({ tipo_exame, exame, medico_nome, data_marcacao });
 
             return res.status(201).json(novoExame);
         } catch (error: any) {

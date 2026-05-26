@@ -18,10 +18,6 @@ export class Exame {
     @Column()
     justificacao!: string;
  
-    // Resultado pode ser preenchido posteriormente
-    @Column({ nullable: true })
-    resultado!: string | null;
- 
     @Column()
     dataCriacao!: Date; // Data de criação do registro
 
