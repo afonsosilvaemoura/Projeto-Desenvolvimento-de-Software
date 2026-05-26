@@ -267,13 +267,23 @@ tr:hover {
         <p>Nenhum exame carregado.</p>
       </div>
 
-      <h2>Novo Exame</h2>
-      <form id="formExame">
-        <input id="tipoExame" placeholder="Tipo de Exame" required />
-        <input id="dataExame" type="date" required />
-        <input id="exameMedicoNome" placeholder="Nome do médico" required />
-        <button class="form-btn" type="submit">Criar exame</button>
-        <p id="erroExame" class="erro"></p>
+      <h2>Alerta</h2>
+      <form id="formAlerta">
+        <input id="tipoAlerta" placeholder="Tipo de Alerta" required />
+        <input id="dataAlerta" type="date" required />
+        <input id="alertaMedicoNome" placeholder="Nome do médico" required />
+        <button class="form-btn" type="submit">Criar alerta</button>
+        <p id="erroAlerta" class="erro"></p>
+      </form>
+    </section>
+
+    <section id="pagina-alertas" class="pagina">
+      <h1>Alertas</h1>
+      <button onclick="buscarAlertas()">Atualizar alertas</button>
+      <div id="listaAlertas">
+        <p>Nenhum alerta carregado.</p>
+      </div>
+
       </form>
     </section>
 
@@ -510,7 +520,6 @@ tr:hover {
     for (const carat of dados) {
       // Cria um badge visual dependendo do estado retornado pelo servidor
       const éControlada = carat.controloTotal === 'CONTROLADA';
-      const classeBadge = éControlada ? 'badge badge-sucesso' : 'badge badge-erro';
       const textoBadge = éControlada ? 'Controlada' : 'Não Controlada';
 
       html += `
@@ -663,13 +672,14 @@ tr:hover {
     const dados = await resposta.json(); 
 
     let recomendacao = "";
-    const score = dados.scoreTotal; // Ajusta se o nome for outro
-    if (score <= 16) { 
-        recomendacao = "Urgente: O seu controlo é baixo. Recomendamos a marcação de uma consulta médica com brevidade.";
-    } else if (score < 24) {
-        recomendacao = "Vigiar: Os seus sintomas merecem atenção. Mantenha a vigilância e reveja a medicação.";
+    const score = dados.avaliacao.scoreTotal; 
+        if (score > 24) { 
+       recomendacao ="Controlado: Os sintomas estão estáveis. Volte a fazer este exame daqui a 12 semanas."
+    } else if (score > 16) {
+         recomendacao = "Vigiar: Os seus sintomas merecem atenção. Mantenha a vigilância e reveja a medicação.";
     } else {
-        recomendacao = "Controlado: Os sintomas estão estáveis. Volte a fazer este exame daqui a 12 semanas.";
+        recomendacao = "Urgente: O seu controlo é baixo. Recomendamos a marcação de uma consulta médica com brevidade.";
+    ;
     }
 
     // 2. Mostrar o Modal
@@ -689,7 +699,7 @@ function fecharModal() {
 
 function irParaAlertas() {
     fecharModal();
-    mostrarPagina('pagina-alertas'); // Certifica-te que tens uma <section id="pagina-alertas">
+    mostrarPagina('pagina-alertas'); 
 }
 
     
@@ -707,14 +717,22 @@ function irParaAlertas() {
     buscarCARAT();
   </script>
 
+
+  <div id="modalAlerta" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; justify-content: center; align-items: center;">
   
-  <div id="modalAlerta" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-  <div class="card" style="max-width: 400px; text-align: center;">
-    <h2 id="tituloAlerta">Avaliação Clínica</h2>
-    <p id="textoRecomendacao" style="margin: 20px 0;"></p>
-    <button onclick="irParaAlertas()">Ir para Alertas</button>
-    <button onclick="fecharModal()" style="background:#6b7280; margin-top: 10px;">Fechar</button>
+  <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); text-align: center;">
+    <h2 id="tituloAlerta" style="margin-top: 0; color: #0a5c91;">Avaliação Clínica</h2>
+    <p id="textoRecomendacao" style="margin: 20px 0; font-size: 1.1rem; line-height: 1.5;"></p>
+    
+    <button onclick="irParaAlertas()" style="width: 100%; padding: 12px; background: #0a5c91; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+      Ir para Alertas
+    </button>
+    
+    <button onclick="fecharModal()" style="width: 100%; padding: 12px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px;">
+      Fechar
+    </button>
   </div>
+  
 </div>
 </body>
 
