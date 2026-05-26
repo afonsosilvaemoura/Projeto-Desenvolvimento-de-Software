@@ -17,8 +17,8 @@ export class PrescricaoController {
 
     async criar(req: Request, res: Response) {
         try {
-            const { medicamento, dose, medico_nome } = req.body;
-            const novaPrescricao = await this.service.criarPrescricao({ medicamento, dose, medico_nome });
+            const { id, utente_id, medico_nome, farmaco, dosagem, posologia } = req.body;
+            const novaPrescricao = await this.service.criarPrescricao({ id, utente_id, medico_nome, farmaco, dosagem, posologia });
 
             return res.status(201).json(novaPrescricao);
 

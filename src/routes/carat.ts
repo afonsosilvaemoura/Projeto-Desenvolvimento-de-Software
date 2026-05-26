@@ -6,9 +6,9 @@ const routes = Router();
 
 // Esta rota passa primeiro pelo authMiddleware, se falhar nem chega ao buscarCARAT
 // router.get('/carat', authMiddleware, buscarCARAT); // buscarCARAT not exported
-router.post('/carat', authMiddleware, criarAvaliacaoCarat);
+routes.post('/carat', authMiddleware, criarAvaliacaoCarat);
 
-export default router;
+export default routes;
 
 /* GET /carat — listar todas as avaliações
 router.get('/', (req, res) => ctrl.listar(req, res));

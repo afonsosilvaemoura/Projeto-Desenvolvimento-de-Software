@@ -7,13 +7,17 @@ export class ExameService {
     private repo = AppDataSource.getRepository(Exame);
 
        async criarExame(
-            dados: { tipo_exame: string; exame: string; medico_nome: string }
+            dados: { id: number;utente_id: number; medico_nome: string; tipo: string; justificacao: string; data_criacao: Date; data_marcacao: Date }
         ): Promise<Exame> {
             const jaExiste = await this.repo.findOneBy({
-                tipo_exame: dados.tipo_exame,
-                exame: dados.exame,
+                id: dados.id,
+                utente_id: dados.utente_id,
                 medico_nome: dados.medico_nome,
-            });
+                tipo: dados.tipo,
+                justificacao: dados.justificacao,
+                data_criacao: dados.data_criacao,
+                data_marcacao: dados.data_marcacao,
+            })  
     
             if (jaExiste) {
                 throw new Error('Já existe um exame igual registado no sistema.');
@@ -21,7 +25,7 @@ export class ExameService {
     
             const nova = this.repo.create({
                 ...dados, // espalha os campos tipo_exame, exame e medico_nome
-                dataCriacao: new Date(),
+                data_criacao: new Date(),
             });
     
             return this.repo.save(nova);
@@ -31,9 +35,11 @@ export class ExameService {
          dados: CreateExameDto
      ): Promise<ExameResponseDto> {
          const jaExiste = await this.repo.findOneBy({
-             tipo_exame: dados.tipo_exame,
-             exame: dados.exame,
-             medico_nome: dados.medico_nome,
+            utente_id: dados.utente_id,
+            medico_nome: dados.medico_nome,
+            tipo: dados.tipo,
+            justificacao: dados.justificacao,
+            data_marcacao: dados.data_marcacao,
          });
  
          if (jaExiste) {
@@ -42,7 +48,7 @@ export class ExameService {
  
          const nova = this.repo.create({
              ...dados,
-             dataCriacao: new Date(),
+             data_criacao: new Date(),
          });
  
          const guardada = await this.repo.save(nova);
@@ -70,9 +76,11 @@ export class ExameService {
         private toResponseDto(exame: Exame): ExameResponseDto {
             return {
                 id: exame.id,
-                tipo_exame: exame.tipo_exame,
-                exame: exame.exame,
+                utente_id: exame.utente_id,
                 medico_nome: exame.medico_nome,
+                tipo: exame.tipo,
+                justificacao: exame.justificacao,
+                data_marcacao: exame.data_marcacao,
             };
         }
     }

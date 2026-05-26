@@ -40,8 +40,8 @@ export class ExameController {
 
     async criar(req: Request, res: Response) {
         try {
-            const { tipo_exame, exame, medico_nome, data_marcacao } = req.body;
-            const novoExame = await this.service.criarExame({ tipo_exame, exame, medico_nome, data_marcacao });
+            const { id, utente_id, medico_nome, tipo, justificacao, data_criacao, data_marcacao } = req.body;
+            const novoExame = await this.service.criarExame({ id, utente_id, medico_nome, tipo, justificacao, data_criacao, data_marcacao });
 
             return res.status(201).json(novoExame);
 
@@ -63,3 +63,5 @@ export class ExameController {
             }
         }
 }
+
+
