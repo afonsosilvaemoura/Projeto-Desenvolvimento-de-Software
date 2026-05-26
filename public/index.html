@@ -2,193 +2,193 @@
 <html lang="pt">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>Sistema Clínico de Controlo de Doenças Respiratórias</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      min-height: 100vh;
-    }
+  <meta charset="UTF-8" />
+  <title>Sistema Clínico de Controlo de Doenças Respiratórias</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f5f7fb;
-  display: flex;
-  min-height: 100vh;
-  color: #1f2937;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f5f7fb;
+  display: flex;
+  min-height: 100vh;
+  color: #1f2937;
 }
 
 
 nav {
-  width: 260px;
-  background: linear-gradient(180deg, #0f172a, #1e293b);
-  color: white;
-  padding: 30px 20px;
-  box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+  width: 260px;
+  background: linear-gradient(180deg, #0f172a, #1e293b);
+  color: white;
+  padding: 30px 20px;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.08);
 }
 
 nav h2 {
-  font-size: 24px;
-  margin-bottom: 25px;
-  text-align: center;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 600;
+  color: #e2e8f0;
 }
 
 nav button {
-  width: 100%;
-  border: none;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.08);
-  color: #e5e7eb;
-  cursor: pointer;
-  text-align: left;
-  font-size: 15px;
-  transition: all 0.25s ease;
+  width: 100%;
+  border: none;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  color: #e5e7eb;
+  cursor: pointer;
+  text-align: left;
+  font-size: 15px;
+  transition: all 0.25s ease;
 }
 
 nav button:hover {
-  background: #2563eb;
-  transform: translateX(4px);
+  background: #2563eb;
+  transform: translateX(4px);
 }
 
 main {
-  flex: 1;
-  padding: 40px;
+  flex: 1;
+  padding: 40px;
 }
 
 .pagina {
-  display: none;
+  display: none;
 }
 
 .pagina.ativa {
-  display: block;
-  animation: fadeIn .25s ease;
+  display: block;
+  animation: fadeIn .25s ease;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h1 {
-  font-size: 32px;
-  margin-bottom: 10px;
-  color: #111827;
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #111827;
 }
 
 h2 {
-  margin-top: 35px;
-  margin-bottom: 15px;
-  color: #374151;
-  font-size: 22px;
+  margin-top: 35px;
+  margin-bottom: 15px;
+  color: #374151;
+  font-size: 22px;
 }
 
 
 section {
-  background: white;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
 }
 
 
 form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 500px;
 }
 
 input,
 select {
-  padding: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 14px;
-  font-size: 15px;
-  transition: border .2s ease;
-  background: #f9fafb;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  font-size: 15px;
+  transition: border .2s ease;
+  background: #f9fafb;
 }
 
 input:focus,
 select:focus {
-  outline: none;
-  border-color: #2563eb;
-  background: white;
+  outline: none;
+  border-color: #2563eb;
+  background: white;
 }
 
 
 button.form-btn,
 form button {
-  padding: 14px;
-  border: none;
-  border-radius: 14px;
-  background: #2563eb;
-  color: white;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: .2s ease;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #2563eb;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s ease;
 }
 
 button.form-btn:hover,
 form button:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px);
+  background: #1d4ed8;
+  transform: translateY(-2px);
 }
 
 
 table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  overflow: hidden;
-  border-radius: 18px;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
 th {
-  background: #eef2ff;
-  color: #374151;
-  font-weight: 600;
+  background: #eef2ff;
+  color: #374151;
+  font-weight: 600;
 }
 
 th,
 td {
-  padding: 16px;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 tr:hover {
-  background: #f9fafb;
+  background: #f9fafb;
 }
 
 
 .erro {
-  color: #dc2626;
-  font-weight: 500;
+  color: #dc2626;
+  font-weight: 500;
 }
 
 .sucesso {
-  color: #16a34a;
-  font-weight: 500;
+  color: #16a34a;
+  font-weight: 500;
 }
 
 
@@ -196,494 +196,544 @@ tr:hover {
 #listaExames,
 #resultadoFhir,
 #listaCARAT {
-  margin-top: 20px;
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: inset 0 0 0 1px #eef2f7;
+  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: inset 0 0 0 1px #eef2f7;
 }
 
 
 @media (max-width: 900px) {
-  body {
-    flex-direction: column;
-  }
+  body {
+    flex-direction: column;
+  }
 
-  nav {
-    width: 100%;
-  }
+  nav {
+    width: 100%;
+  }
 
-  main {
-    padding: 20px;
-  }
+  main {
+    padding: 20px;
+  }
 
-  section {
-    padding: 20px;
-  }
+  section {
+    padding: 20px;
+  }
 }
-  </style>
+  </style>
 </head>
 
 <body>
-  <nav>
-    <h2>Menu</h2>
-    <button onclick="mostrarPagina('pagina-inicio')">Início</button>
-    <button onclick="mostrarPagina('pagina-prescricoes')">Prescrições</button>
-    <button onclick="mostrarPagina('pagina-exames')">Exames</button>
-    <button onclick="mostrarPagina('pagina-fhir')">Consulta FHIR</button>
-    <button onclick="mostrarPagina('pagina-carat')">Questionário CARAT</button>
-  </nav>
+  <nav>
+    <h2>Menu</h2>
+    <button onclick="mostrarPagina('pagina-inicio')">Início</button>
+    <button onclick="mostrarPagina('pagina-prescricoes')">Prescrições</button>
+    <button onclick="mostrarPagina('pagina-exames')">Exames</button>
+    <button onclick="mostrarPagina('pagina-fhir')">Consulta FHIR</button>
+    <button onclick="mostrarPagina('pagina-carat')">Questionário CARAT</button>
+    <button onclick="mostrarPagina('pagina-alertas')">Alertas</button>
+    <button onclick="mostrarPagina('pagina-Dashboard')">Dashboard</button>
+  </nav>
 
-  <main>
-    <section id="pagina-inicio" class="pagina ativa">
-      <h1>Sistema Clínico de Controlo de Doenças Respiratórias</h1>
-      <p>Escolha uma funcionalidade no menu.</p>
-    </section>
+  <main>
+    <section id="pagina-inicio" class="pagina ativa">
+      <h1>Sistema Clínico de Controlo de Doenças Respiratórias</h1>
+      <p>Escolha uma funcionalidade no menu.</p>
+    </section>
 
-    <section id="pagina-prescricoes" class="pagina">
-      <h1>Prescrições</h1>
+    <section id="pagina-prescricoes" class="pagina">
+      <h1>Prescrições</h1>
 
-      <h2>Nova Prescrição</h2>
-      <form id="formPrescricao">
-        <input id="medicamento" placeholder="Medicamento" required />
-        <input id="dose" placeholder="Dose" required />
-        <input id="prescricaoMedicoNome" placeholder="Nome do médico" required />
-        <button class="form-btn" type="submit">Criar prescrição</button>
-        <p id="erroPrescricao" class="erro"></p>
-      </form>
+      <h2>Nova Prescrição</h2>
+      <form id="formPrescricao">
+        <input id="medicamento" placeholder="Medicamento" required />
+        <input id="dose" placeholder="Dose" required />
+        <input id="prescricaoMedicoNome" placeholder="Nome do médico" required />
+        <button class="form-btn" type="submit">Criar prescrição</button>
+        <p id="erroPrescricao" class="erro"></p>
+      </form>
 
-      <h2>Lista de Prescrições</h2>
-      <div id="listaPrescricoes">
-        <p>A carregar prescrições...</p>
-      </div>
-    </section>
+      <h2>Lista de Prescrições</h2>
+      <div id="listaPrescricoes">
+        <p>A carregar prescrições...</p>
+      </div>
+    </section>
 
-    <section id="pagina-exames" class="pagina">
-      <h1>Exames</h1>
-      <button onclick="buscarExames()">Atualizar exames</button>
-      <div id="listaExames">
-        <p>Nenhum exame carregado.</p>
-      </div>
+    <section id="pagina-exames" class="pagina">
+      <h1>Exames</h1>
+      <button onclick="buscarExames()">Atualizar exames</button>
+      <div id="listaExames">
+        <p>Nenhum exame carregado.</p>
+      </div>
 
-      <h2>Novo Exame</h2>
-      <form id="formExame">
-        <input id="tipoExame" placeholder="Tipo de Exame" required />
-        <input id="dataExame" type="date" required />
-        <input id="exameMedicoNome" placeholder="Nome do médico" required />
-        <button class="form-btn" type="submit">Criar exame</button>
-        <p id="erroExame" class="erro"></p>
-      </form>
-    </section>
+      <h2>Exame</h2>
+      <form id="formExame">
+        <input id="tipoExame" placeholder="Tipo de Exame" required />
+        <input id="dataExame" type="date" required />
+        <input id="exameMedicoNome" placeholder="Nome do médico" required />
+        <button class="form-btn" type="submit">Criar exame</button>
+        <p id="erroExame" class="erro"></p>
+      </form>
+    </section>
 
-    <section id="pagina-fhir" class="pagina">
-      <h1>Consulta FHIR</h1>
-      <form id="formFhir">
-        <input id="codigoLoinc" value="8310-5" placeholder="Código LOINC" required />
-        <button class="form-btn" type="submit">Pesquisar Observation</button>
-      </form>
+    <section id="pagina-alertas" class="pagina">
+      <h1>Alertas</h1>
+      <button onclick="buscarAlertas()">Atualizar alertas</button>
+      <div id="listaAlertas">
+        <p>Nenhum alerta carregado.</p>
+      </div>
 
-      <h2>Resultado</h2>
-      <div id="resultadoFhir">
-        <p>Sem resultados.</p>
-      </div>
-    </section>
+      </form>
+    </section>
 
-    <section id="pagina-carat" class="pagina">
-      <h1>Questionário CARAT</h1>
+    <section id="pagina-fhir" class="pagina">
+      <h1>Consulta FHIR</h1>
+      <form id="formFhir">
+        <input id="codigoLoinc" value="8310-5" placeholder="Código LOINC" required />
+        <button class="form-btn" type="submit">Pesquisar Observation</button>
+      </form>
 
-      <h2>Responder ao Questionário</h2>
-      <form id="formCarat">
-        <div id="perguntasContainer">
-          <p>A carregar perguntas...</p>
-        </div>
-        <button class="form-btn" type="submit">Submeter Respostas</button>
-        <p id="erroCarat" class="erro"></p>
-      </form>
+      <h2>Resultado</h2>
+      <div id="resultadoFhir">
+        <p>Sem resultados.</p>
+      </div>
+    </section>
 
-      <h2>Histórico de Avaliações</h2>
-      <button onclick="buscarCARAT()">Atualizar CARAT</button>
-      <div id="listaCARAT">
-        <p>A carregar questionários CARAT...</p>
-      </div>
-    </section>
-  </main>
+    <section id="pagina-carat" class="pagina">
+      <h1>Questionário CARAT</h1>
 
-  <script>
-    function mostrarPagina(idPagina) {
-      const paginas = document.querySelectorAll('.pagina');
-      paginas.forEach(pagina => pagina.classList.remove('ativa'));
+      <h2>Responder ao Questionário</h2>
+      <form id="formCarat">
+        <div id="perguntasContainer">
+          <p>A carregar perguntas...</p>
+        </div>
+        <button class="form-btn" type="submit">Submeter Respostas</button>
+        <p id="erroCarat" class="erro"></p>
+      </form>
 
-      const paginaAtiva = document.getElementById(idPagina);
-      if (paginaAtiva) {
-        paginaAtiva.classList.add('ativa');
-      }
-    }
+      <h2>Histórico de Avaliações</h2>
+      <button onclick="buscarCARAT()">Atualizar CARAT</button>
+      <div id="listaCARAT">
+        <p>A carregar questionários CARAT...</p>
+      </div>
+    </section>
+  </main>
 
-    async function buscarPrescricoes() {
-      const container = document.getElementById('listaPrescricoes');
-      container.innerHTML = '<p>A carregar prescrições...</p>';
+  <script>
+    function mostrarPagina(idPagina) {
+      const paginas = document.querySelectorAll('.pagina');
+      paginas.forEach(pagina => pagina.classList.remove('ativa'));
 
-      try {
-        const resposta = await fetch('/prescricoes');
-        const dados = await resposta.json();
+      const paginaAtiva = document.getElementById(idPagina);
+      if (paginaAtiva) {
+        paginaAtiva.classList.add('ativa');
+      }
+    }
 
-        if (!Array.isArray(dados) || dados.length === 0) {
-          container.innerHTML = '<p>Nenhuma prescrição registada.</p>';
-          return;
-        }
+    async function buscarPrescricoes() {
+      const container = document.getElementById('listaPrescricoes');
+      container.innerHTML = '<p>A carregar prescrições...</p>';
 
-        let html = `
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Medicamento</th>
-                <th>Dose</th>
-                <th>Médico</th>
-                <th>Data de Criação</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
+      try {
+        const resposta = await fetch('/prescricoes');
+        const dados = await resposta.json();
 
-        for (const p of dados) {
-          html += `
-            <tr>
-              <td>${p.id ?? ''}</td>
-              <td>${p.medicamento ?? ''}</td>
-              <td>${p.dose ?? ''}</td>
-              <td>${p.medico_nome ?? ''}</td>
-              <td>${p.dataCriacao ?? 'não exposta'}</td>
-            </tr>
-          `;
-        }
+        if (!Array.isArray(dados) || dados.length === 0) {
+          container.innerHTML = '<p>Nenhuma prescrição registada.</p>';
+          return;
+        }
 
-        html += '</tbody></table>';
-        container.innerHTML = html;
-      } catch (erro) {
-        container.innerHTML = '<p class="erro">Erro ao carregar prescrições.</p>';
-      }
-    }
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Medicamento</th>
+                <th>Dose</th>
+                <th>Médico</th>
+                <th>Data de Criação</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
 
-    async function buscarExames() {
-      const container = document.getElementById('listaExames');
-      container.innerHTML = '<p>A carregar exames...</p>';
+        for (const p of dados) {
+          html += `
+            <tr>
+              <td>${p.id ?? ''}</td>
+              <td>${p.medicamento ?? ''}</td>
+              <td>${p.dose ?? ''}</td>
+              <td>${p.medico_nome ?? ''}</td>
+              <td>${p.dataCriacao ?? 'não exposta'}</td>
+            </tr>
+          `;
+        }
 
-      try {
-        const resposta = await fetch('/exames');
-        const dados = await resposta.json();
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (erro) {
+        container.innerHTML = '<p class="erro">Erro ao carregar prescrições.</p>';
+      }
+    }
 
-        if (!Array.isArray(dados) || dados.length === 0) {
-          container.innerHTML = '<p>Nenhum exame registado.</p>';
-          return;
-        }
+    async function buscarExames() {
+      const container = document.getElementById('listaExames');
+      container.innerHTML = '<p>A carregar exames...</p>';
 
-        let html = `
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nome</th>
-                <th>Código</th>
-                <th>Médico</th>
-                <th>Data de Criação</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
+      try {
+        const resposta = await fetch('/exames');
+        const dados = await resposta.json();
 
-        for (const exame of dados) {
-          html += `
-            <tr>
-              <td>${exame.id ?? ''}</td>
-              <td>${exame.nome ?? ''}</td>
-              <td>${exame.codigo ?? ''}</td>
-              <td>${exame.medico_nome ?? ''}</td>
-              <td>${exame.dataCriacao ?? 'não exposta'}</td>
-            </tr>
-          `;
-        }
+        if (!Array.isArray(dados) || dados.length === 0) {
+          container.innerHTML = '<p>Nenhum exame registado.</p>';
+          return;
+        }
 
-        html += '</tbody></table>';
-        container.innerHTML = html;
-      } catch (erro) {
-        container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>';
-      }
-    }
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Código</th>
+                <th>Médico</th>
+                <th>Data de Criação</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
 
-    async function criarPrescricao(event) {
-      event.preventDefault();
+        for (const exame of dados) {
+          html += `
+            <tr>
+              <td>${exame.id ?? ''}</td>
+              <td>${exame.nome ?? ''}</td>
+              <td>${exame.codigo ?? ''}</td>
+              <td>${exame.medico_nome ?? ''}</td>
+              <td>${exame.dataCriacao ?? 'não exposta'}</td>
+            </tr>
+          `;
+        }
 
-      const erroPrescricao = document.getElementById('erroPrescricao');
-      erroPrescricao.textContent = '';
-      erroPrescricao.className = 'erro';
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (erro) {
+        container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>';
+      }
+    }
 
-      const medicamento = document.getElementById('medicamento').value.trim();
-      const dose = document.getElementById('dose').value.trim();
-      const medico_nome = document.getElementById('prescricaoMedicoNome').value.trim();
+    async function criarPrescricao(event) {
+      event.preventDefault();
 
-      try {
-        const resposta = await fetch('/prescricoes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ medicamento, dose, medico_nome })
-        });
+      const erroPrescricao = document.getElementById('erroPrescricao');
+      erroPrescricao.textContent = '';
+      erroPrescricao.className = 'erro';
 
-        if (!resposta.ok) {
-          const dados = await resposta.json();
-          throw new Error(dados.erro || 'Erro ao criar prescrição');
-        }
+      const medicamento = document.getElementById('medicamento').value.trim();
+      const dose = document.getElementById('dose').value.trim();
+      const medico_nome = document.getElementById('prescricaoMedicoNome').value.trim();
 
-        document.getElementById('formPrescricao').reset();
-        await buscarPrescricoes();
-        erroPrescricao.textContent = '✅ Prescrição criada com sucesso!';
-        erroPrescricao.className = 'sucesso';
-      } catch (erro) {
-        erroPrescricao.textContent = erro.message;
-        erroPrescricao.className = 'erro';
-      }
-    }
+      try {
+        const resposta = await fetch('/prescricoes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ medicamento, dose, medico_nome })
+        });
 
-    async function criarExame(event) {
-      if (event) event.preventDefault();
+        if (!resposta.ok) {
+          const dados = await resposta.json();
+          throw new Error(dados.erro || 'Erro ao criar prescrição');
+        }
 
-      const erroExame = document.getElementById('erroExame');
-      erroExame.textContent = '';
-      erroExame.className = 'erro';
+        document.getElementById('formPrescricao').reset();
+        await buscarPrescricoes();
+        erroPrescricao.textContent = '✅ Prescrição criada com sucesso!';
+        erroPrescricao.className = 'sucesso';
+      } catch (erro) {
+        erroPrescricao.textContent = erro.message;
+        erroPrescricao.className = 'erro';
+      }
+    }
 
-      const tipoExame = document.getElementById('tipoExame').value.trim();
-      const dataExame = document.getElementById('dataExame').value.trim();
-      const medico_nome = document.getElementById('exameMedicoNome').value.trim();
+    async function criarExame(event) {
+      if (event) event.preventDefault();
 
-      try {
-        const resposta = await fetch('/exames', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tipoExame, dataExame, medico_nome })
-        });
+      const erroExame = document.getElementById('erroExame');
+      erroExame.textContent = '';
+      erroExame.className = 'erro';
 
-        if (!resposta.ok) {
-          const dados = await resposta.json();
-          throw new Error(dados.erro || 'Erro ao criar exame');
-        }
+      const tipoExame = document.getElementById('tipoExame').value.trim();
+      const dataExame = document.getElementById('dataExame').value.trim();
+      const medico_nome = document.getElementById('exameMedicoNome').value.trim();
 
-        document.getElementById('formExame').reset();
-        await buscarExames();
-        erroExame.textContent = '✅ Exame criado com sucesso!';
-        erroExame.className = 'sucesso';
-      } catch (erro) {
-        erroExame.textContent = erro.message;
-        erroExame.className = 'erro';
-      }
-    }
+      try {
+        const resposta = await fetch('/exames', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipoExame, dataExame, medico_nome })
+        });
 
-    async function buscarCARAT() {
-  const container = document.getElementById('listaCARAT');
-  container.innerHTML = '<p>A carregar Questionário CARAT...</p>';
+        if (!resposta.ok) {
+          const dados = await resposta.json();
+          throw new Error(dados.erro || 'Erro ao criar exame');
+        }
 
-  try {
-    const resposta = await fetch('/carat');
-    const dados = await resposta.json();
+        document.getElementById('formExame').reset();
+        await buscarExames();
+        erroExame.textContent = '✅ Exame criado com sucesso!';
+        erroExame.className = 'sucesso';
+      } catch (erro) {
+        erroExame.textContent = erro.message;
+        erroExame.className = 'erro';
+      }
+    }
 
-    if (!Array.isArray(dados) || dados.length === 0) {
-      container.innerHTML = '<p>Nenhum questionário CARAT registado.</p>';
-      return;
-    }
+    async function buscarCARAT() {
+  const container = document.getElementById('listaCARAT');
+  container.innerHTML = '<p>A carregar Questionário CARAT...</p>';
 
-    let html = `
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nome do Doente</th>
-            <th>Score Total</th>
-            <th>Score Rinite</th>
-            <th>Score Asma</th>
-            <th>Estado de Controlo</th> <th>Data de Criação</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
+  try {
+    const resposta = await fetch('/carat');
+    const dados = await resposta.json();
 
-    for (const carat of dados) {
-      // Cria um badge visual dependendo do estado retornado pelo servidor
-      const éControlada = carat.controloTotal === 'CONTROLADA';
-      const classeBadge = éControlada ? 'badge badge-sucesso' : 'badge badge-erro';
-      const textoBadge = éControlada ? 'Controlada' : 'Não Controlada';
+    if (!Array.isArray(dados) || dados.length === 0) {
+      container.innerHTML = '<p>Nenhum questionário CARAT registado.</p>';
+      return;
+    }
 
-      html += `
-        <tr>
-          <td>${carat.id ?? ''}</td>
-          <td>${carat.nome ?? 'Doente'}</td>
-          <td><strong>${carat.scoreTotal ?? 0}</strong> / 30</td>
-          <td>${carat.scoreRinite ?? 0} / 12</td>
-          <td>${carat.scoreAsma ?? 0} / 18</td>
-          <td><span class="${classeBadge}">${textoBadge}</span></td>
-          <td>${carat.dataCriacao ?? ''}</td>
-        </tr>
-      `;
-    }
+    let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome do Doente</th>
+            <th>Score Total</th>
+            <th>Score Rinite</th>
+            <th>Score Asma</th>
+            <th>Estado de Controlo</th> <th>Data de Criação</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
 
-    html += '</tbody></table>';
-    container.innerHTML = html;
-  } catch (erro) {
-    container.innerHTML = '<p>Erro ao carregar questionários CARAT.</p>';
-  }
+    for (const carat of dados) {
+      // Cria um badge visual dependendo do estado retornado pelo servidor
+      const éControlada = carat.controloTotal === 'CONTROLADA';
+      const textoBadge = éControlada ? 'Controlada' : 'Não Controlada';
+
+      html += `
+        <tr>
+          <td>${carat.id ?? ''}</td>
+          <td>${carat.nome ?? 'Doente'}</td>
+          <td><strong>${carat.scoreTotal ?? 0}</strong> / 30</td>
+          <td>${carat.scoreRinite ?? 0} / 12</td>
+          <td>${carat.scoreAsma ?? 0} / 18</td>
+          <td><span class="${classeBadge}">${textoBadge}</span></td>
+          <td>${carat.dataCriacao ?? ''}</td>
+        </tr>
+      `;
+    }
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  } catch (erro) {
+    container.innerHTML = '<p>Erro ao carregar questionários CARAT.</p>';
+  }
 }
 
-    async function pesquisarFhir(event) {
-      event.preventDefault();
-      const codigo = document.getElementById('codigoLoinc').value.trim();
-      const resultado = document.getElementById('resultadoFhir');
-      resultado.innerHTML = '<p>A pesquisar...</p>';
+    async function pesquisarFhir(event) {
+      event.preventDefault();
+      const codigo = document.getElementById('codigoLoinc').value.trim();
+      const resultado = document.getElementById('resultadoFhir');
+      resultado.innerHTML = '<p>A pesquisar...</p>';
 
-      try {
-        const resposta = await fetch(`/fhir/observations?code=${encodeURIComponent(codigo)}`);
-        if (!resposta.ok) {
-          throw new Error('Erro na resposta do servidor');
-        }
-        const dados = await resposta.json();
+      try {
+        const resposta = await fetch(`/fhir/observations?code=${encodeURIComponent(codigo)}`);
+        if (!resposta.ok) {
+          throw new Error('Erro na resposta do servidor');
+        }
+        const dados = await resposta.json();
 
-        if (!Array.isArray(dados) || dados.length === 0) {
-          resultado.innerHTML = '<p>Nenhuma Observation encontrada para esse código LOINC.</p>';
-          return;
-        }
+        if (!Array.isArray(dados) || dados.length === 0) {
+          resultado.innerHTML = '<p>Nenhuma Observation encontrada para esse código LOINC.</p>';
+          return;
+        }
 
-        let html = `
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Código LOINC</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Unidade</th>
-                <th>Data/Hora</th>
-                <th>Doente</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Código LOINC</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Unidade</th>
+                <th>Data/Hora</th>
+                <th>Doente</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
 
-        for (const obs of dados) {
-          html += `
-            <tr>
-              <td>${obs.id ?? ''}</td>
-              <td>${obs.code ?? ''}</td>
-              <td>${obs.display ?? ''}</td>
-              <td>${obs.value ?? ''}</td>
-              <td>${obs.unit ?? ''}</td>
-              <td>${obs.effectiveDateTime ?? ''}</td>
-              <td>${obs.subject ?? ''}</td>
-              <td>${obs.status ?? ''}</td>
-            </tr>
-          `;
-        }
-        html += '</tbody></table>';
-        resultado.innerHTML = html;
-      } catch (erro) {
-        console.error(erro);
-        resultado.innerHTML = '<p class="erro">Erro ao consultar servidor FHIR.</p>';
-      }
-    }
+        for (const obs of dados) {
+          html += `
+            <tr>
+              <td>${obs.id ?? ''}</td>
+              <td>${obs.code ?? ''}</td>
+              <td>${obs.display ?? ''}</td>
+              <td>${obs.value ?? ''}</td>
+              <td>${obs.unit ?? ''}</td>
+              <td>${obs.effectiveDateTime ?? ''}</td>
+              <td>${obs.subject ?? ''}</td>
+              <td>${obs.status ?? ''}</td>
+            </tr>
+          `;
+        }
+        html += '</tbody></table>';
+        resultado.innerHTML = html;
+      } catch (erro) {
+        console.error(erro);
+        resultado.innerHTML = '<p class="erro">Erro ao consultar servidor FHIR.</p>';
+      }
+    }
 
-    async function carregarPerguntasCarat() {
-      try {
-        const resposta = await fetch('/carat/perguntas');
-        const dados = await resposta.json();
-        const container = document.getElementById('perguntasContainer');
-        let html = '';
+    async function carregarPerguntasCarat() {
+      try {
+        const resposta = await fetch('/carat/perguntas');
+        const dados = await resposta.json();
+        const container = document.getElementById('perguntasContainer');
+        let html = '';
 
-        dados.perguntas.forEach((pergunta, idx) => {
-          html += `
-            <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-              <label><strong>${idx + 1}. ${pergunta}</strong></label><br>
-          `;
-          
-          dados.opcoes.forEach(opcao => {
-            html += `
-              <label style="display: block; margin: 8px 0;">
-                <input type="radio" name="pergunta_${idx}" value="${opcao.valor}" required>
-                ${opcao.label}
-              </label>
-            `;
-          });
-          
-          html += `</div>`;
-        });
+        dados.perguntas.forEach((pergunta, idx) => {
+          html += `
+            <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+              <label><strong>${idx + 1}. ${pergunta}</strong></label><br>
+          `;
+          
+          dados.opcoes.forEach(opcao => {
+            html += `
+              <label style="display: block; margin: 8px 0;">
+                <input type="radio" name="pergunta_${idx}" value="${opcao.valor}" required>
+                ${opcao.label}
+              </label>
+            `;
+          });
+          
+          html += `</div>`;
+        });
 
-        container.innerHTML = html;
-      } catch (erro) {
-        console.error('Erro ao carregar perguntas CARAT:', erro);
-        document.getElementById('perguntasContainer').innerHTML = '<p class="erro">Erro ao carregar perguntas.</p>';
-      }
-    }
+        container.innerHTML = html;
+      } catch (erro) {
+        console.error('Erro ao carregar perguntas CARAT:', erro);
+        document.getElementById('perguntasContainer').innerHTML = '<p class="erro">Erro ao carregar perguntas.</p>';
+      }
+    }
 
-    async function submeterRespostasCarat(event) {
-      event.preventDefault();
-      const erroCarat = document.getElementById('erroCarat');
-      erroCarat.textContent = '';
-      erroCarat.className = 'erro';
+    async function submeterRespostasCarat(event) {
+      event.preventDefault();
+      const erroCarat = document.getElementById('erroCarat');
+      erroCarat.textContent = '';
+      erroCarat.className = 'erro';
 
-      const respostas = [];
-      const totalPerguntas = 10;
-      for (let i = 0; i < totalPerguntas; i++) {
-        const radioButtons = document.getElementsByName(`pergunta_${i}`);
-        const selecionada = Array.from(radioButtons).find(r => r.checked);
-        
-        if (!selecionada) {
-          erroCarat.textContent = `Por favor, responda à pergunta ${i + 1}.`;
-          return;
-        }
-        respostas.push(parseInt(selecionada.value));
-      }
+      const respostas = [];
+      const totalPerguntas = 10;
+      for (let i = 0; i < totalPerguntas; i++) {
+        const radioButtons = document.getElementsByName(`pergunta_${i}`);
+        const selecionada = Array.from(radioButtons).find(r => r.checked);
+        
+        if (!selecionada) {
+          erroCarat.textContent = `Por favor, responda à pergunta ${i + 1}.`;
+          return;
+        }
+        respostas.push(parseInt(selecionada.value));
+      }
 
-      try {
-        const resposta = await fetch('/carat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            perg1: respostas[0],
-            perg2: respostas[1],
-            perg3: respostas[2],
-            perg4: respostas[3],
-            perg5: respostas[4],
-            perg6: respostas[5],
-            perg7: respostas[6],
-            perg8: respostas[7],
-            perg9: respostas[8],
-            perg10: respostas[9]
-          })
-        });
+      try {
+        const resposta = await fetch('/carat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            perg1: respostas[0],
+            perg2: respostas[1],
+            perg3: respostas[2],
+            perg4: respostas[3],
+            perg5: respostas[4],
+            perg6: respostas[5],
+            perg7: respostas[6],
+            perg8: respostas[7],
+            perg9: respostas[8],
+            perg10: respostas[9]
+          })
+        });
 
-        if (!resposta.ok) {
-          const dados = await resposta.json();
-          throw new Error(dados.erro || 'Erro ao submeter respostas');
-        }
+        if (!resposta) return;
+    const dados = await resposta.json(); 
 
-        document.getElementById('formCarat').reset();
-        erroCarat.textContent = 'Respostas submetidas com sucesso!';
-        erroCarat.className = 'sucesso';
-        await buscarCARAT();
-      } catch (erro) {
-        erroCarat.textContent = erro.message;
-        erroCarat.className = 'erro';
-      }
-    }
+    let recomendacao = "";
+    const score = dados.avaliacao.scoreTotal; 
+        if (score > 24) { 
+       recomendacao ="Controlado: Os sintomas estão estáveis. Volte a fazer este exame daqui a 12 semanas."
+    } else if (score > 16) {
+         recomendacao = "Vigiar: Os seus sintomas merecem atenção. Mantenha a vigilância e reveja a medicação.";
+    } else {
+        recomendacao = "Urgente: O seu controlo é baixo. Recomendamos a marcação de uma consulta médica com brevidade.";
+    ;
+    }
 
-    // Event Listeners
-    document.getElementById('formPrescricao').addEventListener('submit', criarPrescricao);
-    document.getElementById('formFhir').addEventListener('submit', pesquisarFhir);
-    document.getElementById('formCarat').addEventListener('submit', submeterRespostasCarat);
-    document.getElementById('formExame').addEventListener('submit', criarExame);
-    
-    // Inicialização
-    buscarPrescricoes();
-    buscarExames();
-    carregarPerguntasCarat();
-    buscarCARAT();
-  </script>
+    // 2. Mostrar o Modal
+    document.getElementById('tituloAlerta').textContent = "Resultado do CARAT";
+    document.getElementById('textoRecomendacao').textContent = recomendacao;
+    document.getElementById('modalAlerta').style.display = 'flex';
+
+  } catch (erro) {
+    console.error(erro);
+  }
+}
+
+// Funções auxiliares para o modal
+function fecharModal() {
+    document.getElementById('modalAlerta').style.display = 'none';
+}
+
+function irParaAlertas() {
+    fecharModal();
+    mostrarPagina('pagina-alertas'); 
+}
+
+    
+
+    // Event Listeners
+    document.getElementById('formPrescricao').addEventListener('submit', criarPrescricao);
+    document.getElementById('formFhir').addEventListener('submit', pesquisarFhir);
+    document.getElementById('formCarat').addEventListener('submit', submeterRespostasCarat);
+    document.getElementById('formExame').addEventListener('submit', criarExame);
+    
+    // Inicialização
+    buscarPrescricoes();
+    buscarExames();
+    carregarPerguntasCarat();
+    buscarCARAT();
+  </script>
+
+
+  <div id="modalAlerta" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; justify-content: center; align-items: center;">
+  
+  <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); text-align: center;">
+    <h2 id="tituloAlerta" style="margin-top: 0; color: #0a5c91;">Avaliação Clínica</h2>
+    <p id="textoRecomendacao" style="margin: 20px 0; font-size: 1.1rem; line-height: 1.5;"></p>
+    
+    <button onclick="irParaAlertas()" style="width: 100%; padding: 12px; background: #0a5c91; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+      Ir para Alertas
+    </button>
+    
+    <button onclick="fecharModal()" style="width: 100%; padding: 12px; background: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px;">
+      Fechar
+    </button>
+  </div>
+  
+</div>
 </body>
 
 </html>
