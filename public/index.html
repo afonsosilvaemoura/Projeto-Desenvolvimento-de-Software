@@ -267,23 +267,13 @@ tr:hover {
         <p>Nenhum exame carregado.</p>
       </div>
 
-      <h2>Alerta</h2>
-      <form id="formAlerta">
-        <input id="tipoAlerta" placeholder="Tipo de Alerta" required />
-        <input id="dataAlerta" type="date" required />
-        <input id="alertaMedicoNome" placeholder="Nome do médico" required />
-        <button class="form-btn" type="submit">Criar alerta</button>
-        <p id="erroAlerta" class="erro"></p>
-      </form>
-    </section>
-
-    <section id="pagina-alertas" class="pagina">
-      <h1>Alertas</h1>
-      <button onclick="buscarAlertas()">Atualizar alertas</button>
-      <div id="listaAlertas">
-        <p>Nenhum alerta carregado.</p>
-      </div>
-
+      <h2>Novo Exame</h2>
+      <form id="formExame">
+        <input id="tipoExame" placeholder="Tipo de Exame" required />
+        <input id="dataExame" type="date" required />
+        <input id="exameMedicoNome" placeholder="Nome do médico" required />
+        <button class="form-btn" type="submit">Criar exame</button>
+        <p id="erroExame" class="erro"></p>
       </form>
     </section>
 
