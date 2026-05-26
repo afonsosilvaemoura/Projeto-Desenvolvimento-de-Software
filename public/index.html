@@ -520,8 +520,8 @@ tr:hover {
     for (const carat of dados) {
       // Cria um badge visual dependendo do estado retornado pelo servidor
       const éControlada = carat.controloTotal === 'CONTROLADA';
-      const textoBadge = éControlada ? 'Controlada' : 'Não Controlada';
-
+    const textoBadge = éControlada ? 'Controlada' : 'Não Controlada';
+    const classeBadge = éControlada ? 'badge-controlada' : 'badge-nao-controlada'; 
       html += `
         <tr>
           <td>${carat.id ?? ''}</td>
@@ -534,6 +534,21 @@ tr:hover {
         </tr>
       `;
     }
+.badge-controlada {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.badge-nao-controlada {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
 
     html += '</tbody></table>';
     container.innerHTML = html;
