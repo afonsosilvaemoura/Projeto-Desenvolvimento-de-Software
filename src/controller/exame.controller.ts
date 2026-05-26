@@ -23,36 +23,41 @@
     */
 import { Request, Response } from 'express';
 import { ExamesService } from '../services/exame.service';
-
-const service = new ExamesService();
+import { CreateExameDto } from '../dtos/exame/create-exame.dto';
 
 export class ExameController {
-
-    async listar(req: Request, res: Response) {
-        try {
-            const exames = await service.listarExames();
-            return res.status(200).json(exames);
-
-        } catch (erro: any) {
-            return res.status(500).json({
-                erro: erro.message || 'Erro ao listar exames'
-            });
-        }
+    private service = new ExamesService();
+    
+        async listar(req: Request, res: Response) {
+            const exames = await this.service.listarExames();
+            return res.json(exames);
+    }
+        async listarComDTO(req: Request, res: Response) {
+        const exames = await this.service.listarExamesComDTO();
+        return res.json(exames);
     }
 
     async criar(req: Request, res: Response) {
         try {
-            const resultado = await service.criarExame(req.body);
+            const { tipo_exame, exame, medico_nome, dataMarcacao } = req.body;
+            const novoExame = await this.service.criarExame({ tipo_exame, exame, medico_nome, dataMarcacao });
 
-            return res.status(201).json({
-                mensagem: 'Exame marcado com sucesso!',
-                dados: resultado
-            });
-
-        } catch (erro: any) {
-            return res.status(400).json({
-                erro: erro.message || 'Erro ao marcar exame'
-            });
+            return res.status(201).json(novoExame);
+        } catch (error: any) {
+            return res.status(400).json({ erro: error.message });
         }
     }
+
+    // Versão com DTOs: o formato esperado da entrada fica explícito
+        async criarComDTO(req: Request, res: Response) {
+    
+            try {
+                const dto: CreateExameDto = req.body;
+                const novoExame = await this.service.criarExameComDTO(dto);
+                return res.status(201).json(novoExame);
+    
+            } catch (error: any) {
+                return res.status(400).json({ erro: error.message });
+            }
+        }
 }

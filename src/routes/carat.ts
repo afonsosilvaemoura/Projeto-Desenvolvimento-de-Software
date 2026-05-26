@@ -27,4 +27,3 @@ router.get('/avaliacoes/utente/:utenteId', autenticar, autorizar(MEDICO, UTENTE)
 // GET /carat/avaliacoes/:id
 router.get('/avaliacoes/:id', autenticar, (req, res) => ctrl.obter(req, res));
 */
-export default router;
