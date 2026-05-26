@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {  criarAvaliacaoCarat } from '../controller/carat.controller';
+import { criarAvaliacaoCarat } from '../controller/carat.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 const routes = Router();

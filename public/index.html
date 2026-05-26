@@ -1,3 +1,5 @@
+index
+
 <!DOCTYPE html>
 <html lang="pt">
 
@@ -283,8 +285,6 @@ tr:hover {
       <div id="listaAlertas">
         <p>Nenhum alerta carregado.</p>
       </div>
-
-      </form>
     </section>
 
     <section id="pagina-fhir" class="pagina">
@@ -519,7 +519,9 @@ tr:hover {
 
     for (const carat of dados) {
       // Cria um badge visual dependendo do estado retornado pelo servidor
-      const éControlada = carat.controloTotal === 'CONTROLADA';
+      const éControlada = carat.scoreTotal > 24; // Exemplo de critério para controlo
+      const classeBadge = éControlada ? 'sucesso' : 'erro'; // Defina a classe
+      html += `<td><span class="${classeBadge}">${textoBadge}</span></td>`;
       const textoBadge = éControlada ? 'Controlada' : 'Não Controlada';
 
       html += `

@@ -1,3 +1,4 @@
+
 import { AppDataSource } from '../database/database';
 import { Prescricao } from '../models/prescricao.entity';
 import { CreatePrescricaoDto } from '../dtos/prescricao/create-prescricao.dto';
@@ -7,16 +8,15 @@ export class PrescricaoService {
 
     private repo = AppDataSource.getRepository(Prescricao);
 
-    async criarPrescricao(
-        dados: { id: number; utente_id: number; medico_nome: string; farmaco: string; dosagem: string; posologia: string }
+
+
+   /* async criarPrescricao(
+        dados: { medicamento: string; dose: string; medico_nome: string }
     ): Promise<Prescricao> {
         const jaExiste = await this.repo.findOneBy({
-            id: dados.id,
-            utente_id: dados.utente_id,
+            farmaco: dados.medicamento,
+            dosagem: dados.dose,
             medico_nome: dados.medico_nome,
-            farmaco: dados.farmaco,
-            dosagem: dados.dosagem,
-            posologia: dados.posologia,
         });
 
         if (jaExiste) {
@@ -25,20 +25,21 @@ export class PrescricaoService {
 
         const nova = this.repo.create({
             ...dados, // espalha os campos medicamento, dose e medico_nome
-            data_criacao: new Date(),
+            dataCriacao: new Date(),
         });
 
         return this.repo.save(nova);
     }
 
-
-    async criarPrescricaoDto(
+*/
+   async criarPrescricaoDto(
         dados: CreatePrescricaoDto
     ): Promise<PrescricaoResponseDto> {
+        // 1. Remova o 'id' da verificação de existência, 
+        // a menos que o ID seja fornecido pelo utilizador (o que é raro).
+        // Geralmente, verificamos duplicidade por campos de negócio (farmaco + utente, por exemplo).
         const jaExiste = await this.repo.findOneBy({
-            id: dados.id,
             utente_id: dados.utente_id,
-            medico_nome: dados.medico_nome,
             farmaco: dados.farmaco,
             dosagem: dados.dosagem,
             posologia: dados.posologia,
@@ -48,9 +49,12 @@ export class PrescricaoService {
             throw new Error('Já existe uma prescrição igual registada no sistema.');
         }
 
+        // 2. Garanta que não passa o 'id' para o create
+        const { id, ...dadosSemId } = dados; 
+
         const nova = this.repo.create({
-            ...dados,
-            data_criacao: new Date(),
+            ...dadosSemId,
+            data_criacao: new Date().toISOString(),
         });
 
         const guardada = await this.repo.save(nova);
@@ -77,19 +81,19 @@ export class PrescricaoService {
     }
 
     // Usando DTO, podemos controlar os campos devolvidos ao cliente.
-    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao, mas não é enviada na resposta.
+    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao,
+    // mas não é enviada na resposta.
 
-    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais complexa ou reutilizada em vários pontos do código.
+    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais 
+    // complexa ou reutilizada em vários pontos do código.
 
     private toResponseDto(prescricao: Prescricao): PrescricaoResponseDto {
         return {
             id: prescricao.id,
-            medicamento: prescricao.farmaco,
-            dose: prescricao.dosagem,
+            farmaco: prescricao.farmaco,
+            dosagem: prescricao.dosagem,
             medico_nome: prescricao.medico_nome,
         };
     }
 }
-
-
 

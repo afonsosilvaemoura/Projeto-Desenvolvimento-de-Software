@@ -1,15 +1,3 @@
-/*Esta classe AuthService é responsável por autenticar um utilizador.
-
-Ou seja, recebe:
-	•	username
-	•	password
-
-e verifica se:
-	1.	o utilizador existe
-	2.	a password está correta
-
-Se tudo correr bem, gera um token JWT que poderá depois ser usado nas rotas protegidas.*/
-
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { baseDeDadosUsers } from '../database/database';

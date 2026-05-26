@@ -1,6 +1,6 @@
 // Cria utilizadores de teste na base de dados.
 // Executar UMA VEZ com: npx ts-node src/database/seed.ts
- /*
+ 
 import 'reflect-metadata';
 import bcrypt from 'bcrypt';
 import { AppDataSource } from './database';
@@ -36,6 +36,11 @@ async function seed() {
     // Utente de teste (associado ao médico id=1)
     const utenteExiste = await utenteRepo.findOneBy({ email: 'mariasantos@gmail.com' });
     if (!utenteExiste) {
+        // Buscar o médico com id=1 para associar ao utente
+        const medico = await medicoRepo.findOneBy({ id: 1 });
+        if (!medico) {
+            throw new Error('Médico com id=1 não encontrado.');
+        }
         const utente = utenteRepo.create({
             nome: 'Maria Santos',
             email: 'mariasantos@gmail.com',
@@ -43,7 +48,7 @@ async function seed() {
             data_nascimento: '1985-03-15',
             nif: '123456789',
             telefone: '912345678',
-            medico_id: 1,
+            medicoId: medico.id, // Use foreign key property instead of relation
             ativo: true,
             dataCriacao: new Date(),
             dataAtualizacao: new Date(),
@@ -82,4 +87,4 @@ async function seed() {
 }
  
 seed().catch(console.error);
- */
+ 
