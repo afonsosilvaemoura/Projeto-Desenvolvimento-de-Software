@@ -6,15 +6,13 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.services';
 
-export class LoginController {
+export class AuthController {
     private authService = new AuthService();
 
-    login(req: Request, res: Response) {
+    async login(req: Request, res: Response) {
         try {
             const { username, password } = req.body;
-
-            const token = this.authService.login(username, password);
-
+            const token = await this.authService.login(username, password);
             return res.status(200).json({
                 mensagem: 'Login com sucesso',
                 token
