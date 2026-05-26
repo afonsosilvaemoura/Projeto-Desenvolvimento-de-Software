@@ -1,46 +1,61 @@
 import { Request, Response } from 'express';
-import { PrescricaoService } from '../services/prescricao.service';
 import { CreatePrescricaoDto } from '../dtos/prescricao/create-prescricao.dto';
-
+import { baseDeDadosLocalPrescricao } from '../database/database';
+import { PrescricaoService } from '../services/prescricao.service';
+import { Prescricao } from '../models/prescricao.entity';
 export class PrescricaoController {
-    private service = new PrescricaoService();
-
-    async listar(req: Request, res: Response) {
-        const prescricoes = await this.service.listarPrescricoes();
-        return res.json(prescricoes);
+/*
+        async listar(req: Request, res: Response) {
+        // Retorna tudo o que está na nossa lista
+        return res.json(baseDeDadosLocal);
     }
-
+*/
     async listarComDTO(req: Request, res: Response) {
-        const prescricoes = await this.service.listarPrescricoesComDTO();
-        return res.json(prescricoes);
+        return res.json(baseDeDadosLocalPrescricao.map(p => ({
+            id: p.id,
+            utente_id: p.utente_id,
+            medico_nome: p.medico_nome,
+            farmaco: p.farmaco,
+            dosagem: p.dosagem,
+            posologia: p.posologia,
+            data_criacao: p.data_criacao
+        })));
     }
 
-    async criar(req: Request, res: Response) {
-        try {
-            const { id, utente_id, medico_nome, farmaco, dosagem, posologia } = req.body;
-            const novaPrescricao = await this.service.criarPrescricao({ id, utente_id, medico_nome, farmaco, dosagem, posologia });
+        async criar(req: Request, res: Response) {
+        const { id, } = req.body;
 
-            return res.status(201).json(novaPrescricao);
+        // Criamos o objeto manualmente
+        const nova: Prescricao = {
+            id: baseDeDadosLocalPrescricao.length + 1,
+            utente_id: req.body.utente_id,
+            medico_nome: req.body.medico_nome,
+            farmaco: req.body.farmaco,
+            dosagem: req.body.dosagem,
+            posologia: req.body.posologia,
+            data_criacao: new Date().toISOString()  
+        };
 
-        } catch (error: any) {
-            return res.status(400).json({ erro: error.message });
-        }
+        // Guardamos na nossa lista "global"
+        baseDeDadosLocalPrescricao.push(nova);
+
+        return res.status(201).json(nova);
     }
 
+/*
     // Versão com DTOs: o formato esperado da entrada fica explícito
     async criarComDTO(req: Request, res: Response) {
 
         try {
             const dto: CreatePrescricaoDto = req.body;
-            const novaPrescricao = await this.service.criarPrescricaoDto(dto);
-            return res.status(201).json(novaPrescricao);
+            const nova = await this.service.criarPrescricaoDto(dto);
+            baseDeDadosLocal.push(nova);
+            return res.status(201).json(nova);
 
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
-    }
-
-
-    
-    
+    } 
+        
+*/
 }

@@ -1,5 +1,3 @@
-// Define os dados de entrada para criar uma prescrição.
-
 export interface CreatePrescricaoDto {
     id: number;
     utente_id: number;
@@ -7,4 +5,5 @@ export interface CreatePrescricaoDto {
     farmaco: string;
     dosagem: string;
     posologia: string;
+    data_criacao: string;
 }

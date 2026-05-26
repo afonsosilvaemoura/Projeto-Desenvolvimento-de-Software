@@ -1,6 +1,6 @@
 // Cria utilizadores de teste na base de dados.
 // Executar UMA VEZ com: npx ts-node src/database/seed.ts
- 
+ /*
 import 'reflect-metadata';
 import bcrypt from 'bcrypt';
 import { AppDataSource } from './database';
@@ -83,4 +83,4 @@ async function seed() {
 }
  
 seed().catch(console.error);
- 
+ */

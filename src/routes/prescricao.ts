@@ -5,6 +5,6 @@ const routes = Router();
 const controller = new PrescricaoController();
 
 routes.get('/', controller.listarComDTO.bind(controller));
-routes.post('/', controller.criarComDTO.bind(controller));
+routes.post('/', controller.criar.bind(controller));
 
 export default routes;

@@ -22,5 +22,5 @@ export class Prescricao {
     posologia!: string;
 
     @Column()
-    data_criacao!: Date;
+    data_criacao!: string;
 }
