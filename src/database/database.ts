@@ -39,7 +39,7 @@ export async function initializeDatabase() {
   try {
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
-      console.log('✓ TypeORM database initialized');
+      console.log('TypeORM database initialized');
     }
   } catch (error) {
     console.error('Erro ao inicializar TypeORM:', error);
