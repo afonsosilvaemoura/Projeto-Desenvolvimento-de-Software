@@ -15,13 +15,13 @@ export class PrescricaoController {
         return res.json(prescricoes);
     }
 
-    // Versão sem DTOs: os dados são usados diretamente a partir do req.body
     async criar(req: Request, res: Response) {
         try {
             const { medicamento, dose, medico_nome } = req.body;
             const novaPrescricao = await this.service.criarPrescricao({ medicamento, dose, medico_nome });
 
             return res.status(201).json(novaPrescricao);
+
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
@@ -32,7 +32,7 @@ export class PrescricaoController {
 
         try {
             const dto: CreatePrescricaoDto = req.body;
-            const novaPrescricao = await this.service.criarPrescricaoComDTO(dto);
+            const novaPrescricao = await this.service.criarPrescricaoDto(dto);
             return res.status(201).json(novaPrescricao);
 
         } catch (error: any) {

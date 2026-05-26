@@ -22,18 +22,19 @@
 }
     */
 import { Request, Response } from 'express';
-import { ExamesService } from '../services/exame.service';
+import { ExameService } from '../services/exame.service';
 import { CreateExameDto } from '../dtos/exame/create-exame.dto';
 
 export class ExameController {
-    private service = new ExamesService();
+    private service = new ExameService();
     
-        async listar(req: Request, res: Response) {
-            const exames = await this.service.listarExames();
-            return res.json(exames);
+    async listar(req: Request, res: Response) {
+        const exames = await this.service.listarExame();
+        return res.json(exames);
     }
-        async listarComDTO(req: Request, res: Response) {
-        const exames = await this.service.listarExamesComDTO();
+
+    async listarComDTO(req: Request, res: Response) {
+        const exames = await this.service.listarExameComDTO();
         return res.json(exames);
     }
 
@@ -43,6 +44,7 @@ export class ExameController {
             const novoExame = await this.service.criarExame({ tipo_exame, exame, medico_nome, data_marcacao });
 
             return res.status(201).json(novoExame);
+
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
@@ -53,7 +55,7 @@ export class ExameController {
     
             try {
                 const dto: CreateExameDto = req.body;
-                const novoExame = await this.service.criarExameComDTO(dto);
+                const novoExame = await this.service.criarExameDto(dto);
                 return res.status(201).json(novoExame);
     
             } catch (error: any) {

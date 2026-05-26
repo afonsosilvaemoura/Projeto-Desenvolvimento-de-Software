@@ -7,8 +7,6 @@ export class PrescricaoService {
 
     private repo = AppDataSource.getRepository(Prescricao);
 
-
-
     async criarPrescricao(
         dados: { medicamento: string; dose: string; medico_nome: string }
     ): Promise<Prescricao> {
@@ -31,7 +29,7 @@ export class PrescricaoService {
     }
 
 
-    async criarPrescricaoComDTO(
+    async criarPrescricaoDto(
         dados: CreatePrescricaoDto
     ): Promise<PrescricaoResponseDto> {
         const jaExiste = await this.repo.findOneBy({
@@ -73,11 +71,9 @@ export class PrescricaoService {
     }
 
     // Usando DTO, podemos controlar os campos devolvidos ao cliente.
-    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao,
-    // mas não é enviada na resposta.
+    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao, mas não é enviada na resposta.
 
-    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais 
-    // complexa ou reutilizada em vários pontos do código.
+    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais complexa ou reutilizada em vários pontos do código.
 
     private toResponseDto(prescricao: Prescricao): PrescricaoResponseDto {
         return {
