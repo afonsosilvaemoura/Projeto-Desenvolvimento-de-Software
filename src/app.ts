@@ -11,7 +11,7 @@ const PORT = Number(process.env.PORT) || 3000;
 // ── Middleware global ──────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.listen(3000, () => console.log("Servidor Local (Em Memória) a correr na porta 3000"));
+app.listen(PORT, () => console.log(`Servidor a correr em http://localhost:${PORT}`));
 
 // CORS básico para desenvolvimento
 app.use((_req, res, next) => {
@@ -138,6 +138,6 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 });
 
 // ── Arranque ───────────────────────────────────────────
-app.listen(3000, () => {
-  console.log(`\n🏥 SAUDINOB API a correr em http://localhost:3000`);
+app.listen(PORT, () => {
+  console.log(`\nSAUDINOB API a correr em http://localhost:${PORT}`);
 });
