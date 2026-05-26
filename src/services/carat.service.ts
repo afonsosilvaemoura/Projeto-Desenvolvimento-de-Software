@@ -117,14 +117,14 @@ export function calcularCARAT(respostas: number[]): ResultadoCARAT {
   const scoreAsma = respostasAsma.reduce((acc, val) => acc + val, 0);
   const scoreTotal = scoreRinite + scoreAsma;
 
-  // Lógica corrigida: > 24 é Controlada, <= 24 é Não Controlada
-  const controloTotal = scoreTotal > CARAT.LIMIAR_BAIXO_CONTROLO_GLOBAL ? 'CONTROLADA' : 'NAO_CONTROLADA';
-  
+
   // Rinite: > 8 é bem controlada
   const riniteControlada = scoreRinite > CARAT.LIMIAR_MAX_RINITE_MAL_CONTROLADA; 
   
   // Asma: >= 16 é bem controlada
   const asmaControlada = scoreAsma >= CARAT.LIMIAR_MAX_ASMA_MAL_CONTROLADA;
+  // Lógica corrigida: > 24 é Controlada, <= 24 é Não Controlada
+ const controloTotal = (scoreTotal > CARAT.LIMIAR_BAIXO_CONTROLO_GLOBAL && riniteControlada && asmaControlada) ? 'CONTROLADA' : 'NAO_CONTROLADA';
 
   return {
     scoreTotal,
