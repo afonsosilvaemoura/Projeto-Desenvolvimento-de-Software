@@ -2,6 +2,7 @@
 
 export interface CreateExameDto {
 
+  id: number;
   utente_id: number;
   medico_nome: string;
   tipo: string;
