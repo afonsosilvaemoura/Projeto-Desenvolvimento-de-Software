@@ -1,52 +1,23 @@
-/*
-import { AppDataSource } from '../database/database';
-import { Exame } from '../models/exame.entity';
-
-export class ExameService {
-
-    private repo = AppDataSource.getRepository(Exame);
-
-    async criarExame(dados: { tipo_exame: string, exame: string, medico_nome: string }): Promise<Exame> {
-
-        if (dados.exame.length !== 4) {
-            throw new Error("O código do exame deve ter exatamente 4 caracteres.");
-        }
-
-        const jaExiste = await this.repo.findOneBy({
-            tipo_exame: dados.tipo_exame,
-            exame: dados.exame,
-            medico_nome: dados.medico_nome,
-        });
-        if (jaExiste) {
-            throw new Error("Já existe um exame igual registado no sistema.");
-        }
-
-        const novo = this.repo.create(dados);
-        return this.repo.save(novo);
-    }
-
-    async listarExames(): Promise<Exame[]> {
-        return this.repo.find();
-    }
-}
-*/
-
 import { AppDataSource } from '../database/database';
 import { Exame } from '../models/exame.entity';
 import { CreateExameDto } from '../dtos/exame/create-exame.dto';
 import { ExameResponseDto } from '../dtos/exame/exame-response.dto';
-export class ExamesService {
+export class ExameService {
 
     private repo = AppDataSource.getRepository(Exame);
 
        async criarExame(
-            dados: { tipo_exame: string; exame: string; medico_nome: string; data_marcacao: string | Date }
+            dados: { id: number;utente_id: number; medico_nome: string; tipo: string; justificacao: string; data_criacao: Date; data_marcacao: Date }
         ): Promise<Exame> {
             const jaExiste = await this.repo.findOneBy({
-                tipo_exame: dados.tipo_exame,
-                exame: dados.exame,
+                id: dados.id,
+                utente_id: dados.utente_id,
                 medico_nome: dados.medico_nome,
-            });
+                tipo: dados.tipo,
+                justificacao: dados.justificacao,
+                data_criacao: dados.data_criacao,
+                data_marcacao: dados.data_marcacao,
+            })  
     
             if (jaExiste) {
                 throw new Error('Já existe um exame igual registado no sistema.');
@@ -54,19 +25,21 @@ export class ExamesService {
     
             const nova = this.repo.create({
                 ...dados, // espalha os campos tipo_exame, exame e medico_nome
-                dataCriacao: new Date(),
+                data_criacao: new Date(),
             });
     
             return this.repo.save(nova);
         }
 
- async criarPrescricaoComDTO(
+ async criarExameDto(
          dados: CreateExameDto
      ): Promise<ExameResponseDto> {
          const jaExiste = await this.repo.findOneBy({
-             tipo_exame: dados.tipo_exame,
-             exame: dados.exame,
-             medico_nome: dados.medico_nome,
+            utente_id: dados.utente_id,
+            medico_nome: dados.medico_nome,
+            tipo: dados.tipo,
+            justificacao: dados.justificacao,
+            data_marcacao: dados.data_marcacao,
          });
  
          if (jaExiste) {
@@ -75,7 +48,7 @@ export class ExamesService {
  
          const nova = this.repo.create({
              ...dados,
-             dataCriacao: new Date(),
+             data_criacao: new Date(),
          });
  
          const guardada = await this.repo.save(nova);
@@ -103,9 +76,11 @@ export class ExamesService {
         private toResponseDto(exame: Exame): ExameResponseDto {
             return {
                 id: exame.id,
-                tipo_exame: exame.tipo_exame,
-                exame: exame.exame,
+                utente_id: exame.utente_id,
                 medico_nome: exame.medico_nome,
+                tipo: exame.tipo,
+                justificacao: exame.justificacao,
+                data_marcacao: exame.data_marcacao,
             };
         }
     }

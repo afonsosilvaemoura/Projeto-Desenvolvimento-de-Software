@@ -7,15 +7,16 @@ export class PrescricaoService {
 
     private repo = AppDataSource.getRepository(Prescricao);
 
-
-
     async criarPrescricao(
-        dados: { medicamento: string; dose: string; medico_nome: string }
+        dados: { id: number; utente_id: number; medico_nome: string; farmaco: string; dosagem: string; posologia: string }
     ): Promise<Prescricao> {
         const jaExiste = await this.repo.findOneBy({
-            medicamento: dados.medicamento,
-            dose: dados.dose,
+            id: dados.id,
+            utente_id: dados.utente_id,
             medico_nome: dados.medico_nome,
+            farmaco: dados.farmaco,
+            dosagem: dados.dosagem,
+            posologia: dados.posologia,
         });
 
         if (jaExiste) {
@@ -24,20 +25,23 @@ export class PrescricaoService {
 
         const nova = this.repo.create({
             ...dados, // espalha os campos medicamento, dose e medico_nome
-            dataCriacao: new Date(),
+            data_criacao: new Date(),
         });
 
         return this.repo.save(nova);
     }
 
 
-    async criarPrescricaoComDTO(
+    async criarPrescricaoDto(
         dados: CreatePrescricaoDto
     ): Promise<PrescricaoResponseDto> {
         const jaExiste = await this.repo.findOneBy({
-            medicamento: dados.medicamento,
-            dose: dados.dose,
+            id: dados.id,
+            utente_id: dados.utente_id,
             medico_nome: dados.medico_nome,
+            farmaco: dados.farmaco,
+            dosagem: dados.dosagem,
+            posologia: dados.posologia,
         });
 
         if (jaExiste) {
@@ -46,7 +50,7 @@ export class PrescricaoService {
 
         const nova = this.repo.create({
             ...dados,
-            dataCriacao: new Date(),
+            data_criacao: new Date(),
         });
 
         const guardada = await this.repo.save(nova);
@@ -73,17 +77,15 @@ export class PrescricaoService {
     }
 
     // Usando DTO, podemos controlar os campos devolvidos ao cliente.
-    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao,
-    // mas não é enviada na resposta.
+    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao, mas não é enviada na resposta.
 
-    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais 
-    // complexa ou reutilizada em vários pontos do código.
+    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais complexa ou reutilizada em vários pontos do código.
 
     private toResponseDto(prescricao: Prescricao): PrescricaoResponseDto {
         return {
             id: prescricao.id,
-            medicamento: prescricao.medicamento,
-            dose: prescricao.dose,
+            medicamento: prescricao.farmaco,
+            dose: prescricao.dosagem,
             medico_nome: prescricao.medico_nome,
         };
     }

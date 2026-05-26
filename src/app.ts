@@ -1,3 +1,4 @@
+
 import express from 'express';
 import path from 'path';
 import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
@@ -137,10 +138,21 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ erro: 'Erro interno do servidor.', detalhe: err.message });
 });
 
-// ── Arranque ───────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\nSAUDINOB API a correr em http://localhost:${PORT}`);
+
+app.listen(3000, () => {
+  console.log(`\nSAUDINOB API a correr em http://localhost:3000`);
 });
 
 
 
+import express from 'express';
+import prescricaoRoutes from './routes/prescricao';
+import  ExameRoutes from './routes/exame';
+
+const app = express();
+
+app.use(express.json());
+app.use('/prescricoes', prescricaoRoutes);
+app.use('/exames', ExameRoutes);
+
+app.listen(3000, () => console.log("Servidor Local (Em Memória) a correr na porta 3000"));
