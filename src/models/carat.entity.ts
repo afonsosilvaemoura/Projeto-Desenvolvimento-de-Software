@@ -1,47 +1,49 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-
+ 
+// Guarda as respostas como JSON string para evitar 10 colunas separadas.
+// O score e o nível de controlo são calculados pelo service no momento da criação.
+ 
 @Entity()
-export class Carat {
-
+export class AvaliacaoCARAT {
+ 
     @PrimaryGeneratedColumn()
     id!: number;
-
+ 
+    // null se a avaliação for feita por utilizador anónimo
+    @Column({ nullable: true })
+    utente_id!: number | null;
+ 
+    // null se a avaliação for feita pelo próprio utente
+    @Column({ nullable: true })
+    medico_nome!: string | null;
+ 
+    // Array de 10 respostas (0-3 cada) guardado como JSON string
     @Column()
-    perg1!: number;
-
+    respostas!: string;
+ 
     @Column()
-    perg2!: number;
-
+    scoreTotal!: number;
+ 
     @Column()
-    perg3!: number;
-
+    scoreRinite!: number;
+ 
     @Column()
-    perg4!: number;
-
+    scoreAsma!: number;
+ 
+    // 'CONTROLADA' | 'PARCIALMENTE_CONTROLADA' | 'NAO_CONTROLADA'
     @Column()
-    perg5!: number;
-
+    nivelControlo!: string;
+ 
     @Column()
-    perg6!: number;
-
+    recomendacao!: string;
+ 
     @Column()
-    perg7!: number;
-
-    @Column()
-    perg8!: number;
-
-    @Column()
-    perg9!: number;
-
-    @Column()
-    perg10!: number;
-
-    @Column()
-    codigo!: string;
-
-    @Column()
-    medico_nome!: string;
-
+    proximoPassoSemanas!: number;
+ 
+    @Column({ default: false })
+    anonima!: boolean;
+ 
     @Column()
     dataCriacao!: Date;
 }
+ 

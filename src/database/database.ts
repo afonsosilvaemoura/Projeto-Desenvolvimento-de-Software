@@ -1,47 +1,45 @@
 import 'reflect-metadata';
-import Database from 'better-sqlite3';
 import { DataSource } from 'typeorm';
+import { Utente } from '../models/utente.entity';
+import { Medico } from '../models/medico.entity';
+import { Administrador } from '../models/administrador.entity';
+import { AvaliacaoCARAT } from '../models/avaliacao-carat.entity';
+import { Alerta } from '../models/alerta.entity';
+import { Medicacao } from '../models/medicacao.entity';
 import { Prescricao } from '../models/prescricao.entity';
 import { Exame } from '../models/exame.entity';
-import { Carat } from '../models/carat.entity';
-import { User } from '../models/user.entity';
-
-const bcrypt = require("bcryptjs");
-
-// "Tabela" de utilizadores
-export const baseDeDadosUsers: User[] = [
-    { id: 1, username: "medico", password: bcrypt.hashSync("1234", 1), role: "medico" },
-    { id: 2, username: "admin", password: bcrypt.hashSync("admin1234", 1), role: "admin" },
-    { id: 3, username: "utente", password: bcrypt.hashSync("utente1234", 1), role: "utente" }
-];
-
-// ── better-sqlite3 connection ──────────────────────────
-let db: Database.Database;
-
-export function getDb(): Database.Database {
-  if (!db) {
-    db = new Database('data.db');
-    db.pragma('journal_mode = WAL');
-  }
-  return db;
-}
+import { Auditoria } from '../models/auditoria.entity';
+import { LimiarAlerta } from '../models/limiar-alerta.entity';
+ 
 
 // ── TypeORM DataSource ─────────────────────────────────
 export const AppDataSource = new DataSource({
     type: 'better-sqlite3',
     database: 'data.db',
-    entities: [Prescricao, Exame, Carat],
+    entities: [
+        Utente,
+        Medico,
+        Administrador,
+        AvaliacaoCARAT,
+        Alerta,
+        Medicacao,
+        Prescricao,
+        Exame,
+        Auditoria,
+        LimiarAlerta,
+    ],
     synchronize: true,
 });
+ 
 
 // ── Initialize TypeORM on startup ─────────────────────
 export async function initializeDatabase() {
-  try {
-    if (!AppDataSource.isInitialized) {
-      await AppDataSource.initialize();
-      console.log('✓ TypeORM database initialized');
+    try {
+        if (!AppDataSource.isInitialized) {
+            await AppDataSource.initialize();
+            console.log('Base de dados inicializada');
+        }
+    } catch (error) {
+        console.error('Erro ao inicializar a base de dados:', error);
     }
-  } catch (error) {
-    console.error('Erro ao inicializar TypeORM:', error);
-  }
 }
