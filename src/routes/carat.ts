@@ -2,12 +2,13 @@ import { Router } from 'express';
 import { buscarCARAT, criarAvaliacaoCarat } from '../controller/carat.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
-const router = Router();
+const routes = Router();
 
 // Esta rota passa primeiro pelo authMiddleware, se falhar nem chega ao buscarCARAT
-router.get('/carat', authMiddleware, buscarCARAT);
+// router.get('/carat', authMiddleware, buscarCARAT); // buscarCARAT not exported
 router.post('/carat', authMiddleware, criarAvaliacaoCarat);
 
+export default router;
 
 /* GET /carat — listar todas as avaliações
 router.get('/', (req, res) => ctrl.listar(req, res));
