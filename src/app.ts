@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
 
-console.log('✓ Imports carregados');
+console.log('Imports carregados');
 console.log('Iniciando aplicação...');
 
 const app = express();
@@ -141,3 +141,32 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 app.listen(PORT, () => {
   console.log(`\nSAUDINOB API a correr em http://localhost:${PORT}`);
 });
+
+/*
+import express from 'express';
+import path from 'path';
+import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
+// Importe as suas rotas aqui
+import prescricaoRoutes from './routes/prescricao';
+import ExameRoutes from './routes/exame';
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Ficheiros estáticos
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Rotas importadas (Adicione isto ao seu Bloco 1)
+app.use('/prescricoes', prescricaoRoutes);
+app.use('/exames', ExameRoutes);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.listen(3000, () => console.log(`Servidor a correr em http://localhost:3000/`));
+
+});
+*/

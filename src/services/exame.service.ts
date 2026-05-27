@@ -82,7 +82,7 @@ export class ExamesService {
          return this.toResponseDto(guardada);
      }
 
-    async listarExame(): Promise<Exame[]> {
+    async listarExamecomDTO(): Promise<Exame[]> {
             return this.repo.find();
         }
     

@@ -7,84 +7,82 @@ export class PrescricaoService {
 
     private repo = AppDataSource.getRepository(Prescricao);
 
-
-
     async criarPrescricao(
-        dados: { medicamento: string; dose: string; medico_nome: string }
+        dados: { utente_id: number; farmaco: string; dosagem: string; medico_nome: string; posologia: string }
     ): Promise<Prescricao> {
         const jaExiste = await this.repo.findOneBy({
-            medicamento: dados.medicamento,
-            dose: dados.dose,
+            utente_id: dados.utente_id,
+            farmaco: dados.farmaco,
+            dosagem: dados.dosagem,
             medico_nome: dados.medico_nome,
+            posologia: dados.posologia,
         });
 
         if (jaExiste) {
-            throw new Error('Já existe uma prescrição igual registada no sistema.');
-        }
-
-        const nova = this.repo.create({
-            ...dados, // espalha os campos medicamento, dose e medico_nome
-            dataCriacao: new Date(),
-        });
-
-        return this.repo.save(nova);
-    }
-
-
-    async criarPrescricaoComDTO(
-        dados: CreatePrescricaoDto
-    ): Promise<PrescricaoResponseDto> {
-        const jaExiste = await this.repo.findOneBy({
-            medicamento: dados.medicamento,
-            dose: dados.dose,
-            medico_nome: dados.medico_nome,
-        });
-
-        if (jaExiste) {
-            throw new Error('Já existe uma prescrição igual registada no sistema.');
+            throw new Error('Já existe uma prescrição com os mesmos dados registada no sistema.');
         }
 
         const nova = this.repo.create({
             ...dados,
-            dataCriacao: new Date(),
+            data_criacao: new Date(),
+        });
+         
+        return this.repo.save(nova);
+    }
+
+    async criarPrescricaoDTO(
+        dados: CreatePrescricaoDto
+    ): Promise<Prescricao> {
+        const jaExiste = await this.repo.findOneBy({
+            utente_id: dados.utente_id,
+            farmaco: dados.farmaco,
+            dosagem: dados.dosagem,
+            medico_nome: dados.medico_nome,
+            posologia: dados.posologia,
+        });
+
+        if (jaExiste) {
+            throw new Error('Já existe uma prescrição com os mesmos dados registada no sistema.');
+        }
+
+        const nova = this.repo.create({
+            ...dados,
+            data_criacao: new Date(),
         });
 
         const guardada = await this.repo.save(nova);
-        return this.toResponseDto(guardada);
+        return this.criarPrescricaoDTO(guardada);
     }
 
-    // Busca todas as prescrições
-    async listarPrescricoes(): Promise<Prescricao[]> {
+      async listarPrescricoes(): Promise<Prescricao[]> {
         return this.repo.find();
     }
 
-    // Busca com transformação em DTO (sem expor a data de criação)
     async listarPrescricoesComDTO(): Promise<PrescricaoResponseDto[]> {
         const prescricoes = await this.repo.find();
         return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
     }
 
-    // Busca por filtro (médico específico)
+/*
+
     async listarComFiltro(nomeMedico: string): Promise<PrescricaoResponseDto[]> {
         const prescricoes = await this.repo.find({
             where: { medico_nome: nomeMedico },
         });
+        
         return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
     }
-
-    // Usando DTO, podemos controlar os campos devolvidos ao cliente.
-    // Aqui, por exemplo, a dataCriacao existe na entidade Prescricao,
-    // mas não é enviada na resposta.
-
-    // Este método pode ainda ser transformado num DTO assembler, caso a lógica de transformação seja mais 
-    // complexa ou reutilizada em vários pontos do código.
+*/
 
     private toResponseDto(prescricao: Prescricao): PrescricaoResponseDto {
         return {
             id: prescricao.id,
-            medicamento: prescricao.medicamento,
-            dose: prescricao.dose,
+            utente_id: prescricao.utente_id,
+            farmaco: prescricao.farmaco,
+            dosagem: prescricao.dosagem,
             medico_nome: prescricao.medico_nome,
+            posologia: prescricao.posologia,
+            data_criacao: prescricao.data_criacao.toISOString(),
         };
     }
 }

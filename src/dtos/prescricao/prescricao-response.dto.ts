@@ -1,6 +1,9 @@
 export interface PrescricaoResponseDto {
   id: number;
-  medicamento: string;
-  dose: string;
+  utente_id: number;
   medico_nome: string;
+  farmaco: string;
+  dosagem: string;
+  posologia: string;
+  data_criacao: string;
 }

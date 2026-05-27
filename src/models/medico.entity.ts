@@ -1,7 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { UserRole } from './user.entities';
  
 @Entity()
 export class Medico {
+    role: UserRole = UserRole.MEDICO;
  
     @PrimaryGeneratedColumn()
     id!: number;
@@ -10,7 +12,7 @@ export class Medico {
     nome!: string;
  
     @Column({ unique: true })
-    email!: string;
+    username!: string;
  
     @Column()
     password_hash!: string;
