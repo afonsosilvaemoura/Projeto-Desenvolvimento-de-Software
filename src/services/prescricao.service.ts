@@ -82,7 +82,7 @@ export class PrescricaoService {
             dosagem: prescricao.dosagem,
             medico_nome: prescricao.medico_nome,
             posologia: prescricao.posologia,
-            data_criacao: prescricao.data_criacao.toISOString(),
+            data_criacao: prescricao.data_criacao,
         };
     }
 }

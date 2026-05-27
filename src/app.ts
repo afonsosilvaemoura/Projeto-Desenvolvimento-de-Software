@@ -1,20 +1,17 @@
-import express from 'express';
+/*import express from 'express';
 import path from 'path';
-import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
 import authRoutes from './routes/auth.routes';
-
-console.log('Imports carregados');
-console.log('Iniciando aplicação...');
+import prescricaoRoutes from './routes/prescricao';
+import exameRoutes from './routes/exame';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-// ── Middleware global ──────────────────────────────────
+// ── Middleware Global ──────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.listen(PORT, () => console.log(`Servidor a correr em http://localhost:${PORT}`));
 
-// CORS básico para desenvolvimento
+// CORS básico
 app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -24,103 +21,15 @@ app.use((_req, res, next) => {
 
 // ── Ficheiros estáticos ───────────────────────────────
 app.use(express.static(path.join(__dirname, '../public')));
+
+// ── Rotas (Mapeamento) ────────────────────────────────
 app.use('/api/auth', authRoutes);
-
-// Mock data para as rotas
-const mockPrescricoes: any[] = [];
-const mockExames: any[] = [];
-const mockCarat: any[] = [];
-
-// GET /prescricoes
-app.get('/prescricoes', (_req, res) => {
-  res.json(mockPrescricoes);
-});
-
-// POST /prescricoes
-app.post('/prescricoes', (req, res) => {
-  const { medicamento, dose, medico_nome } = req.body;
-  const novaPrescricao = {
-    id: mockPrescricoes.length + 1,
-    medicamento,
-    dose,
-    medico_nome,
-    dataCriacao: new Date().toISOString()
-  };
-  mockPrescricoes.push(novaPrescricao);
-  res.status(201).json({ mensagem: `Prescrição para ${medicamento} criada`, prescricao: novaPrescricao });
-});
-
-// GET /exames
-app.get('/exames', (_req, res) => {
-  res.json(mockExames);
-}); 
-
-// GET /carat/perguntas
-app.get('/carat/perguntas', (_req, res) => {
-  res.json({
-    perguntas: PERGUNTAS_CARAT,
-    opcoes: OPCOES_RESPOSTA,
-    totalPerguntas: PERGUNTAS_CARAT.length
-  });
-});
-
-// POST /carat - Submeter respostas
-app.post('/carat', (req, res) => {
-  try {
-    const { perg1, perg2, perg3, perg4, perg5, perg6, perg7, perg8, perg9, perg10 } = req.body;
-    
-    const novaAvaliacao = {
-      id: mockCarat.length + 1,
-      perg1, perg2, perg3, perg4, perg5, perg6, perg7, perg8, perg9, perg10,
-      scoreTotal: perg1 + perg2 + perg3 + perg4 + perg5 + perg6 + perg7 + perg8 + perg9 + perg10,
-      scoreRinite: perg1 + perg2 + perg3 + perg4,
-      scoreAsma: perg5 + perg6 + perg7 + perg8 + perg9 + perg10,
-      dataCriacao: new Date().toISOString()
-    };
-    
-    mockCarat.push(novaAvaliacao);
-    res.status(201).json({ mensagem: 'Avaliação CARAT registada com sucesso', avaliacao: novaAvaliacao });
-  } catch (error: any) {
-    res.status(400).json({ erro: error.message });
-  }
-});
-
-// GET /fhir/observations
-app.get('/fhir/observations', (req, res) => {
-  const code = req.query.code as string || '8310-5';
-  const mockObservations = [
-    {
-      id: '1',
-      code: code,
-      display: 'Temperatura corporal',
-      value: 36.5,
-      unit: 'Celsius',
-      effectiveDateTime: new Date().toISOString(),
-      subject: 'Paciente 001',
-      status: 'final'
-    }
-  ];
-  res.json(mockObservations);
-});
+app.use('/prescricoes', prescricaoRoutes);
+app.use('/exames', exameRoutes);
 
 // ── Rota raiz ──────────────────────────────────────────
-app.get('/', (_req: express.Request, res: express.Response) => {
+app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// ── API Info ────────────────────────────────────────────
-app.get('/api/info', (_req: express.Request, res: express.Response) => {
-  res.json({
-    sistema: 'SAUDINOB',
-    descricao: 'Sistema de prevenção e acompanhamento de doenças respiratórias crónicas',
-    versao: '1.0.0',
-    endpoints: {
-      prescricoes: '/prescricoes',
-      exames: '/exames',
-      carat: '/carat',
-      fhir: '/fhir/observations'
-    },
-  });
 });
 
 // ── Tratamento de erros ────────────────────────────────
@@ -128,41 +37,42 @@ app.use((_req, res) => {
   res.status(404).json({ erro: 'Rota não encontrada.' });
 });
 
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('[ERRO]', err.message);
-  res.status(500).json({ erro: 'Erro interno do servidor.', detalhe: err.message });
-});
-
-// ── Arranque ───────────────────────────────────────────
+// ── Arranque do Servidor ──────────────────────────────
 app.listen(PORT, () => {
   console.log(`\nSAUDINOB API a correr em http://localhost:${PORT}`);
-});
+});*/
 
-/*
 import express from 'express';
 import path from 'path';
-import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
-// Importe as suas rotas aqui
+import { AppDataSource } from './database/database';
+import { Prescricao } from './models/prescricao.entity';
+import { Exame } from './models/exame.entity';
+import exameRoutes from './routes/exame';
 import prescricaoRoutes from './routes/prescricao';
-import ExameRoutes from './routes/exame';
 
 const app = express();
-const PORT = 3000;
 
-// Middleware
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Ficheiros estáticos
-app.use(express.static(path.join(__dirname, '../public')));
-
-// Rotas importadas (Adicione isto ao seu Bloco 1)
 app.use('/prescricoes', prescricaoRoutes);
-app.use('/exames', ExameRoutes);
+app.use('/exames', exameRoutes);
+app.use('/pedidos-exames', exameRoutes);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.listen(3000, () => console.log(`Servidor a correr em http://localhost:3000/`));
+if (require.main === module) {
+    AppDataSource.initialize().then(async () => {
 
-});
-*/
+        const prescricaoRepo = AppDataSource.getRepository(Prescricao);
+        if (await prescricaoRepo.count() === 0) {
+            await prescricaoRepo.save({ medicamento: 'Aspirina', dose: '500mg', medico_nome: 'Dr. House', dataCriacao: new Date() });
+        }
+
+        const exameRepo = AppDataSource.getRepository(Exame);
+        if (await exameRepo.count() === 0) {
+            await exameRepo.save({ nome: 'RX Torax', codigo: 'RX01', medico_nome: 'Dr. House', dataCriacao: new Date() });
+        }
+
+        app.listen(3000, () => console.log("Servidor (TypeORM + SQLite) a correr na porta 3000"));
+    });
+}
+
+export default app;

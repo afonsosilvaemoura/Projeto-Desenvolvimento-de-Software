@@ -5,5 +5,5 @@ export interface PrescricaoResponseDto {
   farmaco: string;
   dosagem: string;
   posologia: string;
-  data_criacao: string;
+  data_criacao: Date;
 }

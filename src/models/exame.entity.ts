@@ -4,23 +4,21 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 export class Exame {
  
     @PrimaryGeneratedColumn()
-    id!: number;
+    utente_id!: number;
  
     @Column()
-    utente_id!: number;
+    tipo_exame!: string;
+ 
+    @Column()
+    exame!: string;
  
     @Column()
     medico_nome!: string;
  
     @Column()
-    tipo!: string;
- 
-    @Column()
-    justificacao!: string;
- 
-    @Column()
-    dataCriacao!: Date; // Data de criação do registro
+    data_marcacao!: Date;
 
-      @Column()
-    dataMarcacao!: Date; // Data em que o exame está marcado para acontecer
+    @Column()
+    data_criacao!: Date;
+
 }

@@ -1,13 +1,10 @@
-// Cria utilizadores de teste na base de dados.
-// Executar UMA VEZ com: npx ts-node src/database/seed.ts
- 
 import 'reflect-metadata';
 import bcrypt from 'bcrypt';
 import { AppDataSource } from './database';
 import { Utente } from '../models/utente.entity';
 import { Medico } from '../models/medico.entity';
 import { Administrador } from '../models/administrador.entity';
-import { LimiarAlerta } from '../models/limiar-alerta.entity';
+import { LimiarAlerta } from '../models/limiarAlerta.entity';
  
 async function seed() {
     await AppDataSource.initialize();

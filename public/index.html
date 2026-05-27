@@ -73,17 +73,32 @@
 
 <!-- BLOCO APP -->
 <div id="bloco-app">
-  <nav>
-    <h2>Menu</h2>
-    <button onclick="mostrarPagina('pagina-inicio')">Início</button>
-    <button onclick="mostrarPagina('pagina-prescricoes')">Prescrições</button>
-    <button onclick="mostrarPagina('pagina-exames')">Exames</button>
-    <button onclick="mostrarPagina('pagina-fhir')">Consulta FHIR</button>
-    <button onclick="mostrarPagina('pagina-carat')">Questionário CARAT</button>
-    <button onclick="mostrarPagina('pagina-alertas')">Alertas</button>
-    <button onclick="mostrarPagina('pagina-Dashboard')">Dashboard</button>
-    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
-  </nav>
+<nav>
+  <h2>Menu</h2>
+
+  <!-- Todos têm acesso ao Início -->
+  <button onclick="mostrarPagina('pagina-inicio')">Início</button>
+
+  <!-- Utente: só listar | Médico: listar + criar -->
+  <button data-roles="utente,medico" onclick="mostrarPagina('pagina-prescricoes')">Prescrições</button>
+
+  <!-- Utente: só listar | Médico: listar + criar -->
+  <button data-roles="utente,medico" onclick="mostrarPagina('pagina-exames')">Exames</button>
+
+  <!-- Só admin -->
+  <button data-roles="admin" onclick="mostrarPagina('pagina-fhir')">Consulta FHIR</button>
+
+  <!-- Utente e Médico -->
+  <button data-roles="utente,medico" onclick="mostrarPagina('pagina-carat')">Questionário CARAT</button>
+
+  <!-- Só admin -->
+  <button data-roles="admin" onclick="mostrarPagina('pagina-alertas')">Alertas</button>
+
+  <!-- Utente e admin -->
+  <button data-roles="utente,admin" onclick="mostrarPagina('pagina-Dashboard')">Dashboard</button>
+
+  <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+</nav>
 
   <main>
     <section id="pagina-inicio" class="pagina ativa">
@@ -255,7 +270,7 @@
       if (!res.ok) { const d = await res.json(); throw new Error(d.erro || 'Erro ao criar prescrição'); }
       document.getElementById('formPrescricao').reset();
       await buscarPrescricoes();
-      erroEl.textContent = '✅ Prescrição criada com sucesso!'; erroEl.className = 'sucesso';
+      erroEl.textContent = 'Prescrição criada com sucesso!'; erroEl.className = 'sucesso';
     } catch (err) { erroEl.textContent = err.message; }
   }
 
@@ -267,29 +282,33 @@
       const res   = await fetch('/exames', { headers: authHeaders() });
       const dados = await res.json();
       if (!Array.isArray(dados) || dados.length === 0) { container.innerHTML = '<p>Nenhum exame registado.</p>'; return; }
-      container.innerHTML = `<table><thead><tr><th>#</th><th>Nome</th><th>Código</th><th>Médico</th><th>Data</th></tr></thead><tbody>
-        ${dados.map(x => `<tr><td>${x.id??''}</td><td>${x.nome??''}</td><td>${x.codigo??''}</td><td>${x.medico_nome??''}</td><td>${x.dataCriacao??'—'}</td></tr>`).join('')}
+      container.innerHTML = `<table><thead><tr><th>#</th><th>Tipo</th><th>Data</th><th>Médico</th><th>Data</th></tr></thead><tbody>
+        ${dados.map(x => `<tr><td>${x.utente_id??''}</td><td>${x.tipo_exame??''}</td><td>${x.exame??''}</td><td>${x.data_marcacao??'—'}</td><td>${x.medico_nome??''}</td><td>${x.data_criacao??'—'}</td></tr>`).join('')}
       </tbody></table>`;
     } catch { container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>'; }
   }
 
-  async function criarExame(e) {
+ async function criarExame(e) {
     e.preventDefault();
     const erroEl = document.getElementById('erroExame');
     erroEl.textContent = ''; erroEl.className = 'erro';
     const body = {
-      tipoExame:   document.getElementById('tipoExame').value.trim(),
-      dataExame:   document.getElementById('dataExame').value.trim(),
-      medico_nome: document.getElementById('exameMedicoNome').value.trim()
+      utente_id: document.getElementById('utenteId').value.trim(),
+      tipo_exame: document.getElementById('tipoExame').value.trim(),
+      exame: document.getElementById('exame').value.trim(),
+      medico_nome: document.getElementById('exameMedicoNome').value.trim(),
+      data_marcacao: document.getElementById('dataMarcacao').value.trim()
     };
     try {
       const res = await fetch('/exames', { method:'POST', headers: authHeaders({'Content-Type':'application/json'}), body: JSON.stringify(body) });
       if (!res.ok) { const d = await res.json(); throw new Error(d.erro || 'Erro ao criar exame'); }
       document.getElementById('formExame').reset();
       await buscarExames();
-      erroEl.textContent = '✅ Exame criado com sucesso!'; erroEl.className = 'sucesso';
+      erroEl.textContent = 'Exame criado com sucesso!'; erroEl.className = 'sucesso';
     } catch (err) { erroEl.textContent = err.message; }
   }
+
+
 
   // ── CARAT ────────────────────────────────────────────────────────
   async function buscarCARAT() {
@@ -353,6 +372,36 @@
       document.getElementById('modalAlerta').style.display   = 'flex';
     } catch (err) { console.error(err); erroEl.textContent = 'Erro ao submeter respostas.'; }
   }
+
+function aplicarPermissoes() {
+  const role = localStorage.getItem('userRole'); // "utente", "medico" ou "admin"
+
+  // Controla botões do menu
+  document.querySelectorAll('nav button[data-roles]').forEach(btn => {
+    const rolesPermitidos = btn.getAttribute('data-roles').split(',');
+    btn.style.display = rolesPermitidos.includes(role) ? 'block' : 'none';
+  });
+
+  // Controla secções dentro das páginas
+  document.querySelectorAll('[data-roles]').forEach(el => {
+    // Ignora os botões do nav (já tratados acima)
+    if (el.tagName === 'BUTTON') return;
+    const rolesPermitidos = el.getAttribute('data-roles').split(',');
+    el.style.display = rolesPermitidos.includes(role) ? 'block' : 'none';
+  });
+}
+
+function iniciarAplicacao() {
+  document.getElementById('bloco-login').style.display = 'none';
+  document.getElementById('bloco-app').style.display = 'flex';
+
+  aplicarPermissoes(); // ← aplica as permissões antes de carregar dados
+
+  buscarPrescricoes();
+  buscarExames();
+  carregarPerguntasCarat();
+  buscarCARAT();
+}
 
   // ── FHIR ─────────────────────────────────────────────────────────
   async function pesquisarFhir(e) {
