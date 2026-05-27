@@ -51,7 +51,7 @@ export class PrescricaoService {
         });
 
         const guardada = await this.repo.save(nova);
-        return this.criarPrescricaoDTO(guardada);
+        return this.toResponseDto(guardada); 
     }
 
       async listarPrescricoes(): Promise<Prescricao[]> {
