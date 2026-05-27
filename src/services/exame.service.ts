@@ -3,38 +3,53 @@ import { Exame } from '../models/exame.entity';
 import { CreateExameDto } from '../dtos/exame/create-exame.dto';
 import { ExameResponseDto } from '../dtos/exame/exame-response.dto';
 
-export class ExamesService {
+export class ExameService {
+    
     private repo = AppDataSource.getRepository(Exame);
 
-    async criarExame(dados: CreateExameDto): Promise<Exame> {
-        // 1. Verificação de duplicidade: ignore o ID aqui
+    async criarExame(
+        dados: { utente_id: number; tipo: string; medico_nome: string; justificacao: string; data_marcacao: Date }
+    ): Promise<Exame> {
         const jaExiste = await this.repo.findOneBy({
             utente_id: dados.utente_id,
             tipo: dados.tipo,
             medico_nome: dados.medico_nome,
-            data_marcacao: dados.data_marcacao as any, 
+            data_marcacao: dados.data_marcacao, 
         });
 
         if (jaExiste) {
-            throw new Error('Já existe um exame igual registado no sistema.');
+            throw new Error('Já existe um exame com os mesmos dados registado no sistema.');
         }
 
-        // 2. Desestruture para remover o ID (se vier no DTO) e garantir a consistência
-        const { id, ...dadosSemId } = dados;
-
         const nova = this.repo.create({
-            ...dadosSemId,
-            // Certifique-se de que o nome aqui é igual ao da sua Entidade
-            data_criacao: new Date(), 
+            ...dados,
+            data_criacao: new Date(),
         });
-
+         
         return this.repo.save(nova);
     }
 
-    async criarPrescricaoComDTO(dados: CreateExameDto): Promise<ExameResponseDto> {
-        // Reutilizamos a lógica de criação para evitar duplicação
-        const exameCriado = await this.criarExame(dados);
-        return this.toResponseDto(exameCriado);
+    async criarExameDTO(
+        dados: CreateExameDto
+    ): Promise<ExameResponseDto> {
+const jaExiste = await this.repo.findOneBy({
+            utente_id: dados.utente_id,
+            tipo: dados.tipo,
+            medico_nome: dados.medico_nome,
+            data_marcacao: new Date(dados.data_marcacao),
+        });
+
+        if (jaExiste) {
+            throw new Error('Já existe um exame com os mesmos dados registado no sistema.');
+        }
+
+        const nova = this.repo.create({
+            ...dados,
+            data_criacao: new Date(),
+        });
+
+        const guardada = await this.repo.save(nova);
+        return this.criarExameDTO(guardada);
     }
 
     async listarExame(): Promise<Exame[]> {
@@ -61,7 +76,7 @@ export class ExamesService {
             tipo: exame.tipo,
             justificacao: exame.justificacao,
             data_marcacao: exame.data_marcacao,
-            data_criacao: exame.data_criacao,
+            data_criacao: exame.data_criacao
         };
     }
 }

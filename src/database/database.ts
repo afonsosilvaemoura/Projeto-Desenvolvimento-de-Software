@@ -60,6 +60,4 @@ export const baseDeDadosUsers = [
         password: "1234.", 
         role: "medico"
     }
-];
-
-
+]

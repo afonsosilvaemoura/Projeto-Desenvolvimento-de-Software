@@ -7,7 +7,7 @@ export interface CreateExameDto {
   medico_nome: string;
   tipo: string;
   justificacao: string;
-  data_marcacao: string; // Data em que o exame está marcado para acontecer
-  data_criacao: string; // Data de criação do registro
+  data_marcacao: Date; // Data em que o exame está marcado para acontecer
+  data_criacao: Date; // Data de criação do registro
 
 }

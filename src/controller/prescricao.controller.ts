@@ -6,7 +6,7 @@ export class PrescricaoController {
     private service = new PrescricaoService();
 
     async listar(req: Request, res: Response) {
-        const prescricoes = await this.service.listarPrescricoes();
+        const prescricoes = await this.service.listarPrescricao();
         return res.json(prescricoes);
     }
 
@@ -18,16 +18,16 @@ export class PrescricaoController {
     // Versão sem DTOs: os dados são usados diretamente a partir do req.body
     async criar(req: Request, res: Response) {
         try {
-            const { id, utente_id, medicamento, dose, medico_nome, posologia } = req.body;
+            const { utente_id, farmaco, dosagem, medico_nome, posologia } = req.body;
             const novaPrescricao = await this.service.criarPrescricao({
-                id: id ?? null,
-                utente_id: utente_id ?? null,
+                utente_id,
+                farmaco,
+                dosagem,
                 medico_nome,
-                farmaco: medicamento,
-                dosagem: dose,
-                posologia: posologia ?? ''
+                posologia
             });
             return res.status(201).json(novaPrescricao);
+
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
@@ -38,16 +38,13 @@ export class PrescricaoController {
 
         try {
             const dto: CreatePrescricaoDto = req.body;
-            const novaPrescricao = await this.service.criarPrescricaoDto(dto);
+            const novaPrescricao = await this.service.criarPrescricaoDTO(dto);
             return res.status(201).json(novaPrescricao);
+
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
-    }
-
-
-    
-    
+    }  
 }
 
 

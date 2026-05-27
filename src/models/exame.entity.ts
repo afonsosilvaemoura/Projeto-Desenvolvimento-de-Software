@@ -19,8 +19,8 @@ export class Exame {
     justificacao!: string;
  
     @Column()
-    data_criacao!: string; // Data de criação do registro
+    data_criacao!: Date; // Data de criação do registro
 
     @Column()
-    data_marcacao!: string; // Data em que o exame está marcado para acontecer
+    data_marcacao!: Date // Data em que o exame está marcado para acontecer
 }

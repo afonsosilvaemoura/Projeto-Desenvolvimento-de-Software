@@ -17,10 +17,16 @@ export class ExameController {
 
     async criar(req: Request, res: Response) {
         try {
-            // Use the DTO-based method to avoid missing required fields
-            const dto: CreateExameDto = req.body;
-            const novoExame = await this.service.criarExameDto(dto);
+            const { utente_id, tipo, medico_nome, justificacao, data_marcacao } = req.body;
+            const novoExame = await this.service.criarExame({
+                utente_id,
+                medico_nome,
+                tipo,
+                justificacao,
+                data_marcacao
+            });
             return res.status(201).json(novoExame);
+
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
@@ -30,14 +36,10 @@ export class ExameController {
     async criarComDTO(req: Request, res: Response) {
         try {
             const dto: CreateExameDto = req.body;
-            const novoExame = await this.service.criarExameDto(dto);
+            const novoExame = await this.service.criarExameDTO(dto);
             return res.status(201).json(novoExame);
         } catch (error: any) {
             return res.status(400).json({ erro: error.message });
         }
     }
 }
-
-
-
-

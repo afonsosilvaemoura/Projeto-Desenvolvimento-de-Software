@@ -8,6 +8,3 @@ routes.get('/', controller.listarComDTO);
 routes.post('/', controller.criar);
 
 export default routes;
-
-
-

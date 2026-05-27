@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/prescricoes', prescricaoRoutes);
 app.use('/exames', ExameRoutes);
 
+
 // Suas outras rotas (GET /carat, etc...)
 // ...
 
