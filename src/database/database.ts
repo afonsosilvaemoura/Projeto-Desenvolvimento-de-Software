@@ -44,14 +44,14 @@ export const AppDataSource = new DataSource({
 export const baseDeDadosUsers = [
     {
         id: "1",
-        username: "joao_silva",
+        username: "joao",
         password: "1234", 
         role: "utente"
     },
     {
         id: "2",
         username: "admin",
-        password: "1234.", 
+        password: "1234", 
         role: "administrador"
     },
     {

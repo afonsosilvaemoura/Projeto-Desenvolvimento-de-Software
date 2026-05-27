@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from './services/carat.service';
+import authRoutes from './routes/auth.routes';
 
 console.log('Imports carregados');
 console.log('Iniciando aplicação...');
@@ -23,7 +24,7 @@ app.use((_req, res, next) => {
 
 // ── Ficheiros estáticos ───────────────────────────────
 app.use(express.static(path.join(__dirname, '../public')));
-
+app.use('/api/auth', authRoutes);
 
 // Mock data para as rotas
 const mockPrescricoes: any[] = [];
@@ -52,12 +53,7 @@ app.post('/prescricoes', (req, res) => {
 // GET /exames
 app.get('/exames', (_req, res) => {
   res.json(mockExames);
-});
-
-// GET /carat
-app.get('/carat', (_req, res) => {
-  res.json(mockCarat);
-});
+}); 
 
 // GET /carat/perguntas
 app.get('/carat/perguntas', (_req, res) => {
