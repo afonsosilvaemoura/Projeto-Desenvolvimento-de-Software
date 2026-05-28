@@ -15,6 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
+
+
 app.use('/api/auth',    authRoutes);
 app.use('/prescricoes', prescricaoRoutes);
 app.use('/exames',      exameRoutes);

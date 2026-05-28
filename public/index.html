@@ -10,36 +10,49 @@
 
     #bloco-login { display: flex; justify-content: center; align-items: center; height: 100vh; }
     .login-container { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); width: 100%; max-width: 400px; }
+    .login-container h2 { text-align:center; margin-bottom:20px; color:#0f172a; }
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
     .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 15px; }
-    .btn-login { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .btn-login { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top:6px; }
+    .btn-login:hover { background: #1d4ed8; }
 
     #bloco-app { display: none; min-height: 100vh; }
-    nav { width: 260px; background: linear-gradient(180deg, #0f172a, #1e293b); color: white; padding: 30px 20px; box-shadow: 4px 0 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
-    nav h2 { font-size: 24px; margin-bottom: 25px; text-align: center; color: #e2e8f0; }
-    nav button { width: 100%; border: none; padding: 14px 16px; margin-bottom: 12px; border-radius: 14px; background: rgba(255,255,255,0.08); color: #e5e7eb; cursor: pointer; text-align: left; font-size: 15px; transition: all 0.25s ease; }
+    nav { width: 260px; background: linear-gradient(180deg, #0f172a, #1e293b); color: white; padding: 30px 20px; box-shadow: 4px 0 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; flex-shrink:0; }
+    nav h2 { font-size: 20px; margin-bottom: 6px; text-align: center; color: #e2e8f0; }
+    #navNomeUser { font-size:13px; color:#94a3b8; text-align:center; margin-bottom:22px; }
+    nav button { width: 100%; border: none; padding: 14px 16px; margin-bottom: 10px; border-radius: 14px; background: rgba(255,255,255,0.08); color: #e5e7eb; cursor: pointer; text-align: left; font-size: 15px; transition: all 0.2s ease; }
     nav button:hover { background: #2563eb; transform: translateX(4px); }
     .btn-logout { margin-top: auto; background: #dc2626 !important; text-align: center !important; }
 
-    main { flex: 1; padding: 40px; }
+    main { flex: 1; padding: 40px; overflow-y:auto; }
     .pagina { display: none; }
     .pagina.ativa { display: block; animation: fadeIn .25s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-    h1 { font-size: 32px; margin-bottom: 10px; }
-    h2 { margin-top: 35px; margin-bottom: 15px; color: #374151; font-size: 22px; }
-    section { background: white; border-radius: 24px; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
-    form.app-form { display: flex; flex-direction: column; gap: 14px; max-width: 500px; }
-    form.app-form input { padding: 14px; border: 1px solid #d1d5db; border-radius: 14px; font-size: 15px; background: #f9fafb; }
-    button.form-btn { padding: 14px; border: none; border-radius: 14px; background: #2563eb; color: white; cursor: pointer; font-weight: 600; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; border-radius: 18px; background: white; overflow: hidden; }
-    th { background: #eef2ff; font-weight: 600; padding: 16px; text-align: left; }
-    td { padding: 16px; border-bottom: 1px solid #e5e7eb; }
-    .erro { color: #dc2626; font-weight: 500; }
-    .sucesso { color: #16a34a; font-weight: 500; }
-    .badge-controlada { background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 99px; font-size: 13px; font-weight: 600; }
-    .badge-nao-controlada { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 99px; font-size: 13px; font-weight: 600; }
+    h1 { font-size: 28px; margin-bottom: 10px; }
+    h2.section-title { margin-top: 30px; margin-bottom: 14px; color: #374151; font-size: 20px; }
+    section.card { background: white; border-radius: 24px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom:24px; }
+    form.app-form { display: flex; flex-direction: column; gap: 12px; max-width: 520px; }
+    form.app-form label { font-size:14px; font-weight:500; color:#374151; margin-bottom:2px; display:block; }
+    form.app-form input:not([type="radio"]):not([type="checkbox"]), form.app-form select { padding: 12px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 15px; background: #f9fafb; width:100%; }
+    button.form-btn { padding: 14px; border: none; border-radius: 14px; background: #2563eb; color: white; cursor: pointer; font-weight: 600; font-size:15px; }
+    button.form-btn:hover { background: #1d4ed8; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; background: white; border-radius: 14px; overflow: hidden; box-shadow:0 2px 10px rgba(0,0,0,0.04); }
+    th { background: #eef2ff; font-weight: 600; padding: 14px 16px; text-align: left; font-size:14px; }
+    td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; font-size:14px; }
+    tr:last-child td { border-bottom:none; }
+    .erro { color: #dc2626; font-weight: 500; margin-top:4px; font-size:14px; }
+    .sucesso { color: #16a34a; font-weight: 500; margin-top:4px; font-size:14px; }
+    .badge-controlada { background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+    .badge-nao-controlada { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+
+    /* Dashboard */
+    .dashboard-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin:20px 0; }
+    .stat-card { background:#eef2ff; border-radius:16px; padding:24px; text-align:center; }
+    .stat-card .stat-num { font-size:36px; font-weight:700; color:#2563eb; }
+    .stat-card .stat-label { font-size:14px; color:#475569; margin-top:4px; }
+    .dropdown-utente { padding:12px; border:1px solid #d1d5db; border-radius:12px; font-size:15px; width:100%; max-width:340px; margin-bottom:20px; background:#f9fafb; }
   </style>
 </head>
 <body>
@@ -47,7 +60,7 @@
 <!-- BLOCO LOGIN -->
 <div id="bloco-login">
   <div class="login-container">
-    <h2 style="text-align:center; margin-bottom:20px;">Acesso SAUDINOB</h2>
+    <h2>Acesso SAUDINOB</h2>
     <form id="loginForm">
       <div class="form-group">
         <label for="role">Tipo de Acesso:</label>
@@ -58,149 +71,210 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="username">Nome de Utilizador / ID:</label>
-        <input type="text" id="username" required>
+        <label for="username">Utilizador:</label>
+        <input type="text" id="username" placeholder="ex: joao" required>
       </div>
       <div class="form-group">
         <label for="password">Palavra-passe:</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" placeholder="ex: 1234" required>
       </div>
       <button type="submit" class="btn-login">Entrar</button>
     </form>
-    <p id="errorMessage" style="color:#dc2626; display:none; margin-top:15px; text-align:center; font-weight:500;"></p>
+    <p id="errorMessage" style="color:#dc2626; display:none; margin-top:14px; text-align:center; font-weight:500;"></p>
+    <details style="margin-top:16px; font-size:13px; color:#94a3b8;">
+      <summary style="cursor:pointer;">Contas de teste</summary>
+      <p style="margin-top:6px; line-height:1.7;">
+        utente → joao / 1234<br>
+        medico → medico1 / 1234.<br>
+        admin &nbsp;→ admin / 1234.
+      </p>
+    </details>
   </div>
 </div>
 
 <!-- BLOCO APP -->
 <div id="bloco-app">
-<nav>
-  <h2>Menu</h2>
+  <nav>
+    <h2>SAUDINOB</h2>
+    <span id="navNomeUser"></span>
 
-  <!-- Todos têm acesso ao Início -->
-  <button onclick="mostrarPagina('pagina-inicio')">Início</button>
+    <button onclick="mostrarPagina('pagina-inicio')">🏠 Início</button>
+    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-prescricoes')">💊 Prescrições</button>
+    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-exames')">🔬 Exames</button>
+    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-carat')">📋 Questionário CARAT</button>
+    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-Dashboard')">📊 Dashboard</button>
+    <button data-roles="admin" onclick="mostrarPagina('pagina-fhir')">🔗 Consulta FHIR</button>
+    <button data-roles="admin" onclick="mostrarPagina('pagina-alertas')">🔔 Alertas</button>
 
-  <!-- Utente: só listar | Médico: listar + criar -->
-  <button data-roles="utente,medico" onclick="mostrarPagina('pagina-prescricoes')">Prescrições</button>
-
-  <!-- Utente: só listar | Médico: listar + criar -->
-  <button data-roles="utente,medico" onclick="mostrarPagina('pagina-exames')">Exames</button>
-
-  <!-- Só admin -->
-  <button data-roles="admin" onclick="mostrarPagina('pagina-fhir')">Consulta FHIR</button>
-
-  <!-- Utente e Médico -->
-  <button data-roles="utente,medico" onclick="mostrarPagina('pagina-carat')">Questionário CARAT</button>
-
-  <!-- Só admin -->
-  <button data-roles="admin" onclick="mostrarPagina('pagina-alertas')">Alertas</button>
-
-  <!-- Utente e admin -->
-  <button data-roles="utente,admin" onclick="mostrarPagina('pagina-Dashboard')">Dashboard</button>
-
-  <button class="btn-logout" onclick="fazerLogout()">Sair</button>
-</nav>
+    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+  </nav>
 
   <main>
-    <section id="pagina-inicio" class="pagina ativa">
+    <!-- INÍCIO -->
+    <section id="pagina-inicio" class="pagina ativa card">
       <h1>Sistema Clínico</h1>
-      <p>Bem-vindo. Escolha uma funcionalidade no menu lateral.</p>
+      <p style="color:#64748b; margin-top:8px;">Bem-vindo. Escolha uma funcionalidade no menu lateral.</p>
     </section>
 
+    <!-- PRESCRIÇÕES -->
     <section id="pagina-prescricoes" class="pagina">
       <h1>Prescrições</h1>
-      <form id="formPrescricao" class="app-form">
-        <input id="medicamento" placeholder="Medicamento" required />
-        <input id="dose" placeholder="Dose" required />
-        <input id="prescricaoMedicoNome" placeholder="Nome do médico" required />
-        <button class="form-btn" type="submit">Criar prescrição</button>
-        <p id="erroPrescricao" class="erro"></p>
-      </form>
-      <div id="listaPrescricoes"><p>A carregar prescrições...</p></div>
+      <div class="card" id="formPrescricaoWrap">
+        <h2 class="section-title">Nova Prescrição</h2>
+        <form id="formPrescricao" class="app-form">
+          <div><label>Farmaco</label><input id="Farmaco"/></div>
+          <div><label>Dosagem</label><input id="dosagem"/></div>
+          <div><label>Posologia</label><input id="Posologia"/></div>
+          <div><label>Nome do Médico</label><input id="prescricaoMedicoNome"/></div>
+          <button class="form-btn" type="submit">Criar Prescrição</button>
+          <p id="erroPrescricao"></p>
+        </form>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Lista de Prescrições</h2>
+        <div id="listaPrescricoes"><p style="color:#64748b;">A carregar prescrições...</p></div>
+      </div>
     </section>
 
+    <!-- EXAMES -->
     <section id="pagina-exames" class="pagina">
       <h1>Exames</h1>
-      <form id="formExame" class="app-form">
-        <input id="tipoExame" placeholder="Tipo de exame" required />
-        <input id="dataExame" type="date" required />
-        <input id="exameMedicoNome" placeholder="Nome do médico" required />
-        <button class="form-btn" type="submit">Criar exame</button>
-        <p id="erroExame" class="erro"></p>
-      </form>
-      <div id="listaExames"><p>A carregar exames...</p></div>
+      <div class="card" id="formExameWrap">
+        <h2 class="section-title">Criar Exame</h2>
+        <form id="formExame" class="app-form">
+          <div><label>ID do Utente</label><input id="exameUtenteId" type="number" placeholder="ex: 1" required /></div>
+          <div><label>Tipo de Exame</label><input id="exameTipoExame" placeholder="ex: Espirometria" required /></div>
+          <div><label>Exame</label><input id="exameNome" placeholder="ex: FVC, FEV1" required /></div>
+          <div><label>ID do Médico</label><input id="exameMedicoId" type="number" placeholder="ex: 2" required /></div>
+          <div><label>Data de Marcação</label><input id="exameDataMarcacao" type="date" required /></div>
+          <button class="form-btn" type="submit">Criar Exame</button>
+          <p id="erroExame"></p>
+        </form>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Lista de Exames</h2>
+        <div id="listaExames"><p style="color:#64748b;">A carregar exames...</p></div>
+      </div>
     </section>
 
-    <section id="pagina-fhir" class="pagina">
+    <!-- FHIR -->
+    <section id="pagina-fhir" class="pagina card">
       <h1>Consulta FHIR</h1>
       <form id="formFhir" class="app-form">
-        <input id="codigoLoinc" placeholder="Código LOINC" required />
+        <div><label>Código LOINC</label><input id="codigoLoinc" placeholder="ex: 8310-5" required /></div>
         <button class="form-btn" type="submit">Pesquisar</button>
       </form>
-      <div id="resultadoFhir"></div>
+      <div id="resultadoFhir" style="margin-top:16px;"></div>
     </section>
 
+    <!-- CARAT -->
     <section id="pagina-carat" class="pagina">
       <h1>Questionário CARAT</h1>
-      <form id="formCarat" class="app-form">
-        <div id="perguntasContainer"><p>A carregar perguntas...</p></div>
-        <button class="form-btn" type="submit">Submeter</button>
-        <p id="erroCarat" class="erro"></p>
-      </form>
-      <h2>Histórico CARAT</h2>
-      <div id="listaCARAT"><p>A carregar...</p></div>
+      <div class="card">
+        <h2 class="section-title">Responder ao Questionário</h2>
+        <form id="formCarat" class="app-form">
+          <div id="perguntasContainer"><p style="color:#64748b;">A carregar perguntas...</p></div>
+          <button class="form-btn" type="submit" id="btnSubmeterCarat" style="display:none;">Submeter Respostas</button>
+          <p id="erroCarat" class="erro"></p>
+        </form>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Histórico CARAT</h2>
+        <div id="listaCARAT"><p style="color:#64748b;">A carregar...</p></div>
+      </div>
     </section>
 
-    <section id="pagina-alertas" class="pagina">
+    <!-- ALERTAS -->
+    <section id="pagina-alertas" class="pagina card">
       <h1>Alertas</h1>
-      <p>Sem alertas de momento.</p>
+      <p style="color:#64748b;">Sem alertas de momento.</p>
     </section>
 
+    <!-- DASHBOARD -->
     <section id="pagina-Dashboard" class="pagina">
       <h1>Dashboard</h1>
-      <p>Em construção.</p>
+
+      <!-- Médico: dropdown de utentes -->
+      <div id="dashboardMedico" style="display:none;">
+        <div class="card">
+          <h2 class="section-title">Selecionar Utente</h2>
+          <select id="selectUtente" class="dropdown-utente" onchange="carregarDashboardUtente(this.value)">
+            <option value="">-- Escolha um utente --</option>
+          </select>
+        </div>
+        <div id="dashboardDados"></div>
+      </div>
+
+      <!-- Utente: só os seus dados -->
+      <div id="dashboardUtente" style="display:none;">
+        <div id="dashboardDadosProprios"></div>
+      </div>
+
+      <div id="dashboardAdmin" style="display:none;" class="card">
+        <p>Vista de administrador: selecione uma secção no menu.</p>
+      </div>
     </section>
   </main>
 </div>
 
-<!-- MODAL DE ALERTA -->
+<!-- MODAL RESULTADO CARAT -->
 <div id="modalAlerta" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
-  <div style="background:white; padding:30px; border-radius:12px; width:90%; max-width:400px; text-align:center;">
-    <h2 id="tituloAlerta" style="margin-top:0; color:#0a5c91;">Avaliação Clínica</h2>
-    <p id="textoRecomendacao" style="margin:20px 0; font-size:1.1rem; line-height:1.5;"></p>
-    <button onclick="irParaAlertas()" style="width:100%; padding:12px; background:#0a5c91; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Ir para Alertas</button>
-    <button onclick="fecharModal()" style="width:100%; padding:12px; background:#6b7280; color:white; border:none; border-radius:6px; cursor:pointer; margin-top:10px;">Fechar</button>
+  <div style="background:white; padding:30px; border-radius:16px; width:90%; max-width:420px; text-align:center;">
+    <h2 id="tituloAlerta" style="margin-top:0; color:#0f172a;">Resultado CARAT</h2>
+    <div id="resultadoScores" style="display:flex; gap:12px; justify-content:center; margin:16px 0;"></div>
+    <p id="textoRecomendacao" style="margin:16px 0; font-size:1rem; line-height:1.6; color:#374151;"></p>
+    <button onclick="fecharModal()" style="width:100%; padding:12px; background:#2563eb; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:600; font-size:15px;">Fechar</button>
   </div>
 </div>
 
 <script>
-  // ── Utilitário: cabeçalhos autenticados ──────────────────────────
+  // ── Cabeçalhos autenticados ──────────────────────────
   function authHeaders(extra = {}) {
     return { 'Authorization': 'Bearer ' + localStorage.getItem('token'), ...extra };
   }
 
-  // ── Navegação ────────────────────────────────────────────────────
-  // FIX: função definida UMA única vez (estava duplicada)
+  // ── Navegação ────────────────────────────────────────
   function mostrarPagina(idPagina) {
     document.querySelectorAll('.pagina').forEach(p => p.classList.remove('ativa'));
     const alvo = document.getElementById(idPagina);
     if (alvo) alvo.classList.add('ativa');
+
+    // Carregar dados ao navegar para o Dashboard
+    if (idPagina === 'pagina-Dashboard') carregarDashboard();
   }
 
-  // ── Arranque ─────────────────────────────────────────────────────
+  // ── Arranque ─────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('token')) iniciarAplicacao();
   });
 
+  function aplicarPermissoes() {
+    const role = localStorage.getItem('userRole');
+    document.querySelectorAll('[data-roles]').forEach(el => {
+      const permitidos = el.getAttribute('data-roles').split(',');
+      el.style.display = permitidos.includes(role) ? '' : 'none';
+    });
+    // Garantir que botões nav não perdem display
+    document.querySelectorAll('nav button[data-roles]').forEach(btn => {
+      const permitidos = btn.getAttribute('data-roles').split(',');
+      btn.style.display = permitidos.includes(role) ? 'block' : 'none';
+    });
+    // Nome no nav
+    const nome = localStorage.getItem('userNome') || role;
+    document.getElementById('navNomeUser').textContent = nome;
+  }
+
   function iniciarAplicacao() {
     document.getElementById('bloco-login').style.display = 'none';
-    document.getElementById('bloco-app').style.display = 'flex';
+    document.getElementById('bloco-app').style.display   = 'flex';
+    aplicarPermissoes();
     buscarPrescricoes();
     buscarExames();
     carregarPerguntasCarat();
     buscarCARAT();
   }
 
-  // ── Login ─────────────────────────────────────────────────────────
+  // ── Login ─────────────────────────────────────────────
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const role     = document.getElementById('role').value;
@@ -213,18 +287,18 @@
       const res  = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // FIX: o formulário já envia "admin"; o backend normaliza para "administrador"
         body: JSON.stringify({ username, password, role })
       });
       const data = await res.json();
-
       if (res.ok) {
         localStorage.setItem('token',    data.token);
         localStorage.setItem('userRole', data.role);
+        localStorage.setItem('userId',   data.userId);
+        localStorage.setItem('userNome', data.nome);
         iniciarAplicacao();
       } else {
-        errorEl.textContent    = data.erro || 'Credenciais inválidas.';
-        errorEl.style.display  = 'block';
+        errorEl.textContent   = data.erro || 'Credenciais inválidas.';
+        errorEl.style.display = 'block';
       }
     } catch {
       errorEl.textContent   = 'Erro de ligação ao servidor.';
@@ -232,27 +306,33 @@
     }
   });
 
-  // ── Logout ───────────────────────────────────────────────────────
+  // ── Logout ───────────────────────────────────────────
   function fazerLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
+    ['token','userRole','userId','userNome'].forEach(k => localStorage.removeItem(k));
     document.getElementById('bloco-app').style.display   = 'none';
     document.getElementById('bloco-login').style.display = 'flex';
     document.getElementById('loginForm').reset();
     document.getElementById('errorMessage').style.display = 'none';
   }
 
-  // ── Prescrições ──────────────────────────────────────────────────
+  // ── Prescrições ──────────────────────────────────────
   async function buscarPrescricoes() {
     const container = document.getElementById('listaPrescricoes');
-    container.innerHTML = '<p>A carregar prescrições...</p>';
+    container.innerHTML = '<p style="color:#64748b;">A carregar...</p>';
     try {
       const res   = await fetch('/prescricoes', { headers: authHeaders() });
       const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) { container.innerHTML = '<p>Nenhuma prescrição registada.</p>'; return; }
-      container.innerHTML = `<table><thead><tr><th>#</th><th>Medicamento</th><th>Dose</th><th>Médico</th><th>Data</th></tr></thead><tbody>
-        ${dados.map(p => `<tr><td>${p.id??''}</td><td>${p.medicamento??''}</td><td>${p.dose??''}</td><td>${p.medico_nome??''}</td><td>${p.dataCriacao??'—'}</td></tr>`).join('')}
-      </tbody></table>`;
+      if (!Array.isArray(dados) || dados.length === 0) {
+        container.innerHTML = '<p style="color:#64748b;">Nenhuma prescrição registada.</p>';
+        return;
+      }
+      container.innerHTML = `
+        <table><thead><tr><th>#</th><th>Medicamento</th><th>Dose</th><th>Médico</th><th>Data</th></tr></thead><tbody>
+        ${dados.map(p => `<tr>
+          <td>${p.id??''}</td><td>${p.medicamento??''}</td><td>${p.dose??''}</td>
+          <td>${p.medico_nome??''}</td><td>${formatarData(p.dataCriacao)}</td>
+        </tr>`).join('')}
+        </tbody></table>`;
     } catch { container.innerHTML = '<p class="erro">Erro ao carregar prescrições.</p>'; }
   }
 
@@ -274,84 +354,87 @@
     } catch (err) { erroEl.textContent = err.message; }
   }
 
-  // ── Exames ───────────────────────────────────────────────────────
+  // ── Exames ───────────────────────────────────────────
   async function buscarExames() {
-  const container = document.getElementById('listaExames');
-  container.innerHTML = '<p>A carregar exames...</p>';
-  try {
-    const res   = await fetch('/exames', { headers: authHeaders() });
-    const dados = await res.json();
-    if (!Array.isArray(dados) || dados.length === 0) {
-      container.innerHTML = '<p>Nenhum exame registado.</p>';
-      return;
-    }
-    container.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Tipo de Exame</th>
-            <th>Exame</th>
-            <th>Médico</th>
-            <th>Data Marcação</th>
-            <th>Data Criação</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${dados.map(x => `
-            <tr>
-              <td>${x.id ?? ''}</td>
-              <td>${x.tipo_exame ?? ''}</td>
-              <td>${x.exame ?? ''}</td>
-              <td>${x.medico_nome ?? ''}</td>
-              <td>${x.data_marcacao ? new Date(x.data_marcacao).toLocaleDateString('pt-PT') : '—'}</td>
-              <td>${x.data_criacao  ? new Date(x.data_criacao).toLocaleDateString('pt-PT')  : '—'}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-  } catch {
-    container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>';
+    const container = document.getElementById('listaExames');
+    container.innerHTML = '<p style="color:#64748b;">A carregar...</p>';
+    try {
+      const res   = await fetch('/exames', { headers: authHeaders() });
+      const dados = await res.json();
+      if (!Array.isArray(dados) || dados.length === 0) {
+        container.innerHTML = '<p style="color:#64748b;">Nenhum exame registado.</p>';
+        return;
+      }
+      container.innerHTML = `
+        <table><thead><tr>
+          <th>#</th><th>Utente ID</th><th>Tipo de Exame</th><th>Exame</th>
+          <th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th>
+        </tr></thead><tbody>
+        ${dados.map(x => `<tr>
+          <td>${x.id??''}</td>
+          <td>${x.utente_id??''}</td>
+          <td>${x.tipo_exame??''}</td>
+          <td>${x.exame??''}</td>
+          <td>${x.medico_id??''}</td>
+          <td>${formatarData(x.data_marcacao)}</td>
+          <td>${formatarData(x.data_criacao)}</td>
+        </tr>`).join('')}
+        </tbody></table>`;
+    } catch { container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>'; }
   }
-}
- async function criarExame(e) {
+
+  async function criarExame(e) {
     e.preventDefault();
     const erroEl = document.getElementById('erroExame');
     erroEl.textContent = ''; erroEl.className = 'erro';
     const body = {
-      utente_id: document.getElementById('utenteId').value.trim(),
-      tipo_exame: document.getElementById('tipoExame').value.trim(),
-      exame: document.getElementById('exame').value.trim(),
-      medico_nome: document.getElementById('exameMedicoNome').value.trim(),
-      data_marcacao: document.getElementById('dataMarcacao').value.trim()
+      utente_id:     document.getElementById('exameUtenteId').value.trim(),
+      tipo_exame:    document.getElementById('exameTipoExame').value.trim(),
+      exame:         document.getElementById('exameNome').value.trim(),
+      medico_id:     document.getElementById('exameMedicoId').value.trim(),
+      data_marcacao: document.getElementById('exameDataMarcacao').value.trim()
     };
     try {
-      const res = await fetch('/exames', { method:'POST', headers: authHeaders({'Content-Type':'application/json'}), body: JSON.stringify(body) });
+      const res = await fetch('/exames', {
+        method: 'POST',
+        headers: authHeaders({'Content-Type':'application/json'}),
+        body: JSON.stringify(body)
+      });
       if (!res.ok) { const d = await res.json(); throw new Error(d.erro || 'Erro ao criar exame'); }
-      document.getElementById('formPrescricao').reset();
-      await buscarPrescricoes();
-      erroEl.textContent = 'Prescrição criada com sucesso!'; erroEl.className = 'sucesso';
+      document.getElementById('formExame').reset();
+      await buscarExames();
+      erroEl.textContent = 'Exame criado com sucesso!'; erroEl.className = 'sucesso';
     } catch (err) { erroEl.textContent = err.message; }
   }
 
-
-
-  // ── CARAT ────────────────────────────────────────────────────────
+  // ── CARAT ────────────────────────────────────────────
   async function buscarCARAT() {
     const container = document.getElementById('listaCARAT');
-    container.innerHTML = '<p>A carregar...</p>';
+    container.innerHTML = '<p style="color:#64748b;">A carregar...</p>';
     try {
       const res   = await fetch('/carat', { headers: authHeaders() });
       const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) { container.innerHTML = '<p>Nenhum questionário CARAT registado.</p>'; return; }
-      container.innerHTML = `<table><thead><tr><th>#</th><th>Doente</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th></tr></thead><tbody>
+      if (!Array.isArray(dados) || dados.length === 0) {
+        container.innerHTML = '<p style="color:#64748b;">Nenhum questionário CARAT registado.</p>';
+        return;
+      }
+      container.innerHTML = `
+        <table><thead><tr>
+          <th>#</th><th>Doente</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th>
+        </tr></thead><tbody>
         ${dados.map(c => {
-          // FIX: variável classeBadge estava indefinida no original
           const controlada = c.controloTotal === 'CONTROLADA';
           const classe = controlada ? 'badge-controlada' : 'badge-nao-controlada';
           const texto  = controlada ? 'Controlada' : 'Não Controlada';
-          return `<tr><td>${c.id??''}</td><td>${c.nome??'Doente'}</td><td><strong>${c.scoreTotal??0}</strong>/30</td><td>${c.scoreRinite??0}/12</td><td>${c.scoreAsma??0}/18</td><td><span class="${classe}">${texto}</span></td><td>${c.dataCriacao??''}</td></tr>`;
+          return `<tr>
+            <td>${c.id??''}</td><td>${c.nome??'Doente'}</td>
+            <td><strong>${c.scoreTotal??0}</strong>/30</td>
+            <td>${c.scoreRinite??0}/12</td><td>${c.scoreAsma??0}/18</td>
+            <td><span class="${classe}">${texto}</span></td>
+            <td>${formatarData(c.dataCriacao)}</td>
+          </tr>`;
         }).join('')}
-      </tbody></table>`;
+        </tbody></table>`;
     } catch { container.innerHTML = '<p class="erro">Erro ao carregar questionários CARAT.</p>'; }
   }
 
@@ -365,7 +448,10 @@
           <label><strong>${idx+1}. ${pergunta}</strong></label><br>
           ${dados.opcoes.map(op => `<label style="display:block; margin:8px 0;"><input type="radio" name="pergunta_${idx}" value="${op.valor}" required> ${op.label}</label>`).join('')}
         </div>`).join('');
-    } catch { document.getElementById('perguntasContainer').innerHTML = '<p class="erro">Erro ao carregar perguntas.</p>'; }
+      document.getElementById('btnSubmeterCarat').style.display = 'block';
+    } catch {
+      document.getElementById('perguntasContainer').innerHTML = '<p class="erro">Erro ao carregar perguntas.</p>';
+    }
   }
 
   async function submeterRespostasCarat(e) {
@@ -382,74 +468,212 @@
 
     try {
       const body = Object.fromEntries(respostas.map((v, i) => [`perg${i+1}`, v]));
-      const res  = await fetch('/carat', { method:'POST', headers: authHeaders({'Content-Type':'application/json'}), body: JSON.stringify(body) });
+      const res  = await fetch('/carat', {
+        method: 'POST',
+        headers: authHeaders({'Content-Type':'application/json'}),
+        body: JSON.stringify(body)
+      });
       const dados = await res.json();
+      if (!res.ok) throw new Error(dados.erro || 'Erro ao submeter');
 
-      // FIX: bloco if/else com chaves correto (original tinha uma chave a mais)
-      const score = dados.avaliacao.scoreTotal;
-      let recomendacao;
-      if      (score > 24) recomendacao = 'Controlado: Os sintomas estão estáveis. Volte daqui a 12 semanas.';
-      else if (score > 16) recomendacao = 'Vigiar: Os seus sintomas merecem atenção. Reveja a medicação.';
-      else                 recomendacao = 'Urgente: O seu controlo é baixo. Recomendamos uma consulta médica com brevidade.';
+      const av = dados.avaliacao;
+      const score = av.scoreTotal;
+      let recomendacao, corBadge;
+      if (score > 24) {
+        recomendacao = '✅ Controlado — Os sintomas estão estáveis. Próxima avaliação daqui a 12 semanas.';
+        corBadge = '#16a34a';
+      } else if (score > 16) {
+        recomendacao = '⚠️ Vigiar — Os seus sintomas merecem atenção. Reveja a medicação e marque consulta em 4 semanas.';
+        corBadge = '#d97706';
+      } else {
+        recomendacao = '🚨 Urgente — O seu controlo é baixo. Recomendamos consulta médica com brevidade.';
+        corBadge = '#dc2626';
+      }
 
-      document.getElementById('tituloAlerta').textContent    = 'Resultado do CARAT';
+      document.getElementById('resultadoScores').innerHTML = `
+        <div style="background:#eef2ff;border-radius:12px;padding:14px;flex:1;text-align:center;">
+          <div style="font-size:28px;font-weight:700;color:#2563eb;">${score}/30</div>
+          <div style="font-size:12px;color:#64748b;">Score Total</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:12px;padding:14px;flex:1;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:#16a34a;">${av.scoreRinite}/12</div>
+          <div style="font-size:12px;color:#64748b;">Rinite</div>
+        </div>
+        <div style="background:#fff7ed;border-radius:12px;padding:14px;flex:1;text-align:center;">
+          <div style="font-size:22px;font-weight:700;color:#d97706;">${av.scoreAsma}/18</div>
+          <div style="font-size:12px;color:#64748b;">Asma</div>
+        </div>`;
+
+      document.getElementById('tituloAlerta').textContent     = 'Resultado do CARAT';
       document.getElementById('textoRecomendacao').textContent = recomendacao;
-      document.getElementById('modalAlerta').style.display   = 'flex';
-    } catch (err) { console.error(err); erroEl.textContent = 'Erro ao submeter respostas.'; }
+      document.getElementById('textoRecomendacao').style.color = corBadge;
+      document.getElementById('modalAlerta').style.display     = 'flex';
+
+      document.getElementById('formCarat').reset();
+      await buscarCARAT();
+    } catch (err) {
+      console.error(err);
+      erroEl.textContent = err.message || 'Erro ao submeter respostas.';
+    }
   }
 
-function aplicarPermissoes() {
-  const role = localStorage.getItem('userRole'); // "utente", "medico" ou "admin"
+  // ── DASHBOARD ─────────────────────────────────────────
+  async function carregarDashboard() {
+    const role   = localStorage.getItem('userRole');
+    const userId = Number(localStorage.getItem('userId'));
 
-  // Controla botões do menu
-  document.querySelectorAll('nav button[data-roles]').forEach(btn => {
-    const rolesPermitidos = btn.getAttribute('data-roles').split(',');
-    btn.style.display = rolesPermitidos.includes(role) ? 'block' : 'none';
-  });
+    document.getElementById('dashboardMedico').style.display  = 'none';
+    document.getElementById('dashboardUtente').style.display  = 'none';
+    document.getElementById('dashboardAdmin').style.display   = 'none';
 
-  // Controla secções dentro das páginas
-  document.querySelectorAll('[data-roles]').forEach(el => {
-    // Ignora os botões do nav (já tratados acima)
-    if (el.tagName === 'BUTTON') return;
-    const rolesPermitidos = el.getAttribute('data-roles').split(',');
-    el.style.display = rolesPermitidos.includes(role) ? 'block' : 'none';
-  });
-}
+    if (role === 'medico') {
+      document.getElementById('dashboardMedico').style.display = 'block';
+      await carregarUtentesMedico();
+    } else if (role === 'utente') {
+      document.getElementById('dashboardUtente').style.display = 'block';
+      await carregarDashboardUtentesProprios(userId);
+    } else {
+      document.getElementById('dashboardAdmin').style.display = 'block';
+    }
+  }
 
-function iniciarAplicacao() {
-  document.getElementById('bloco-login').style.display = 'none';
-  document.getElementById('bloco-app').style.display = 'flex';
+  async function carregarUtentesMedico() {
+    try {
+      const res    = await fetch('/dashboard/utentes', { headers: authHeaders() });
+      const utentes = await res.json();
+      const select = document.getElementById('selectUtente');
+      select.innerHTML = '<option value="">-- Escolha um utente --</option>';
+      utentes.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id; opt.textContent = u.nome;
+        select.appendChild(opt);
+      });
+    } catch { console.error('Erro ao carregar utentes do médico'); }
+  }
 
-  aplicarPermissoes(); // ← aplica as permissões antes de carregar dados
+  async function carregarDashboardUtente(utenteId) {
+    if (!utenteId) { document.getElementById('dashboardDados').innerHTML = ''; return; }
+    const container = document.getElementById('dashboardDados');
+    container.innerHTML = '<p style="color:#64748b;margin:16px 0;">A carregar dados...</p>';
+    try {
+      const res  = await fetch(`/dashboard/dados/${utenteId}`, { headers: authHeaders() });
+      const d    = await res.json();
+      container.innerHTML = renderDashboardCards(d);
+    } catch { container.innerHTML = '<p class="erro">Erro ao carregar dados do utente.</p>'; }
+  }
 
-  buscarPrescricoes();
-  buscarExames();
-  carregarPerguntasCarat();
-  buscarCARAT();
-}
+  async function carregarDashboardUtentesProprios(userId) {
+    const container = document.getElementById('dashboardDadosProprios');
+    container.innerHTML = '<p style="color:#64748b;margin:16px 0;">A carregar os seus dados...</p>';
+    try {
+      const res  = await fetch(`/dashboard/dados/${userId}`, { headers: authHeaders() });
+      const d    = await res.json();
+      container.innerHTML = renderDashboardCards(d);
+    } catch { container.innerHTML = '<p class="erro">Erro ao carregar dados.</p>'; }
+  }
 
-  // ── FHIR ─────────────────────────────────────────────────────────
+  function renderDashboardCards(d) {
+    const uc = d.ultimoCarat;
+    const ucBadge = uc
+      ? (uc.controloTotal === 'CONTROLADA'
+          ? '<span class="badge-controlada">Controlada</span>'
+          : '<span class="badge-nao-controlada">Não Controlada</span>')
+      : '—';
+    const ucScore = uc ? `${uc.scoreTotal}/30` : '—';
+
+    return `
+      <div class="card">
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <div class="stat-num">${d.totalExames}</div>
+            <div class="stat-label">Exames Registados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">${d.totalCarats}</div>
+            <div class="stat-label">Questionários CARAT</div>
+          </div>
+          <div class="stat-card" style="background:#fff7ed;">
+            <div class="stat-num" style="color:#d97706; font-size:24px;">${ucScore}</div>
+            <div class="stat-label">Último Score CARAT</div>
+          </div>
+          <div class="stat-card" style="background:#f0fdf4; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            ${ucBadge}
+            <div class="stat-label" style="margin-top:8px;">Estado Atual</div>
+          </div>
+        </div>
+      </div>
+
+      ${d.exames.length > 0 ? `
+      <div class="card">
+        <h2 class="section-title">Exames</h2>
+        <table><thead><tr>
+          <th>#</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th>
+        </tr></thead><tbody>
+        ${d.exames.map(x => `<tr>
+          <td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
+          <td>${x.medico_id??'—'}</td>
+          <td>${formatarData(x.data_marcacao)}</td>
+          <td>${formatarData(x.data_criacao)}</td>
+        </tr>`).join('')}
+        </tbody></table>
+      </div>` : ''}
+
+      ${d.carats.length > 0 ? `
+      <div class="card">
+        <h2 class="section-title">Histórico CARAT</h2>
+        <table><thead><tr>
+          <th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th>
+        </tr></thead><tbody>
+        ${d.carats.map(c => {
+          const ctrl = c.controloTotal === 'CONTROLADA';
+          return `<tr>
+            <td>${c.id}</td>
+            <td><strong>${c.scoreTotal}/30</strong></td>
+            <td>${c.scoreRinite}/12</td><td>${c.scoreAsma}/18</td>
+            <td><span class="${ctrl ? 'badge-controlada' : 'badge-nao-controlada'}">${ctrl ? 'Controlada' : 'Não Controlada'}</span></td>
+            <td>${formatarData(c.dataCriacao)}</td>
+          </tr>`;
+        }).join('')}
+        </tbody></table>
+      </div>` : ''}`;
+  }
+
+  // ── FHIR ─────────────────────────────────────────────
   async function pesquisarFhir(e) {
     e.preventDefault();
     const codigo    = document.getElementById('codigoLoinc').value.trim();
     const resultado = document.getElementById('resultadoFhir');
-    resultado.innerHTML = '<p>A pesquisar...</p>';
+    resultado.innerHTML = '<p style="color:#64748b;">A pesquisar...</p>';
     try {
       const res   = await fetch(`/fhir/observations?code=${encodeURIComponent(codigo)}`);
       if (!res.ok) throw new Error();
       const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) { resultado.innerHTML = '<p>Nenhuma Observation encontrada.</p>'; return; }
-      resultado.innerHTML = `<table><thead><tr><th>ID</th><th>Código</th><th>Descrição</th><th>Valor</th><th>Unidade</th><th>Data/Hora</th><th>Doente</th><th>Estado</th></tr></thead><tbody>
-        ${dados.map(o => `<tr><td>${o.id??''}</td><td>${o.code??''}</td><td>${o.display??''}</td><td>${o.value??''}</td><td>${o.unit??''}</td><td>${o.effectiveDateTime??''}</td><td>${o.subject??''}</td><td>${o.status??''}</td></tr>`).join('')}
+      if (!Array.isArray(dados) || dados.length === 0) {
+        resultado.innerHTML = '<p>Nenhuma Observation encontrada.</p>';
+        return;
+      }
+      resultado.innerHTML = `<table><thead><tr>
+        <th>ID</th><th>Código</th><th>Descrição</th><th>Valor</th><th>Unidade</th><th>Data/Hora</th><th>Doente</th><th>Estado</th>
+      </tr></thead><tbody>
+        ${dados.map(o => `<tr>
+          <td>${o.id??''}</td><td>${o.code??''}</td><td>${o.display??''}</td>
+          <td>${o.value??''}</td><td>${o.unit??''}</td><td>${o.effectiveDateTime??''}</td>
+          <td>${o.subject??''}</td><td>${o.status??''}</td>
+        </tr>`).join('')}
       </tbody></table>`;
     } catch { resultado.innerHTML = '<p class="erro">Erro ao consultar servidor FHIR.</p>'; }
   }
 
-  // ── Modal ────────────────────────────────────────────────────────
-  function fecharModal() { document.getElementById('modalAlerta').style.display = 'none'; }
-  function irParaAlertas() { fecharModal(); mostrarPagina('pagina-alertas'); }
+  // ── Utilitário de datas ───────────────────────────────
+  function formatarData(val) {
+    if (!val) return '—';
+    try { return new Date(val).toLocaleDateString('pt-PT'); } catch { return val; }
+  }
 
-  // ── Event Listeners ──────────────────────────────────────────────
+  // ── Modal ────────────────────────────────────────────
+  function fecharModal() { document.getElementById('modalAlerta').style.display = 'none'; }
+
+  // ── Event Listeners ──────────────────────────────────
   document.getElementById('formPrescricao').addEventListener('submit', criarPrescricao);
   document.getElementById('formExame').addEventListener('submit', criarExame);
   document.getElementById('formFhir').addEventListener('submit', pesquisarFhir);

@@ -117,9 +117,9 @@ export function calcularCARAT(respostas: number[]): ResultadoCARAT {
   const scoreAsma = respostasAsma.reduce((acc, val) => acc + val, 0);
   const scoreTotal = scoreRinite + scoreAsma;
 
-console.log('Respostas Rinite:', respostasRinite, 'Score Rinite:', scoreRinite);
+/*console.log('Respostas Rinite:', respostasRinite, 'Score Rinite:', scoreRinite);
 console.log('Respostas Asma:', respostasAsma, 'Score Asma:', scoreAsma);
-console.log('Score Total:', scoreTotal);
+console.log('Score Total:', scoreTotal);*/
   // Rinite: > 8 é bem controlada
   const riniteControlada = scoreRinite > CARAT.LIMIAR_MAX_RINITE_MAL_CONTROLADA; 
   

@@ -1,45 +1,28 @@
-/*Esta classe AuthService é responsável por autenticar um utilizador.
-
-Ou seja, recebe:
-	•	username
-	•	password
-
-e verifica se:
-	1.	o utilizador existe
-	2.	a password está correta
-
-Se tudo correr bem, gera um token JWT que poderá depois ser usado nas rotas protegidas.*/
-
-
-
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { baseDeDadosUsers } from '../database/database';
 import { appConfig } from '../config/app.config';
 
+const mockUsers = [
+  { id: 1, username: 'joao',    password: bcrypt.hashSync('1234',  10), role: 'utente',       nome: 'João Silva'   },
+  { id: 2, username: 'medico1', password: bcrypt.hashSync('1234', 10), role: 'medico',        nome: 'Dr. Carlos'   },
+  { id: 3, username: 'admin',   password: bcrypt.hashSync('1234', 10), role: 'administrador', nome: 'Administrador' },
+];
+
 export class AuthService {
-    login(username: string, password: string): string {
-        const user = baseDeDadosUsers.find(u => u.username === username);
+  login(username: string, password: string, role: string): { token: string; role: string; userId: number; nome: string } {
+    const user = mockUsers.find(u => u.username === username);
+    if (!user) throw new Error('Credenciais inválidas.');
 
-        if (!user) {
-            throw new Error('Credenciais inválidas.');
-        }
+    const roleNormalizado = role === 'admin' ? 'administrador' : role;
+    if (user.role !== roleNormalizado) throw new Error('Tipo de acesso incorreto para este utilizador.');
 
-        const passwordValida = bcrypt.compareSync(password, user.password);
+    if (!bcrypt.compareSync(password, user.password)) throw new Error('Credenciais inválidas.');
 
-        if (!passwordValida) {
-            throw new Error('Credenciais inválidas.');
-        }
-
-        const token = jwt.sign(
-            {
-                id: user.id,
-                username: user.username,
-                role: user.role
-            },
-            appConfig.auth.jwtSecret
-        );
-
-        return token;
-    }
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role, nome: user.nome },
+      appConfig.auth.jwtSecret,
+      { expiresIn: '8h' }
+    );
+    return { token, role: user.role, userId: user.id, nome: user.nome };
+  }
 }
