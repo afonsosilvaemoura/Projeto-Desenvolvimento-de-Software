@@ -1,28 +1,38 @@
-import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { appConfig } from '../config/app.config';
-
-const mockUsers = [
-  { id: 1, username: 'joao',    password: bcrypt.hashSync('1234',  10), role: 'utente',       nome: 'João Silva'   },
-  { id: 2, username: 'medico1', password: bcrypt.hashSync('1234', 10), role: 'medico',        nome: 'Dr. Carlos'   },
-  { id: 3, username: 'admin',   password: bcrypt.hashSync('1234', 10), role: 'administrador', nome: 'Administrador' },
-];
+import jwt from 'jsonwebtoken';
+import { AppDataSource } from '../database/database';
+import { Utente }        from '../models/utente.entity';
+import { Medico }        from '../models/medico.entity';
+import { Administrador } from '../models/administrador.entity';
+import { appConfig }     from '../config/app.config';
 
 export class AuthService {
-  login(username: string, password: string, role: string): { token: string; role: string; userId: number; nome: string } {
-    const user = mockUsers.find(u => u.username === username);
-    if (!user) throw new Error('Credenciais inválidas.');
+  async login(
+    username: string,
+    password: string,
+    role: string
+  ): Promise<{ token: string; role: string; userId: number; nome: string }> {
 
-    const roleNormalizado = role === 'admin' ? 'administrador' : role;
-    if (user.role !== roleNormalizado) throw new Error('Tipo de acesso incorreto para este utilizador.');
+    const roleNorm = role === 'admin' ? 'administrador' : role;
+    let userRow: any = null;
 
-    if (!bcrypt.compareSync(password, user.password)) throw new Error('Credenciais inválidas.');
+    if (roleNorm === 'utente') {
+      userRow = await AppDataSource.getRepository(Utente).findOne({ where: { username } });
+    } else if (roleNorm === 'medico') {
+      userRow = await AppDataSource.getRepository(Medico).findOne({ where: { username } });
+    } else if (roleNorm === 'administrador') {
+      userRow = await AppDataSource.getRepository(Administrador).findOne({ where: { username } });
+    }
+
+    if (!userRow) throw new Error('Credenciais inválidas.');
+    if (!bcrypt.compareSync(password, userRow.password_hash)) throw new Error('Credenciais inválidas.');
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role, nome: user.nome },
+      { id: userRow.id, username: userRow.username, role: roleNorm, nome: userRow.nome },
       appConfig.auth.jwtSecret,
       { expiresIn: '8h' }
     );
-    return { token, role: user.role, userId: user.id, nome: user.nome };
+
+    return { token, role: roleNorm, userId: userRow.id, nome: userRow.nome };
   }
 }

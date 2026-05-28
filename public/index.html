@@ -5,679 +5,688 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema Clínico SAUDINOB</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: "Segoe UI", Arial, sans-serif; background: #f5f7fb; min-height: 100vh; color: #1f2937; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:"Segoe UI",Arial,sans-serif;background:#f5f7fb;min-height:100vh;color:#1f2937}
 
-    #bloco-login { display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .login-container { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); width: 100%; max-width: 400px; }
-    .login-container h2 { text-align:center; margin-bottom:20px; color:#0f172a; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-    .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 15px; }
-    .btn-login { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top:6px; }
-    .btn-login:hover { background: #1d4ed8; }
+    /* Login */
+    #bloco-login{display:flex;justify-content:center;align-items:center;height:100vh}
+    .login-box{background:white;padding:40px;border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.06);width:100%;max-width:400px}
+    .login-box h2{text-align:center;margin-bottom:20px;color:#0f172a}
+    .fg{margin-bottom:14px}
+    .fg label{display:block;margin-bottom:6px;font-weight:500;font-size:14px}
+    .fg input,.fg select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;font-size:15px}
+    .btn-primary{width:100%;padding:14px;background:#2563eb;color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:4px}
+    .btn-primary:hover{background:#1d4ed8}
+    .msg-erro{color:#dc2626;font-weight:500;margin-top:12px;text-align:center}
 
-    #bloco-app { display: none; min-height: 100vh; }
-    nav { width: 260px; background: linear-gradient(180deg, #0f172a, #1e293b); color: white; padding: 30px 20px; box-shadow: 4px 0 20px rgba(0,0,0,0.08); display: flex; flex-direction: column; flex-shrink:0; }
-    nav h2 { font-size: 20px; margin-bottom: 6px; text-align: center; color: #e2e8f0; }
-    #navNomeUser { font-size:13px; color:#94a3b8; text-align:center; margin-bottom:22px; }
-    nav button { width: 100%; border: none; padding: 14px 16px; margin-bottom: 10px; border-radius: 14px; background: rgba(255,255,255,0.08); color: #e5e7eb; cursor: pointer; text-align: left; font-size: 15px; transition: all 0.2s ease; }
-    nav button:hover { background: #2563eb; transform: translateX(4px); }
-    .btn-logout { margin-top: auto; background: #dc2626 !important; text-align: center !important; }
+    /* Layout */
+    #bloco-app{display:none;min-height:100vh}
+    nav{width:250px;background:linear-gradient(180deg,#0f172a,#1e293b);color:white;padding:28px 16px;display:flex;flex-direction:column;flex-shrink:0}
+    nav h2{font-size:19px;margin-bottom:4px;text-align:center;color:#e2e8f0}
+    #navNomeUser{font-size:12px;color:#94a3b8;text-align:center;margin-bottom:20px}
+    nav button{width:100%;border:none;padding:13px 14px;margin-bottom:8px;border-radius:12px;background:rgba(255,255,255,.08);color:#e5e7eb;cursor:pointer;text-align:left;font-size:14px;transition:all .18s}
+    nav button:hover{background:#2563eb;transform:translateX(3px)}
+    .btn-logout{margin-top:auto!important;background:#dc2626!important;text-align:center!important}
+    .btn-registo{background:rgba(22,163,74,.25)!important;color:#4ade80!important}
+    .btn-registo:hover{background:#16a34a!important;color:white!important}
+    main{flex:1;padding:36px;overflow-y:auto}
+    .pagina{display:none}
+    .pagina.ativa{display:block;animation:fi .22s ease}
+    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-    main { flex: 1; padding: 40px; overflow-y:auto; }
-    .pagina { display: none; }
-    .pagina.ativa { display: block; animation: fadeIn .25s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    h1 { font-size: 28px; margin-bottom: 10px; }
-    h2.section-title { margin-top: 30px; margin-bottom: 14px; color: #374151; font-size: 20px; }
-    section.card { background: white; border-radius: 24px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom:24px; }
-    form.app-form { display: flex; flex-direction: column; gap: 12px; max-width: 520px; }
-    form.app-form label { font-size:14px; font-weight:500; color:#374151; margin-bottom:2px; display:block; }
-    form.app-form input:not([type="radio"]):not([type="checkbox"]), form.app-form select { padding: 12px; border: 1px solid #d1d5db; border-radius: 12px; font-size: 15px; background: #f9fafb; width:100%; }
-    button.form-btn { padding: 14px; border: none; border-radius: 14px; background: #2563eb; color: white; cursor: pointer; font-weight: 600; font-size:15px; }
-    button.form-btn:hover { background: #1d4ed8; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; background: white; border-radius: 14px; overflow: hidden; box-shadow:0 2px 10px rgba(0,0,0,0.04); }
-    th { background: #eef2ff; font-weight: 600; padding: 14px 16px; text-align: left; font-size:14px; }
-    td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; font-size:14px; }
-    tr:last-child td { border-bottom:none; }
-    .erro { color: #dc2626; font-weight: 500; margin-top:4px; font-size:14px; }
-    .sucesso { color: #16a34a; font-weight: 500; margin-top:4px; font-size:14px; }
-    .badge-controlada { background: #d1fae5; color: #065f46; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
-    .badge-nao-controlada { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+    /* Cards e forms */
+    .card{background:white;border-radius:20px;padding:28px;box-shadow:0 4px 16px rgba(0,0,0,.05);margin-bottom:22px}
+    h1.pg-title{font-size:26px;margin-bottom:20px}
+    h2.sec{margin:0 0 14px;color:#374151;font-size:19px}
+    .app-form{display:flex;flex-direction:column;gap:12px;max-width:500px}
+    .app-form label{font-size:13px;font-weight:500;color:#374151;display:block;margin-bottom:2px}
+    .app-form input:not([type=radio]):not([type=checkbox]),.app-form select{padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb;width:100%}
+    .app-form input[type=checkbox]{width:16px;height:16px;cursor:pointer}
+    button.form-btn{padding:13px;border:none;border-radius:12px;background:#2563eb;color:white;cursor:pointer;font-weight:600;font-size:14px}
+    button.form-btn:hover{background:#1d4ed8}
+    .msg{font-size:13px;font-weight:500;margin-top:2px}
+    .msg.erro{color:#dc2626}.msg.ok{color:#16a34a}
+    table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+    th{background:#eef2ff;font-weight:600;padding:12px 14px;text-align:left}
+    td{padding:12px 14px;border-bottom:1px solid #e5e7eb}
+    tr:last-child td{border-bottom:none}
+    .badge-ok{background:#d1fae5;color:#065f46;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+    .badge-nok{background:#fee2e2;color:#991b1b;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+    .badge-info{background:#dbeafe;color:#1e40af;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
 
     /* Dashboard */
-    .dashboard-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin:20px 0; }
-    .stat-card { background:#eef2ff; border-radius:16px; padding:24px; text-align:center; }
-    .stat-card .stat-num { font-size:36px; font-weight:700; color:#2563eb; }
-    .stat-card .stat-label { font-size:14px; color:#475569; margin-top:4px; }
-    .dropdown-utente { padding:12px; border:1px solid #d1d5db; border-radius:12px; font-size:15px; width:100%; max-width:340px; margin-bottom:20px; background:#f9fafb; }
+    .ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
+    .ficha-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:16px;text-align:center}
+    .ficha-item .val{font-size:22px;font-weight:700;color:#2563eb;margin-bottom:4px}
+    .ficha-item .lbl{font-size:12px;color:#64748b}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
+    .stat{background:#eef2ff;border-radius:14px;padding:20px;text-align:center}
+    .stat .num{font-size:32px;font-weight:700;color:#2563eb}
+    .stat .lbl{font-size:12px;color:#475569;margin-top:4px}
+    select.dropdown{padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;width:100%;max-width:320px;background:#f9fafb;margin-bottom:18px}
+
+    /* Alertas */
+    .limiar-form{display:flex;flex-direction:column;gap:14px;max-width:420px}
+    .limiar-form label{font-size:13px;font-weight:500;color:#374151}
+    .limiar-form input[type=range]{width:100%}
+    .limiar-form input[type=number]{padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;width:120px}
+    .range-row{display:flex;align-items:center;gap:14px}
+    .range-val{font-size:18px;font-weight:700;color:#2563eb;min-width:28px}
+
+    /* Modal Registo */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8000;justify-content:center;align-items:center}
+    .overlay.aberto{display:flex}
+    .modal{background:white;padding:32px;border-radius:20px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto}
+    .modal h2{margin-bottom:20px;color:#0f172a}
+    .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#64748b;margin-top:-4px}
+
+    /* Modal CARAT */
+    #modalCarat{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;justify-content:center;align-items:center}
+    #modalCarat.aberto{display:flex}
+    .scores-row{display:flex;gap:12px;justify-content:center;margin:14px 0;flex-wrap:wrap}
+    .score-box{background:#eef2ff;border-radius:12px;padding:14px 18px;text-align:center;min-width:90px}
+    .score-box .sv{font-size:26px;font-weight:700;color:#2563eb}
+    .score-box .sl{font-size:11px;color:#64748b;margin-top:3px}
   </style>
 </head>
 <body>
 
-<!-- BLOCO LOGIN -->
+<!-- LOGIN -->
 <div id="bloco-login">
-  <div class="login-container">
-    <h2>Acesso SAUDINOB</h2>
+  <div class="login-box">
+    <h2>SAUDINOB</h2>
     <form id="loginForm">
-      <div class="form-group">
-        <label for="role">Tipo de Acesso:</label>
-        <select id="role" required>
-          <option value="utente">Utente</option>
-          <option value="medico">Médico</option>
-          <option value="admin">Administrador</option>
-        </select>
+      <div class="fg"><label>Tipo de Acesso</label>
+        <select id="role"><option value="utente">Utente</option><option value="medico">Médico</option><option value="admin">Administrador</option></select>
       </div>
-      <div class="form-group">
-        <label for="username">Utilizador:</label>
-        <input type="text" id="username" placeholder="ex: joao" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Palavra-passe:</label>
-        <input type="password" id="password" placeholder="ex: 1234" required>
-      </div>
-      <button type="submit" class="btn-login">Entrar</button>
+      <div class="fg"><label>Utilizador</label><input id="username" placeholder="ex: joao" required></div>
+      <div class="fg"><label>Palavra-passe</label><input type="password" id="password" placeholder="ex: 1234" required></div>
+      <button class="btn-primary" type="submit">Entrar</button>
     </form>
-    <p id="errorMessage" style="color:#dc2626; display:none; margin-top:14px; text-align:center; font-weight:500;"></p>
-    <details style="margin-top:16px; font-size:13px; color:#94a3b8;">
-      <summary style="cursor:pointer;">Contas de teste</summary>
-      <p style="margin-top:6px; line-height:1.7;">
-        utente → joao / 1234<br>
-        medico → medico1 / 1234.<br>
-        admin &nbsp;→ admin / 1234.
-      </p>
+    <p id="loginErro" class="msg-erro" style="display:none"></p>
+    <details style="margin-top:16px;font-size:12px;color:#94a3b8"><summary style="cursor:pointer">Contas de teste</summary>
+      <div style="margin-top:8px;line-height:1.9">
+        admin / 1234. → Administrador<br>
+        medico1 / 1234. → Dr. Carlos Silva<br>
+        medico2 / 1234. → Dr.ª Ana Ferreira<br>
+        medico3 / 1234. → Dr. Rui Costa<br>
+        joao / 1234 → João Silva (utente)<br>
+        maria, pedro, ana, rui, sofia, miguel… / 1234
+      </div>
     </details>
   </div>
 </div>
 
-<!-- BLOCO APP -->
+<!-- APP -->
 <div id="bloco-app">
   <nav>
     <h2>SAUDINOB</h2>
     <span id="navNomeUser"></span>
-
-    <button onclick="mostrarPagina('pagina-inicio')">🏠 Início</button>
-    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-prescricoes')">💊 Prescrições</button>
-    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-exames')">🔬 Exames</button>
-    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-carat')">📋 Questionário CARAT</button>
-    <button data-roles="utente,medico" onclick="mostrarPagina('pagina-Dashboard')">📊 Dashboard</button>
-    <button data-roles="admin" onclick="mostrarPagina('pagina-fhir')">🔗 Consulta FHIR</button>
-    <button data-roles="admin" onclick="mostrarPagina('pagina-alertas')">🔔 Alertas</button>
-
-    <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    <button data-roles="utente,medico" onclick="ir('pagina-inicio')">🏠 Início</button>
+    <button data-roles="utente,medico" onclick="ir('pagina-prescricoes')">💊 Prescrições</button>
+    <button data-roles="utente,medico" onclick="ir('pagina-exames')">🔬 Exames</button>
+    <button data-roles="utente,medico" onclick="ir('pagina-carat')">📋 CARAT</button>
+    <button data-roles="utente,medico" onclick="ir('pagina-dashboard')">📊 Dashboard</button>
+    <button data-roles="medico" class="btn-registo" onclick="abrirModalRegisto()">➕ Novo Registo</button>
+    <button data-roles="administrador" onclick="ir('pagina-alertas')">🔔 Alertas</button>
+    <button class="btn-logout" onclick="sair()">Sair</button>
   </nav>
-
   <main>
+
     <!-- INÍCIO -->
     <section id="pagina-inicio" class="pagina ativa card">
-      <h1>Sistema Clínico</h1>
-      <p style="color:#64748b; margin-top:8px;">Bem-vindo. Escolha uma funcionalidade no menu lateral.</p>
+      <h1 class="pg-title">Bem-vindo ao SAUDINOB</h1>
+      <p style="color:#64748b">Escolha uma secção no menu lateral.</p>
     </section>
 
     <!-- PRESCRIÇÕES -->
     <section id="pagina-prescricoes" class="pagina">
-      <h1>Prescrições</h1>
-      <div class="card" id="formPrescricaoWrap">
-        <h2 class="section-title">Nova Prescrição</h2>
+      <h1 class="pg-title">Prescrições</h1>
+      <div class="card">
+        <h2 class="sec">Nova Prescrição</h2>
         <form id="formPrescricao" class="app-form">
-          <div><label>Farmaco</label><input id="Farmaco"/></div>
-          <div><label>Dosagem</label><input id="dosagem"/></div>
-          <div><label>Posologia</label><input id="Posologia"/></div>
-          <div><label>Nome do Médico</label><input id="prescricaoMedicoNome"/></div>
+          <div><label>Medicamento</label><input id="medicamento" placeholder="ex: Salbutamol 100mcg" required></div>
+          <div><label>Dose</label><input id="dose" placeholder="ex: 2 inalações 3x/dia" required></div>
+          <div><label>Nome do Médico</label><input id="prescricaoMedico" placeholder="ex: Dr. Carlos" required></div>
           <button class="form-btn" type="submit">Criar Prescrição</button>
-          <p id="erroPrescricao"></p>
+          <p id="msgPrescricao" class="msg"></p>
         </form>
       </div>
       <div class="card">
-        <h2 class="section-title">Lista de Prescrições</h2>
-        <div id="listaPrescricoes"><p style="color:#64748b;">A carregar prescrições...</p></div>
+        <h2 class="sec">Lista de Prescrições</h2>
+        <div id="listaPrescricoes"><p style="color:#64748b">A carregar…</p></div>
       </div>
     </section>
 
     <!-- EXAMES -->
     <section id="pagina-exames" class="pagina">
-      <h1>Exames</h1>
-      <div class="card" id="formExameWrap">
-        <h2 class="section-title">Criar Exame</h2>
+      <h1 class="pg-title">Exames</h1>
+      <div class="card">
+        <h2 class="sec">Criar Exame</h2>
         <form id="formExame" class="app-form">
-          <div><label>ID do Utente</label><input id="exameUtenteId" type="number" placeholder="ex: 1" required /></div>
-          <div><label>Tipo de Exame</label><input id="exameTipoExame" placeholder="ex: Espirometria" required /></div>
-          <div><label>Exame</label><input id="exameNome" placeholder="ex: FVC, FEV1" required /></div>
-          <div><label>ID do Médico</label><input id="exameMedicoId" type="number" placeholder="ex: 2" required /></div>
-          <div><label>Data de Marcação</label><input id="exameDataMarcacao" type="date" required /></div>
+          <div><label>ID do Utente</label><input id="exUtenteId" type="number" placeholder="ex: 1" required></div>
+          <div><label>Tipo de Exame</label><input id="exTipo" placeholder="ex: Espirometria" required></div>
+          <div><label>Exame</label><input id="exNome" placeholder="ex: FVC, FEV1" required></div>
+          <div><label>ID do Médico</label><input id="exMedicoId" type="number" placeholder="ex: 2" required></div>
+          <div><label>Data de Marcação</label><input id="exData" type="date" required></div>
           <button class="form-btn" type="submit">Criar Exame</button>
-          <p id="erroExame"></p>
+          <p id="msgExame" class="msg"></p>
         </form>
       </div>
       <div class="card">
-        <h2 class="section-title">Lista de Exames</h2>
-        <div id="listaExames"><p style="color:#64748b;">A carregar exames...</p></div>
+        <h2 class="sec">Lista de Exames</h2>
+        <div id="listaExames"><p style="color:#64748b">A carregar…</p></div>
       </div>
-    </section>
-
-    <!-- FHIR -->
-    <section id="pagina-fhir" class="pagina card">
-      <h1>Consulta FHIR</h1>
-      <form id="formFhir" class="app-form">
-        <div><label>Código LOINC</label><input id="codigoLoinc" placeholder="ex: 8310-5" required /></div>
-        <button class="form-btn" type="submit">Pesquisar</button>
-      </form>
-      <div id="resultadoFhir" style="margin-top:16px;"></div>
     </section>
 
     <!-- CARAT -->
     <section id="pagina-carat" class="pagina">
-      <h1>Questionário CARAT</h1>
+      <h1 class="pg-title">Questionário CARAT</h1>
       <div class="card">
-        <h2 class="section-title">Responder ao Questionário</h2>
+        <h2 class="sec">Responder ao Questionário</h2>
         <form id="formCarat" class="app-form">
-          <div id="perguntasContainer"><p style="color:#64748b;">A carregar perguntas...</p></div>
-          <button class="form-btn" type="submit" id="btnSubmeterCarat" style="display:none;">Submeter Respostas</button>
-          <p id="erroCarat" class="erro"></p>
+          <div id="perguntasContainer"><p style="color:#64748b">A carregar perguntas…</p></div>
+          <button class="form-btn" type="submit" id="btnSubmeterCarat" style="display:none">Submeter Respostas</button>
+          <p id="erroCaratForm" class="msg erro"></p>
         </form>
       </div>
       <div class="card">
-        <h2 class="section-title">Histórico CARAT</h2>
-        <div id="listaCARAT"><p style="color:#64748b;">A carregar...</p></div>
+        <h2 class="sec">Histórico CARAT</h2>
+        <div id="listaCARAT"><p style="color:#64748b">A carregar…</p></div>
       </div>
-    </section>
-
-    <!-- ALERTAS -->
-    <section id="pagina-alertas" class="pagina card">
-      <h1>Alertas</h1>
-      <p style="color:#64748b;">Sem alertas de momento.</p>
     </section>
 
     <!-- DASHBOARD -->
-    <section id="pagina-Dashboard" class="pagina">
-      <h1>Dashboard</h1>
-
-      <!-- Médico: dropdown de utentes -->
-      <div id="dashboardMedico" style="display:none;">
+    <section id="pagina-dashboard" class="pagina">
+      <h1 class="pg-title">Dashboard Clínico</h1>
+      <div id="dashMedico" style="display:none">
         <div class="card">
-          <h2 class="section-title">Selecionar Utente</h2>
-          <select id="selectUtente" class="dropdown-utente" onchange="carregarDashboardUtente(this.value)">
-            <option value="">-- Escolha um utente --</option>
+          <h2 class="sec">Selecionar Utente</h2>
+          <select id="selectUtente" class="dropdown" onchange="carregarDashUtente(this.value)">
+            <option value="">— Escolha um utente —</option>
           </select>
         </div>
-        <div id="dashboardDados"></div>
+        <div id="dashConteudo"></div>
       </div>
-
-      <!-- Utente: só os seus dados -->
-      <div id="dashboardUtente" style="display:none;">
-        <div id="dashboardDadosProprios"></div>
-      </div>
-
-      <div id="dashboardAdmin" style="display:none;" class="card">
-        <p>Vista de administrador: selecione uma secção no menu.</p>
+      <div id="dashUtente" style="display:none">
+        <div id="dashConteudoProprio"></div>
       </div>
     </section>
+
+    <!-- ALERTAS (só admin) -->
+    <section id="pagina-alertas" class="pagina">
+      <h1 class="pg-title">Alertas e Limiares</h1>
+      <div class="card">
+        <h2 class="sec">Configurar Limiares de Alerta</h2>
+        <form id="formLimiar" class="limiar-form">
+          <div>
+            <label>Score mínimo CARAT (abaixo gera alerta)</label>
+            <div class="range-row">
+              <input type="range" id="sliderScore" min="0" max="30" value="24" oninput="document.getElementById('valScore').textContent=this.value">
+              <span class="range-val" id="valScore">24</span><span style="font-size:13px;color:#64748b">/30</span>
+            </div>
+          </div>
+          <div>
+            <label>Deterioração mínima entre avaliações (pontos)</label>
+            <div class="range-row">
+              <input type="number" id="inputDeteri" min="1" max="15" value="3" style="width:90px">
+              <span style="font-size:13px;color:#64748b">pontos</span>
+            </div>
+          </div>
+          <button class="form-btn" type="submit">Guardar Limiares</button>
+          <p id="msgLimiar" class="msg"></p>
+        </form>
+      </div>
+      <div class="card">
+        <h2 class="sec">Alertas Ativos</h2>
+        <div id="listaAlertas"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+    </section>
+
   </main>
 </div>
 
+<!-- MODAL NOVO REGISTO -->
+<div id="overlayRegisto" class="overlay" onclick="fecharSeFora(event,'overlayRegisto')">
+  <div class="modal">
+    <h2>Novo Registo <button class="modal-close" onclick="fecharModal('overlayRegisto')">✕</button></h2>
+    <div class="fg">
+      <label>Tipo de registo</label>
+      <select id="tipoRegisto" onchange="trocarFormRegisto()">
+        <option value="utente">Utente</option>
+        <option value="medico">Médico</option>
+      </select>
+    </div>
+
+    <!-- Form utente -->
+    <form id="formRegistoUtente" class="app-form" style="margin-top:14px">
+      <div><label>Nome completo</label><input id="rNome" required></div>
+      <div><label>Username</label><input id="rUsername" required></div>
+      <div><label>Password</label><input type="password" id="rPassword" required></div>
+      <div><label>Sexo</label>
+        <select id="rSexo"><option value="M">Masculino</option><option value="F">Feminino</option></select>
+      </div>
+      <div><label>Idade</label><input type="number" id="rIdade" min="0" max="120"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="rAsma">
+        <label for="rAsma" style="font-weight:400;margin:0">Diagnóstico de Asma</label>
+      </div>
+      <div><label>Data da 1ª Consulta</label><input type="date" id="rConsulta"></div>
+      <div><label>Médico Responsável</label>
+        <select id="rMedico"><option value="">— Selecionar —</option></select>
+      </div>
+      <button class="form-btn" type="submit">Criar Utente</button>
+      <p id="msgRegistoUtente" class="msg"></p>
+    </form>
+
+    <!-- Form médico (oculto) -->
+    <form id="formRegistoMedico" class="app-form" style="margin-top:14px;display:none">
+      <div><label>Nome completo</label><input id="rmNome" required></div>
+      <div><label>Username</label><input id="rmUsername" required></div>
+      <div><label>Password</label><input type="password" id="rmPassword" required></div>
+      <div><label>Especialidade</label><input id="rmEsp" placeholder="ex: Pneumologia" required></div>
+      <div><label>Nº de Cédula</label><input id="rmCedula" placeholder="ex: OM-12345"></div>
+      <button class="form-btn" type="submit">Criar Médico</button>
+      <p id="msgRegistoMedico" class="msg"></p>
+    </form>
+  </div>
+</div>
+
 <!-- MODAL RESULTADO CARAT -->
-<div id="modalAlerta" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
-  <div style="background:white; padding:30px; border-radius:16px; width:90%; max-width:420px; text-align:center;">
-    <h2 id="tituloAlerta" style="margin-top:0; color:#0f172a;">Resultado CARAT</h2>
-    <div id="resultadoScores" style="display:flex; gap:12px; justify-content:center; margin:16px 0;"></div>
-    <p id="textoRecomendacao" style="margin:16px 0; font-size:1rem; line-height:1.6; color:#374151;"></p>
-    <button onclick="fecharModal()" style="width:100%; padding:12px; background:#2563eb; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:600; font-size:15px;">Fechar</button>
+<div id="modalCarat">
+  <div class="modal">
+    <h2 id="caratTitulo" style="margin-bottom:10px">Resultado CARAT</h2>
+    <div class="scores-row" id="caratScores"></div>
+    <p id="caratReco" style="margin:14px 0;font-size:15px;line-height:1.6;text-align:center"></p>
+    <button class="form-btn" style="width:100%" onclick="fecharModal('modalCarat')">Fechar</button>
   </div>
 </div>
 
 <script>
-  // ── Cabeçalhos autenticados ──────────────────────────
-  function authHeaders(extra = {}) {
-    return { 'Authorization': 'Bearer ' + localStorage.getItem('token'), ...extra };
-  }
+// ── Utilitários ──────────────────────────────────────────────────────────────
+const ah = (extra={}) => ({'Authorization':'Bearer '+localStorage.getItem('token'),...extra});
+const fmt = v => v ? new Date(v).toLocaleDateString('pt-PT') : '—';
+const role  = () => localStorage.getItem('userRole');
+const uid   = () => Number(localStorage.getItem('userId'));
 
-  // ── Navegação ────────────────────────────────────────
-  function mostrarPagina(idPagina) {
-    document.querySelectorAll('.pagina').forEach(p => p.classList.remove('ativa'));
-    const alvo = document.getElementById(idPagina);
-    if (alvo) alvo.classList.add('ativa');
+function ir(id) {
+  document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('ativa'));
+  document.getElementById(id)?.classList.add('ativa');
+  if(id==='pagina-dashboard') carregarDash();
+  if(id==='pagina-alertas')   carregarAlertas();
+}
 
-    // Carregar dados ao navegar para o Dashboard
-    if (idPagina === 'pagina-Dashboard') carregarDashboard();
-  }
+function fecharModal(id){ document.getElementById(id).classList.remove('aberto'); document.getElementById(id).style.display='none'; }
+function fecharSeFora(e,id){ if(e.target.id===id) fecharModal(id); }
 
-  // ── Arranque ─────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('token')) iniciarAplicacao();
+// ── Login ────────────────────────────────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const erEl = document.getElementById('loginErro');
+  erEl.style.display='none';
+  try{
+    const res  = await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:document.getElementById('username').value,
+        password:document.getElementById('password').value, role:document.getElementById('role').value})});
+    const d = await res.json();
+    if(res.ok){
+      localStorage.setItem('token',d.token); localStorage.setItem('userRole',d.role);
+      localStorage.setItem('userId',d.userId); localStorage.setItem('userNome',d.nome);
+      iniciar();
+    } else { erEl.textContent=d.erro||'Credenciais inválidas.'; erEl.style.display='block'; }
+  } catch { erEl.textContent='Erro de ligação.'; erEl.style.display='block'; }
+});
+
+function sair(){
+  ['token','userRole','userId','userNome'].forEach(k=>localStorage.removeItem(k));
+  document.getElementById('bloco-app').style.display='none';
+  document.getElementById('bloco-login').style.display='flex';
+  document.getElementById('loginForm').reset();
+  document.getElementById('loginErro').style.display='none';
+}
+
+function aplicarPermissoes(){
+  const r = role();
+  document.querySelectorAll('[data-roles]').forEach(el=>{
+    const ok = el.getAttribute('data-roles').split(',').includes(r);
+    el.style.display = el.tagName==='BUTTON' ? (ok?'block':'none') : (ok?'':' none');
   });
+  document.getElementById('navNomeUser').textContent = localStorage.getItem('userNome')||r;
+}
 
-  function aplicarPermissoes() {
-    const role = localStorage.getItem('userRole');
-    document.querySelectorAll('[data-roles]').forEach(el => {
-      const permitidos = el.getAttribute('data-roles').split(',');
-      el.style.display = permitidos.includes(role) ? '' : 'none';
+function iniciar(){
+  document.getElementById('bloco-login').style.display='none';
+  document.getElementById('bloco-app').style.display='flex';
+  aplicarPermissoes();
+  // Data mínima nos exames = amanhã
+  const amanha = new Date(); amanha.setDate(amanha.getDate()+1);
+  document.getElementById('exData').min = amanha.toISOString().split('T')[0];
+  // Carregar dados
+  if(role()!=='administrador'){
+    carregarPrescricoes(); carregarExames(); carregarPerguntasCarat(); carregarHistoricoCARAT();
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ if(localStorage.getItem('token')) iniciar(); });
+
+// ── Prescrições ──────────────────────────────────────────────────────────────
+async function carregarPrescricoes(){
+  const c=document.getElementById('listaPrescricoes');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  try{
+    const r=await fetch('/prescricoes',{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhuma prescrição registada.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Fármaco</th><th>Dosagem</th><th>Médico</th><th>Data</th></tr></thead><tbody>
+      ${d.map(p=>`<tr><td>${p.id}</td><td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>
+        <td>${fmt(p.data_criacao??p.dataCriacao)}</td></tr>`).join('')}
+    </tbody></table>`;
+  } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
+}
+
+document.getElementById('formPrescricao').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const m=document.getElementById('msgPrescricao'); m.textContent=''; m.className='msg';
+  try{
+    const res=await fetch('/prescricoes',{method:'POST',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({
+        utente_id: uid(),
+        farmaco:   document.getElementById('medicamento').value.trim(),
+        dosagem:   document.getElementById('dose').value.trim(),
+        posologia: document.getElementById('dose').value.trim(),
+        medico_nome: document.getElementById('prescricaoMedico').value.trim()
+      })});
+    if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
+    document.getElementById('formPrescricao').reset();
+    await carregarPrescricoes();
+    m.textContent='Prescrição criada!'; m.className='msg ok';
+  } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
+
+// ── Exames ───────────────────────────────────────────────────────────────────
+async function carregarExames(){
+  const c=document.getElementById('listaExames');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  try{
+    const r=await fetch('/exames',{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum exame registado.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Utente ID</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
+      ${d.map(x=>`<tr><td>${x.id}</td><td>${x.utente_id??''}</td><td>${x.tipo_exame??''}</td><td>${x.exame??''}</td>
+        <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
+    </tbody></table>`;
+  } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
+}
+
+document.getElementById('formExame').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const m=document.getElementById('msgExame'); m.textContent=''; m.className='msg';
+  try{
+    const res=await fetch('/exames',{method:'POST',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({
+        utente_id:    document.getElementById('exUtenteId').value,
+        tipo_exame:   document.getElementById('exTipo').value.trim(),
+        exame:        document.getElementById('exNome').value.trim(),
+        medico_id:    document.getElementById('exMedicoId').value,
+        data_marcacao:document.getElementById('exData').value
+      })});
+    if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
+    document.getElementById('formExame').reset();
+    // Repor min da data
+    const am=new Date(); am.setDate(am.getDate()+1);
+    document.getElementById('exData').min=am.toISOString().split('T')[0];
+    await carregarExames();
+    m.textContent='Exame criado com sucesso!'; m.className='msg ok';
+  } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
+
+// ── CARAT ────────────────────────────────────────────────────────────────────
+async function carregarPerguntasCarat(){
+  try{
+    const r=await fetch('/carat/perguntas');
+    const d=await r.json();
+    const c=document.getElementById('perguntasContainer');
+    c.innerHTML=d.perguntas.map((p,i)=>`
+      <div style="margin-bottom:18px;padding:12px;border:1px solid #ccc;border-radius:8px">
+        <label><strong>${i+1}. ${p}</strong></label><br>
+        ${d.opcoes.map(o=>`<label style="display:block;margin:8px 0"><input type="radio" name="perg_${i}" value="${o.valor}" required> ${o.label}</label>`).join('')}
+      </div>`).join('');
+    document.getElementById('btnSubmeterCarat').style.display='block';
+  } catch { document.getElementById('perguntasContainer').innerHTML='<p class="msg erro">Erro ao carregar perguntas.</p>'; }
+}
+
+async function carregarHistoricoCARAT(){
+  const c=document.getElementById('listaCARAT');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  try{
+    const r=await fetch('/carat',{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum questionário registado.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th></tr></thead><tbody>
+      ${d.map(c=>{const ok=c.nivelControlo==='CONTROLADA'||c.controloTotal==='CONTROLADA';
+        return `<tr><td>${c.id}</td><td><strong>${c.scoreTotal}/30</strong></td><td>${c.scoreRinite}/12</td>
+          <td>${c.scoreAsma}/18</td>
+          <td><span class="${ok?'badge-ok':'badge-nok'}">${ok?'Controlada':'Não Controlada'}</span></td>
+          <td>${fmt(c.dataCriacao)}</td></tr>`}).join('')}
+    </tbody></table>`;
+  } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
+}
+
+document.getElementById('formCarat').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const erEl=document.getElementById('erroCaratForm'); erEl.textContent='';
+  const respostas=[];
+  for(let i=0;i<10;i++){
+    const sel=document.querySelector(`input[name="perg_${i}"]:checked`);
+    if(!sel){erEl.textContent=`Responda à pergunta ${i+1}.`;return;}
+    respostas.push(parseInt(sel.value));
+  }
+  try{
+    const body=Object.fromEntries(respostas.map((v,i)=>[`perg${i+1}`,v]));
+    const r=await fetch('/carat',{method:'POST',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.erro||'Erro');
+    const av=d.avaliacao;
+    const score=av.scoreTotal;
+    let reco,cor;
+    if(score>24){reco='✅ Controlado — próxima avaliação em 12 semanas.';cor='#16a34a';}
+    else if(score>16){reco='⚠️ Vigiar — marque consulta em 4 semanas.';cor='#d97706';}
+    else{reco='🚨 Urgente — consulte o médico com brevidade.';cor='#dc2626';}
+    document.getElementById('caratScores').innerHTML=`
+      <div class="score-box"><div class="sv">${score}/30</div><div class="sl">Total</div></div>
+      <div class="score-box" style="background:#f0fdf4"><div class="sv" style="color:#16a34a">${av.scoreRinite}/12</div><div class="sl">Rinite</div></div>
+      <div class="score-box" style="background:#fff7ed"><div class="sv" style="color:#d97706">${av.scoreAsma}/18</div><div class="sl">Asma</div></div>`;
+    document.getElementById('caratReco').textContent=reco;
+    document.getElementById('caratReco').style.color=cor;
+    document.getElementById('modalCarat').style.display='flex';
+    document.getElementById('modalCarat').classList.add('aberto');
+    document.getElementById('formCarat').reset();
+    await carregarHistoricoCARAT();
+  } catch(er){erEl.textContent=er.message;}
+});
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+async function carregarDash(){
+  const r=role();
+  document.getElementById('dashMedico').style.display='none';
+  document.getElementById('dashUtente').style.display='none';
+  if(r==='medico'){
+    document.getElementById('dashMedico').style.display='block';
+    await carregarListaUtentes();
+  } else if(r==='utente'){
+    document.getElementById('dashUtente').style.display='block';
+    await carregarDashProprio();
+  }
+}
+
+async function carregarListaUtentes(){
+  try{
+    const r=await fetch('/registo/utentes',{headers:ah()});
+    const utentes=await r.json();
+    const sel=document.getElementById('selectUtente');
+    sel.innerHTML='<option value="">— Escolha um utente —</option>';
+    utentes.forEach(u=>{
+      const o=document.createElement('option'); o.value=u.id; o.textContent=u.nome; sel.appendChild(o);
     });
-    // Garantir que botões nav não perdem display
-    document.querySelectorAll('nav button[data-roles]').forEach(btn => {
-      const permitidos = btn.getAttribute('data-roles').split(',');
-      btn.style.display = permitidos.includes(role) ? 'block' : 'none';
-    });
-    // Nome no nav
-    const nome = localStorage.getItem('userNome') || role;
-    document.getElementById('navNomeUser').textContent = nome;
-  }
+  } catch(e){console.error(e);}
+}
 
-  function iniciarAplicacao() {
-    document.getElementById('bloco-login').style.display = 'none';
-    document.getElementById('bloco-app').style.display   = 'flex';
-    aplicarPermissoes();
-    buscarPrescricoes();
-    buscarExames();
-    carregarPerguntasCarat();
-    buscarCARAT();
-  }
+async function carregarDashUtente(utenteId){
+  if(!utenteId){document.getElementById('dashConteudo').innerHTML='';return;}
+  document.getElementById('dashConteudo').innerHTML='<p style="color:#64748b;margin:14px 0">A carregar…</p>';
+  try{
+    const r=await fetch(`/admin/dashboard/${utenteId}`,{headers:ah()});
+    const d=await r.json();
+    document.getElementById('dashConteudo').innerHTML=renderDash(d);
+  } catch{document.getElementById('dashConteudo').innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
+}
 
-  // ── Login ─────────────────────────────────────────────
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const role     = document.getElementById('role').value;
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const errorEl  = document.getElementById('errorMessage');
-    errorEl.style.display = 'none';
+async function carregarDashProprio(){
+  document.getElementById('dashConteudoProprio').innerHTML='<p style="color:#64748b;margin:14px 0">A carregar…</p>';
+  try{
+    const r=await fetch(`/admin/dashboard/${uid()}`,{headers:ah()});
+    const d=await r.json();
+    document.getElementById('dashConteudoProprio').innerHTML=renderDash(d);
+  } catch{document.getElementById('dashConteudoProprio').innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
+}
 
-    try {
-      const res  = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, role })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token',    data.token);
-        localStorage.setItem('userRole', data.role);
-        localStorage.setItem('userId',   data.userId);
-        localStorage.setItem('userNome', data.nome);
-        iniciarAplicacao();
-      } else {
-        errorEl.textContent   = data.erro || 'Credenciais inválidas.';
-        errorEl.style.display = 'block';
-      }
-    } catch {
-      errorEl.textContent   = 'Erro de ligação ao servidor.';
-      errorEl.style.display = 'block';
-    }
-  });
-
-  // ── Logout ───────────────────────────────────────────
-  function fazerLogout() {
-    ['token','userRole','userId','userNome'].forEach(k => localStorage.removeItem(k));
-    document.getElementById('bloco-app').style.display   = 'none';
-    document.getElementById('bloco-login').style.display = 'flex';
-    document.getElementById('loginForm').reset();
-    document.getElementById('errorMessage').style.display = 'none';
-  }
-
-  // ── Prescrições ──────────────────────────────────────
-  async function buscarPrescricoes() {
-    const container = document.getElementById('listaPrescricoes');
-    container.innerHTML = '<p style="color:#64748b;">A carregar...</p>';
-    try {
-      const res   = await fetch('/prescricoes', { headers: authHeaders() });
-      const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) {
-        container.innerHTML = '<p style="color:#64748b;">Nenhuma prescrição registada.</p>';
-        return;
-      }
-      container.innerHTML = `
-        <table><thead><tr><th>#</th><th>Medicamento</th><th>Dose</th><th>Médico</th><th>Data</th></tr></thead><tbody>
-        ${dados.map(p => `<tr>
-          <td>${p.id??''}</td><td>${p.medicamento??''}</td><td>${p.dose??''}</td>
-          <td>${p.medico_nome??''}</td><td>${formatarData(p.dataCriacao)}</td>
-        </tr>`).join('')}
-        </tbody></table>`;
-    } catch { container.innerHTML = '<p class="erro">Erro ao carregar prescrições.</p>'; }
-  }
-
-  async function criarPrescricao(e) {
-    e.preventDefault();
-    const erroEl = document.getElementById('erroPrescricao');
-    erroEl.textContent = ''; erroEl.className = 'erro';
-    const body = {
-      medicamento: document.getElementById('medicamento').value.trim(),
-      dose:        document.getElementById('dose').value.trim(),
-      medico_nome: document.getElementById('prescricaoMedicoNome').value.trim()
-    };
-    try {
-      const res = await fetch('/prescricoes', { method:'POST', headers: authHeaders({'Content-Type':'application/json'}), body: JSON.stringify(body) });
-      if (!res.ok) { const d = await res.json(); throw new Error(d.erro || 'Erro ao criar prescrição'); }
-      document.getElementById('formPrescricao').reset();
-      await buscarPrescricoes();
-      erroEl.textContent = 'Prescrição criada com sucesso!'; erroEl.className = 'sucesso';
-    } catch (err) { erroEl.textContent = err.message; }
-  }
-
-  // ── Exames ───────────────────────────────────────────
-  async function buscarExames() {
-    const container = document.getElementById('listaExames');
-    container.innerHTML = '<p style="color:#64748b;">A carregar...</p>';
-    try {
-      const res   = await fetch('/exames', { headers: authHeaders() });
-      const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) {
-        container.innerHTML = '<p style="color:#64748b;">Nenhum exame registado.</p>';
-        return;
-      }
-      container.innerHTML = `
-        <table><thead><tr>
-          <th>#</th><th>Utente ID</th><th>Tipo de Exame</th><th>Exame</th>
-          <th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th>
-        </tr></thead><tbody>
-        ${dados.map(x => `<tr>
-          <td>${x.id??''}</td>
-          <td>${x.utente_id??''}</td>
-          <td>${x.tipo_exame??''}</td>
-          <td>${x.exame??''}</td>
-          <td>${x.medico_id??''}</td>
-          <td>${formatarData(x.data_marcacao)}</td>
-          <td>${formatarData(x.data_criacao)}</td>
-        </tr>`).join('')}
-        </tbody></table>`;
-    } catch { container.innerHTML = '<p class="erro">Erro ao carregar exames.</p>'; }
-  }
-
-  async function criarExame(e) {
-    e.preventDefault();
-    const erroEl = document.getElementById('erroExame');
-    erroEl.textContent = ''; erroEl.className = 'erro';
-    const body = {
-      utente_id:     document.getElementById('exameUtenteId').value.trim(),
-      tipo_exame:    document.getElementById('exameTipoExame').value.trim(),
-      exame:         document.getElementById('exameNome').value.trim(),
-      medico_id:     document.getElementById('exameMedicoId').value.trim(),
-      data_marcacao: document.getElementById('exameDataMarcacao').value.trim()
-    };
-    try {
-      const res = await fetch('/exames', {
-        method: 'POST',
-        headers: authHeaders({'Content-Type':'application/json'}),
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) { const d = await res.json(); throw new Error(d.erro || 'Erro ao criar exame'); }
-      document.getElementById('formExame').reset();
-      await buscarExames();
-      erroEl.textContent = 'Exame criado com sucesso!'; erroEl.className = 'sucesso';
-    } catch (err) { erroEl.textContent = err.message; }
-  }
-
-  // ── CARAT ────────────────────────────────────────────
-  async function buscarCARAT() {
-    const container = document.getElementById('listaCARAT');
-    container.innerHTML = '<p style="color:#64748b;">A carregar...</p>';
-    try {
-      const res   = await fetch('/carat', { headers: authHeaders() });
-      const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) {
-        container.innerHTML = '<p style="color:#64748b;">Nenhum questionário CARAT registado.</p>';
-        return;
-      }
-      container.innerHTML = `
-        <table><thead><tr>
-          <th>#</th><th>Doente</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th>
-        </tr></thead><tbody>
-        ${dados.map(c => {
-          const controlada = c.controloTotal === 'CONTROLADA';
-          const classe = controlada ? 'badge-controlada' : 'badge-nao-controlada';
-          const texto  = controlada ? 'Controlada' : 'Não Controlada';
-          return `<tr>
-            <td>${c.id??''}</td><td>${c.nome??'Doente'}</td>
-            <td><strong>${c.scoreTotal??0}</strong>/30</td>
-            <td>${c.scoreRinite??0}/12</td><td>${c.scoreAsma??0}/18</td>
-            <td><span class="${classe}">${texto}</span></td>
-            <td>${formatarData(c.dataCriacao)}</td>
-          </tr>`;
-        }).join('')}
-        </tbody></table>`;
-    } catch { container.innerHTML = '<p class="erro">Erro ao carregar questionários CARAT.</p>'; }
-  }
-
-  async function carregarPerguntasCarat() {
-    try {
-      const res   = await fetch('/carat/perguntas');
-      const dados = await res.json();
-      const container = document.getElementById('perguntasContainer');
-      container.innerHTML = dados.perguntas.map((pergunta, idx) => `
-        <div style="margin-bottom:20px; padding:10px; border:1px solid #ccc; border-radius:4px;">
-          <label><strong>${idx+1}. ${pergunta}</strong></label><br>
-          ${dados.opcoes.map(op => `<label style="display:block; margin:8px 0;"><input type="radio" name="pergunta_${idx}" value="${op.valor}" required> ${op.label}</label>`).join('')}
-        </div>`).join('');
-      document.getElementById('btnSubmeterCarat').style.display = 'block';
-    } catch {
-      document.getElementById('perguntasContainer').innerHTML = '<p class="erro">Erro ao carregar perguntas.</p>';
-    }
-  }
-
-  async function submeterRespostasCarat(e) {
-    e.preventDefault();
-    const erroEl = document.getElementById('erroCarat');
-    erroEl.textContent = '';
-
-    const respostas = [];
-    for (let i = 0; i < 10; i++) {
-      const sel = Array.from(document.getElementsByName(`pergunta_${i}`)).find(r => r.checked);
-      if (!sel) { erroEl.textContent = `Por favor, responda à pergunta ${i+1}.`; return; }
-      respostas.push(parseInt(sel.value));
-    }
-
-    try {
-      const body = Object.fromEntries(respostas.map((v, i) => [`perg${i+1}`, v]));
-      const res  = await fetch('/carat', {
-        method: 'POST',
-        headers: authHeaders({'Content-Type':'application/json'}),
-        body: JSON.stringify(body)
-      });
-      const dados = await res.json();
-      if (!res.ok) throw new Error(dados.erro || 'Erro ao submeter');
-
-      const av = dados.avaliacao;
-      const score = av.scoreTotal;
-      let recomendacao, corBadge;
-      if (score > 24) {
-        recomendacao = '✅ Controlado — Os sintomas estão estáveis. Próxima avaliação daqui a 12 semanas.';
-        corBadge = '#16a34a';
-      } else if (score > 16) {
-        recomendacao = '⚠️ Vigiar — Os seus sintomas merecem atenção. Reveja a medicação e marque consulta em 4 semanas.';
-        corBadge = '#d97706';
-      } else {
-        recomendacao = '🚨 Urgente — O seu controlo é baixo. Recomendamos consulta médica com brevidade.';
-        corBadge = '#dc2626';
-      }
-
-      document.getElementById('resultadoScores').innerHTML = `
-        <div style="background:#eef2ff;border-radius:12px;padding:14px;flex:1;text-align:center;">
-          <div style="font-size:28px;font-weight:700;color:#2563eb;">${score}/30</div>
-          <div style="font-size:12px;color:#64748b;">Score Total</div>
+function renderDash(d){
+  const u=d.utente;
+  const uc=d.ultimoCarat;
+  const okBadge=uc?(uc.controloTotal==='CONTROLADA'?'<span class="badge-ok">Controlada</span>':'<span class="badge-nok">Não Controlada</span>'):'—';
+  return `
+    <div class="card">
+      <h2 class="sec">Ficha Clínica — ${u.nome}</h2>
+      <div class="ficha">
+        <div class="ficha-item"><div class="val">${u.idade??'—'}</div><div class="lbl">Idade</div></div>
+        <div class="ficha-item"><div class="val">${u.sexo==='M'?'♂ Masc':u.sexo==='F'?'♀ Fem':'—'}</div><div class="lbl">Sexo</div></div>
+        <div class="ficha-item">
+          <div class="val" style="font-size:15px">${u.diagnostico_asma?'<span class="badge-nok">Sim</span>':'<span class="badge-ok">Não</span>'}</div>
+          <div class="lbl">Diagnóstico de Asma</div>
         </div>
-        <div style="background:#f0fdf4;border-radius:12px;padding:14px;flex:1;text-align:center;">
-          <div style="font-size:22px;font-weight:700;color:#16a34a;">${av.scoreRinite}/12</div>
-          <div style="font-size:12px;color:#64748b;">Rinite</div>
-        </div>
-        <div style="background:#fff7ed;border-radius:12px;padding:14px;flex:1;text-align:center;">
-          <div style="font-size:22px;font-weight:700;color:#d97706;">${av.scoreAsma}/18</div>
-          <div style="font-size:12px;color:#64748b;">Asma</div>
-        </div>`;
-
-      document.getElementById('tituloAlerta').textContent     = 'Resultado do CARAT';
-      document.getElementById('textoRecomendacao').textContent = recomendacao;
-      document.getElementById('textoRecomendacao').style.color = corBadge;
-      document.getElementById('modalAlerta').style.display     = 'flex';
-
-      document.getElementById('formCarat').reset();
-      await buscarCARAT();
-    } catch (err) {
-      console.error(err);
-      erroEl.textContent = err.message || 'Erro ao submeter respostas.';
-    }
-  }
-
-  // ── DASHBOARD ─────────────────────────────────────────
-  async function carregarDashboard() {
-    const role   = localStorage.getItem('userRole');
-    const userId = Number(localStorage.getItem('userId'));
-
-    document.getElementById('dashboardMedico').style.display  = 'none';
-    document.getElementById('dashboardUtente').style.display  = 'none';
-    document.getElementById('dashboardAdmin').style.display   = 'none';
-
-    if (role === 'medico') {
-      document.getElementById('dashboardMedico').style.display = 'block';
-      await carregarUtentesMedico();
-    } else if (role === 'utente') {
-      document.getElementById('dashboardUtente').style.display = 'block';
-      await carregarDashboardUtentesProprios(userId);
-    } else {
-      document.getElementById('dashboardAdmin').style.display = 'block';
-    }
-  }
-
-  async function carregarUtentesMedico() {
-    try {
-      const res    = await fetch('/dashboard/utentes', { headers: authHeaders() });
-      const utentes = await res.json();
-      const select = document.getElementById('selectUtente');
-      select.innerHTML = '<option value="">-- Escolha um utente --</option>';
-      utentes.forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u.id; opt.textContent = u.nome;
-        select.appendChild(opt);
-      });
-    } catch { console.error('Erro ao carregar utentes do médico'); }
-  }
-
-  async function carregarDashboardUtente(utenteId) {
-    if (!utenteId) { document.getElementById('dashboardDados').innerHTML = ''; return; }
-    const container = document.getElementById('dashboardDados');
-    container.innerHTML = '<p style="color:#64748b;margin:16px 0;">A carregar dados...</p>';
-    try {
-      const res  = await fetch(`/dashboard/dados/${utenteId}`, { headers: authHeaders() });
-      const d    = await res.json();
-      container.innerHTML = renderDashboardCards(d);
-    } catch { container.innerHTML = '<p class="erro">Erro ao carregar dados do utente.</p>'; }
-  }
-
-  async function carregarDashboardUtentesProprios(userId) {
-    const container = document.getElementById('dashboardDadosProprios');
-    container.innerHTML = '<p style="color:#64748b;margin:16px 0;">A carregar os seus dados...</p>';
-    try {
-      const res  = await fetch(`/dashboard/dados/${userId}`, { headers: authHeaders() });
-      const d    = await res.json();
-      container.innerHTML = renderDashboardCards(d);
-    } catch { container.innerHTML = '<p class="erro">Erro ao carregar dados.</p>'; }
-  }
-
-  function renderDashboardCards(d) {
-    const uc = d.ultimoCarat;
-    const ucBadge = uc
-      ? (uc.controloTotal === 'CONTROLADA'
-          ? '<span class="badge-controlada">Controlada</span>'
-          : '<span class="badge-nao-controlada">Não Controlada</span>')
-      : '—';
-    const ucScore = uc ? `${uc.scoreTotal}/30` : '—';
-
-    return `
-      <div class="card">
-        <div class="dashboard-grid">
-          <div class="stat-card">
-            <div class="stat-num">${d.totalExames}</div>
-            <div class="stat-label">Exames Registados</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num">${d.totalCarats}</div>
-            <div class="stat-label">Questionários CARAT</div>
-          </div>
-          <div class="stat-card" style="background:#fff7ed;">
-            <div class="stat-num" style="color:#d97706; font-size:24px;">${ucScore}</div>
-            <div class="stat-label">Último Score CARAT</div>
-          </div>
-          <div class="stat-card" style="background:#f0fdf4; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-            ${ucBadge}
-            <div class="stat-label" style="margin-top:8px;">Estado Atual</div>
-          </div>
+        <div class="ficha-item"><div class="val" style="font-size:15px">${fmt(u.data_primeira_consulta)}</div><div class="lbl">1ª Consulta</div></div>
+        <div class="ficha-item"><div class="val" style="font-size:15px">${uc?uc.scoreTotal+'/30':'—'}</div><div class="lbl">Último Score CARAT</div></div>
+        <div class="ficha-item" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
+          ${okBadge}<div class="lbl">Estado Atual</div>
         </div>
       </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">${d.totalExames}</div><div class="lbl">Exames Registados</div></div>
+      <div class="stat"><div class="num">${d.totalCarats}</div><div class="lbl">Avaliações CARAT</div></div>
+      ${uc?`<div class="stat" style="background:#fff7ed"><div class="num" style="color:#d97706;font-size:22px">${uc.scoreRinite}/12</div><div class="lbl">Rinite (último)</div></div>
+            <div class="stat" style="background:#f0fdf4"><div class="num" style="color:#16a34a;font-size:22px">${uc.scoreAsma}/18</div><div class="lbl">Asma (último)</div></div>`:''}
+    </div>
+    ${d.carats.length?`<div class="card">
+      <h2 class="sec">Histórico CARAT</h2>
+      <table><thead><tr><th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th></tr></thead><tbody>
+      ${d.carats.map(c=>{const ok=c.controloTotal==='CONTROLADA';
+        return `<tr><td>${c.id}</td><td><strong>${c.scoreTotal}/30</strong></td><td>${c.scoreRinite}/12</td>
+          <td>${c.scoreAsma}/18</td><td><span class="${ok?'badge-ok':'badge-nok'}">${ok?'Controlada':'Não Controlada'}</span></td>
+          <td>${fmt(c.dataCriacao)}</td></tr>`;}).join('')}
+      </tbody></table></div>`:''}
+    ${d.exames.length?`<div class="card">
+      <h2 class="sec">Exames</h2>
+      <table><thead><tr><th>#</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
+      ${d.exames.map(x=>`<tr><td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
+        <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
+      </tbody></table></div>`:''}`;
+}
 
-      ${d.exames.length > 0 ? `
-      <div class="card">
-        <h2 class="section-title">Exames</h2>
-        <table><thead><tr>
-          <th>#</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th>
-        </tr></thead><tbody>
-        ${d.exames.map(x => `<tr>
-          <td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
-          <td>${x.medico_id??'—'}</td>
-          <td>${formatarData(x.data_marcacao)}</td>
-          <td>${formatarData(x.data_criacao)}</td>
-        </tr>`).join('')}
-        </tbody></table>
-      </div>` : ''}
+// ── Alertas (admin) ───────────────────────────────────────────────────────────
+async function carregarAlertas(){
+  // Limiar
+  try{
+    const r=await fetch('/admin/limiar',{headers:ah()});
+    const d=await r.json();
+    document.getElementById('sliderScore').value=d.scoreMinimo;
+    document.getElementById('valScore').textContent=d.scoreMinimo;
+    document.getElementById('inputDeteri').value=d.deterioracaoPontos;
+  } catch{}
+  // Lista
+  const c=document.getElementById('listaAlertas');
+  try{
+    const r=await fetch('/admin/alertas',{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Sem alertas de momento.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Utente</th><th>Tipo</th><th>Prioridade</th><th>Estado</th><th>Motivo</th><th>Data</th></tr></thead><tbody>
+      ${d.map(a=>`<tr><td>${a.id}</td><td>${a.utente_id}</td>
+        <td><span class="badge-info">${a.tipo}</span></td><td>${a.prioridade}</td>
+        <td>${a.estado}</td><td>${a.motivo}</td><td>${fmt(a.dataCriacao)}</td></tr>`).join('')}
+    </tbody></table>`;
+  } catch {c.innerHTML='<p class="msg erro">Erro ao carregar alertas.</p>';}
+}
 
-      ${d.carats.length > 0 ? `
-      <div class="card">
-        <h2 class="section-title">Histórico CARAT</h2>
-        <table><thead><tr>
-          <th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th>
-        </tr></thead><tbody>
-        ${d.carats.map(c => {
-          const ctrl = c.controloTotal === 'CONTROLADA';
-          return `<tr>
-            <td>${c.id}</td>
-            <td><strong>${c.scoreTotal}/30</strong></td>
-            <td>${c.scoreRinite}/12</td><td>${c.scoreAsma}/18</td>
-            <td><span class="${ctrl ? 'badge-controlada' : 'badge-nao-controlada'}">${ctrl ? 'Controlada' : 'Não Controlada'}</span></td>
-            <td>${formatarData(c.dataCriacao)}</td>
-          </tr>`;
-        }).join('')}
-        </tbody></table>
-      </div>` : ''}`;
-  }
+document.getElementById('formLimiar').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const m=document.getElementById('msgLimiar'); m.textContent=''; m.className='msg';
+  try{
+    const res=await fetch('/admin/limiar',{method:'PUT',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({scoreMinimo:Number(document.getElementById('sliderScore').value),
+        deterioracaoPontos:Number(document.getElementById('inputDeteri').value)})});
+    if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
+    m.textContent='Limiares guardados com sucesso!'; m.className='msg ok';
+  } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
 
-  // ── FHIR ─────────────────────────────────────────────
-  async function pesquisarFhir(e) {
-    e.preventDefault();
-    const codigo    = document.getElementById('codigoLoinc').value.trim();
-    const resultado = document.getElementById('resultadoFhir');
-    resultado.innerHTML = '<p style="color:#64748b;">A pesquisar...</p>';
-    try {
-      const res   = await fetch(`/fhir/observations?code=${encodeURIComponent(codigo)}`);
-      if (!res.ok) throw new Error();
-      const dados = await res.json();
-      if (!Array.isArray(dados) || dados.length === 0) {
-        resultado.innerHTML = '<p>Nenhuma Observation encontrada.</p>';
-        return;
-      }
-      resultado.innerHTML = `<table><thead><tr>
-        <th>ID</th><th>Código</th><th>Descrição</th><th>Valor</th><th>Unidade</th><th>Data/Hora</th><th>Doente</th><th>Estado</th>
-      </tr></thead><tbody>
-        ${dados.map(o => `<tr>
-          <td>${o.id??''}</td><td>${o.code??''}</td><td>${o.display??''}</td>
-          <td>${o.value??''}</td><td>${o.unit??''}</td><td>${o.effectiveDateTime??''}</td>
-          <td>${o.subject??''}</td><td>${o.status??''}</td>
-        </tr>`).join('')}
-      </tbody></table>`;
-    } catch { resultado.innerHTML = '<p class="erro">Erro ao consultar servidor FHIR.</p>'; }
-  }
+// ── Novo Registo ─────────────────────────────────────────────────────────────
+async function abrirModalRegisto(){
+  document.getElementById('overlayRegisto').style.display='flex';
+  document.getElementById('overlayRegisto').classList.add('aberto');
+  // Carregar médicos para o dropdown
+  try{
+    const r=await fetch('/registo/medicos',{headers:ah()});
+    const meds=await r.json();
+    const sel=document.getElementById('rMedico');
+    sel.innerHTML='<option value="">— Selecionar —</option>';
+    meds.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=`${m.nome} (${m.especialidade})`;sel.appendChild(o);});
+  } catch{}
+}
 
-  // ── Utilitário de datas ───────────────────────────────
-  function formatarData(val) {
-    if (!val) return '—';
-    try { return new Date(val).toLocaleDateString('pt-PT'); } catch { return val; }
-  }
+function trocarFormRegisto(){
+  const t=document.getElementById('tipoRegisto').value;
+  document.getElementById('formRegistoUtente').style.display=t==='utente'?'flex':'none';
+  document.getElementById('formRegistoMedico').style.display=t==='medico'?'flex':'none';
+}
 
-  // ── Modal ────────────────────────────────────────────
-  function fecharModal() { document.getElementById('modalAlerta').style.display = 'none'; }
+document.getElementById('formRegistoUtente').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const m=document.getElementById('msgRegistoUtente'); m.textContent=''; m.className='msg';
+  try{
+    const res=await fetch('/registo/utente',{method:'POST',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({
+        nome:document.getElementById('rNome').value.trim(),
+        username:document.getElementById('rUsername').value.trim(),
+        password:document.getElementById('rPassword').value,
+        sexo:document.getElementById('rSexo').value,
+        idade:document.getElementById('rIdade').value||null,
+        diagnostico_asma:document.getElementById('rAsma').checked,
+        data_primeira_consulta:document.getElementById('rConsulta').value||null,
+        medico_id:document.getElementById('rMedico').value||null
+      })});
+    if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
+    document.getElementById('formRegistoUtente').reset();
+    m.textContent='Utente criado com sucesso!'; m.className='msg ok';
+  } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
 
-  // ── Event Listeners ──────────────────────────────────
-  document.getElementById('formPrescricao').addEventListener('submit', criarPrescricao);
-  document.getElementById('formExame').addEventListener('submit', criarExame);
-  document.getElementById('formFhir').addEventListener('submit', pesquisarFhir);
-  document.getElementById('formCarat').addEventListener('submit', submeterRespostasCarat);
+document.getElementById('formRegistoMedico').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const m=document.getElementById('msgRegistoMedico'); m.textContent=''; m.className='msg';
+  try{
+    const res=await fetch('/registo/medico',{method:'POST',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({
+        nome:document.getElementById('rmNome').value.trim(),
+        username:document.getElementById('rmUsername').value.trim(),
+        password:document.getElementById('rmPassword').value,
+        especialidade:document.getElementById('rmEsp').value.trim(),
+        numero_cedula:document.getElementById('rmCedula').value.trim()||null
+      })});
+    if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
+    document.getElementById('formRegistoMedico').reset();
+    m.textContent='Médico criado com sucesso!'; m.className='msg ok';
+  } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
 </script>
 </body>
 </html>

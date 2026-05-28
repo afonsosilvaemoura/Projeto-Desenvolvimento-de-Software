@@ -19,7 +19,6 @@ export async function criarAvaliacaoCarat(req: AuthRequest, res: Response) {
     const repo = AppDataSource.getRepository(AvaliacaoCARAT);
     const nova = repo.create({
       utente_id:          req.user?.id ?? null,
-      medico_nome:        null,
       respostas:          JSON.stringify(arrayRespostas),
       scoreTotal:         resultado.scoreTotal,
       scoreRinite:        resultado.scoreRinite,

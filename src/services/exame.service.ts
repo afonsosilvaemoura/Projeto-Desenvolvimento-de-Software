@@ -5,7 +5,7 @@ interface CreateExameDto {
     utente_id: number;
     tipo_exame: string;
     exame: string;
-    medico_nome: string;
+    medico_id?: number | null;
     data_marcacao: string;
 }
 
@@ -17,7 +17,7 @@ export class ExameService {
             utente_id:     dados.utente_id,
             tipo_exame:    dados.tipo_exame,
             exame:         dados.exame,
-            medico_nome:   dados.medico_nome,
+            medico_id:     dados.medico_id ?? null,
             data_marcacao: new Date(dados.data_marcacao),
             data_criacao:  new Date(),
         });

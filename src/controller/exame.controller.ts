@@ -4,10 +4,9 @@ import { ExameService } from '../services/exame.service';
 export class ExameController {
     private service = new ExameService();
 
-    async listar(req: Request, res: Response) {
+    async listar(_req: Request, res: Response) {
         try {
-            const exames = await this.service.listarExames();
-            return res.json(exames);
+            return res.json(await this.service.listarExames());
         } catch (error: any) {
             return res.status(500).json({ erro: error.message });
         }
@@ -15,12 +14,12 @@ export class ExameController {
 
     async criar(req: Request, res: Response) {
         try {
-            const { utente_id, tipo_exame, exame, medico_nome, data_marcacao } = req.body;
+            const { utente_id, tipo_exame, exame, medico_id, data_marcacao } = req.body;
             const novoExame = await this.service.criarExame({
-                utente_id:     Number(utente_id ?? 0),
+                utente_id:    Number(utente_id ?? 0),
                 tipo_exame,
                 exame,
-                medico_nome,
+                medico_id:    medico_id ? Number(medico_id) : null,
                 data_marcacao,
             });
             return res.status(201).json(novoExame);

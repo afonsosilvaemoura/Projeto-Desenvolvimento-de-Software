@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Exame {
-
     @PrimaryGeneratedColumn()
     id!: number;
 
@@ -15,8 +14,8 @@ export class Exame {
     @Column()
     exame!: string;
 
-    @Column()
-    medico_nome!: string;
+    @Column({ nullable: true })
+    medico_id!: number | null;
 
     @Column({ type: 'datetime' })
     data_marcacao!: Date;
