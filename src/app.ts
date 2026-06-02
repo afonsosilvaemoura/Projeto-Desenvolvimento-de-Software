@@ -10,6 +10,7 @@ import caratRoutes   from './routes/carat';
 import fhirRoutes    from './routes/fhir';
 import registoRoutes from './routes/registo.routes';
 import adminRoutes   from './routes/admin.routes';
+import dashboardRoutes from './routes/dashboard.api';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/carat',     caratRoutes);
 app.use('/fhir',      fhirRoutes);
 app.use('/registo',   registoRoutes);
 app.use('/admin',     adminRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 initializeDatabase().then(() => {
   app.listen(3000, () => {

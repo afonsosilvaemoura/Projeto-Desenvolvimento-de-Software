@@ -17,7 +17,7 @@ export class Medico {
     @Column()
     especialidade!: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     numero_cedula!: string | null;
 
     @Column({ default: true })

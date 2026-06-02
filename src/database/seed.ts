@@ -25,7 +25,7 @@ async function seed() {
     password_hash: bcrypt.hashSync('1234.', 10),
     dataCriacao: new Date()
   }));
-  console.log('✓ Admin criado (admin / 1234.)');
+  console.log('Administrador SAUDINOB (admin / 1234.)');
 
   // ── Médicos ────────────────────────────────────────────────────────────────
   const medicosRepo = AppDataSource.getRepository(Medico);
@@ -37,12 +37,12 @@ async function seed() {
   const medicos = [];
   for (const m of medicosData) {
     const med = await medicosRepo.save(medicosRepo.create({
-      ...m, email: `${m.username}@saudinob.pt`,
+      ...m, 
       password_hash: bcrypt.hashSync('1234.', 10),
       ativo: true, dataCriacao: new Date(), dataAtualizacao: new Date()
     }));
     medicos.push(med);
-    console.log(`✓ Médico: ${m.nome} (${m.username} / 1234.)`);
+    console.log(`Médico: ${m.nome} (${m.username} / 1234.)`);
   }
 
   // ── Utentes (5 por médico) ─────────────────────────────────────────────────
@@ -73,7 +73,6 @@ async function seed() {
     const medico = medicos[u.midx];
     const utente = await utenteRepo.save(utenteRepo.create({
       nome: u.nome, username: u.username,
-      email: `${u.username}@email.pt`,
       password_hash: bcrypt.hashSync('1234', 10),
       sexo: u.sexo, idade: u.idade,
       diagnostico_asma: u.asma,

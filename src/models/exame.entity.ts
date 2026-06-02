@@ -5,16 +5,16 @@ export class Exame {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ type: 'int' })
     utente_id!: number;
 
-    @Column()
+    @Column({ type: 'varchar' })
     tipo_exame!: string;
 
-    @Column()
+    @Column({ type: 'varchar' })
     exame!: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'int', nullable: true })
     medico_id!: number | null;
 
     @Column({ type: 'datetime' })

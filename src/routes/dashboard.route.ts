@@ -1,11 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { interpretarLabel, interpretarTone } from "@/lib/carat";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip, CartesianGrid } from "recharts";
 import { Bell, Activity, Users, Pill } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+
+function getAuthHeaders() {
+  if (typeof window === 'undefined') return {};
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 export const Route = createFileRoute("/app/dashboard")({ component: Dashboard });
 
@@ -31,21 +36,18 @@ function Dashboard() {
 }
 
 function UtenteDash({ userId, nome }: { userId: string; nome: string }) {
-  const { data: avaliacoes = [] } = useQuery({
-    queryKey: ["av", userId],
+  const { data: dashboard = { carats: [], alertas: [], medicacoes: [] } } = useQuery({
+    queryKey: ["dashboard-utente", userId],
     queryFn: async () => {
-      const { data } = await supabase.from("avaliacoes_carat").select("*").eq("utente_user_id", userId).order("created_at", { ascending: true });
-      return data ?? [];
+      const res = await fetch(`/dashboard/utente/${userId}`, { headers: getAuthHeaders() });
+      if (!res.ok) return { carats: [], alertas: [], medicacoes: [] };
+      return await res.json();
     },
   });
-  const { data: alertas = [] } = useQuery({
-    queryKey: ["alertas", userId],
-    queryFn: async () => (await supabase.from("alertas").select("*").eq("utente_user_id", userId).neq("estado","FECHADO").order("created_at", { ascending: false })).data ?? [],
-  });
-  const { data: medicacoes = [] } = useQuery({
-    queryKey: ["med", userId],
-    queryFn: async () => (await supabase.from("medicacoes").select("*").eq("utente_user_id", userId).eq("ativo", true)).data ?? [],
-  });
+
+  const avaliacoes = dashboard.carats ?? [];
+  const alertas = dashboard.alertas ?? [];
+  const medicacoes = dashboard.medicacoes ?? [];
 
   const ultima = avaliacoes[avaliacoes.length - 1];
   const chartData = avaliacoes.map((a) => ({ data: new Date(a.created_at).toLocaleDateString("pt-PT", { day: "2-digit", month: "short" }), score: a.score_total }));
@@ -121,25 +123,17 @@ function UtenteDash({ userId, nome }: { userId: string; nome: string }) {
 }
 
 function MedicoDash({ userId, nome }: { userId: string; nome: string }) {
-  const { data: utentes = [] } = useQuery({
-    queryKey: ["med-utentes", userId],
+  const { data: dashboard = { utentes: [], alertas: [] } } = useQuery({
+    queryKey: ["dashboard-medico", userId],
     queryFn: async () => {
-      const { data: med } = await supabase.from("medicos").select("id").eq("user_id", userId).maybeSingle();
-      if (!med) return [];
-      const { data } = await supabase.from("utentes").select("id,numero_utente,user_id,profiles:profiles!utentes_user_id_fkey(nome,email)").eq("medico_id", med.id);
-      return data ?? [];
+      const res = await fetch(`/dashboard/medico/${userId}`, { headers: getAuthHeaders() });
+      if (!res.ok) return { utentes: [], alertas: [] };
+      return await res.json();
     },
   });
-  const { data: alertas = [] } = useQuery({
-    queryKey: ["med-alertas", userId],
-    queryFn: async () => {
-      const ids = utentes.map((u: any) => u.user_id);
-      if (!ids.length) return [];
-      const { data } = await supabase.from("alertas").select("*").in("utente_user_id", ids).neq("estado","FECHADO").order("created_at", { ascending: false });
-      return data ?? [];
-    },
-    enabled: utentes.length > 0,
-  });
+
+  const utentes = dashboard.utentes ?? [];
+  const alertas = dashboard.alertas ?? [];
 
   return (
     <div className="space-y-6">
@@ -175,13 +169,9 @@ function AdminDash() {
   const { data: stats } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      const [u, m, av, al] = await Promise.all([
-        supabase.from("utentes").select("*", { count: "exact", head: true }),
-        supabase.from("medicos").select("*", { count: "exact", head: true }),
-        supabase.from("avaliacoes_carat").select("*", { count: "exact", head: true }),
-        supabase.from("alertas").select("*", { count: "exact", head: true }).neq("estado","FECHADO"),
-      ]);
-      return { utentes: u.count ?? 0, medicos: m.count ?? 0, avaliacoes: av.count ?? 0, alertas: al.count ?? 0 };
+      const res = await fetch('/dashboard/admin/stats', { headers: getAuthHeaders() });
+      if (!res.ok) return { utentes: 0, medicos: 0, avaliacoes: 0, alertas: 0 };
+      return await res.json();
     },
   });
 
