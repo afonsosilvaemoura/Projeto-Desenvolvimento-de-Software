@@ -27,6 +27,7 @@
                   "  const body = pm.response.json();",
                   "  pm.expect(body).to.have.property('token');",
                   "  pm.collectionVariables.set('tokenMedico', body.token);",
+                  "  pm.collectionVariables.set('medicoId', body.userId);",
                   "});"
                 ]
               }
@@ -38,7 +39,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"medico1\",\n  \"password\": \"password123\",\n  \"role\": \"medico\"\n}"
+              "raw": "{\n  \"username\": \"medico1\",\n  \"password\": \"1234.\",\n  \"role\": \"medico\"\n}"
             }
           }
         },
@@ -54,6 +55,7 @@
                   "  const body = pm.response.json();",
                   "  pm.expect(body).to.have.property('token');",
                   "  pm.collectionVariables.set('tokenUtente', body.token);",
+                  "  pm.collectionVariables.set('utenteId', body.userId);",
                   "});"
                 ]
               }
@@ -65,7 +67,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"utente1\",\n  \"password\": \"password123\",\n  \"role\": \"utente\"\n}"
+              "raw": "{\n  \"username\": \"joao\",\n  \"password\": \"1234\",\n  \"role\": \"utente\"\n}"
             }
           }
         },
@@ -92,7 +94,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\",\n  \"role\": \"administrador\"\n}"
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"1234.\",\n  \"role\": \"administrador\"\n}"
             }
           }
         },
@@ -149,10 +151,6 @@
                 "exec": [
                   "pm.test('Status 201 ou 200', () => {",
                   "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-                  "});",
-                  "pm.test('ID retornado', () => {",
-                  "  const body = pm.response.json();",
-                  "  if (body.id) pm.collectionVariables.set('medicoId', body.id);",
                   "});"
                 ]
               }
@@ -167,7 +165,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Dr. João Silva\",\n  \"username\": \"drjoao\",\n  \"password\": \"senha123\",\n  \"especialidade\": \"Pneumologia\",\n  \"numero_cedula\": \"12345\"\n}"
+              "raw": "{\n  \"nome\": \"Dr. Teste Postman\",\n  \"username\": \"medicotest\",\n  \"password\": \"senha123\",\n  \"especialidade\": \"Pneumologia\",\n  \"numero_cedula\": \"OM-99999\"\n}"
             }
           }
         },
@@ -180,10 +178,6 @@
                 "exec": [
                   "pm.test('Status 201 ou 200', () => {",
                   "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-                  "});",
-                  "pm.test('ID retornado', () => {",
-                  "  const body = pm.response.json();",
-                  "  if (body.id) pm.collectionVariables.set('utenteId', body.id);",
                   "});"
                 ]
               }
@@ -198,7 +192,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Maria Costa\",\n  \"username\": \"mariacosta\",\n  \"password\": \"senha123\",\n  \"email\": \"maria@email.com\",\n  \"sexo\": \"F\",\n  \"idade\": 45,\n  \"nif\": \"123456789\",\n  \"telefone\": \"912345678\",\n  \"diagnostico_asma\": true\n}"
+              "raw": "{\n  \"nome\": \"Utente Teste\",\n  \"username\": \"utentetest\",\n  \"password\": \"senha123\",\n  \"email\": \"utente@teste.com\",\n  \"sexo\": \"M\",\n  \"idade\": 40,\n  \"nif\": \"999999999\",\n  \"telefone\": \"919999999\",\n  \"diagnostico_asma\": true\n}"
             }
           }
         },
@@ -292,7 +286,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"farmaco\": \"Salbutamol\",\n  \"dosagem\": \"100mcg\",\n  \"posologia\": \"2 puffs cada 4-6h se necessário\"\n}"
+              "raw": "{\n  \"utente_id\": {{utenteId}},\n  \"medico_nome\": \"medico1\",\n  \"farmaco\": \"Salbutamol\",\n  \"dosagem\": \"100mcg\",\n  \"posologia\": \"2 puffs cada 4-6h se necessário\"\n}"
             }
           }
         },
@@ -358,7 +352,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"farmaco\": \"Salbutamol\",\n  \"dosagem\": \"100mcg\",\n  \"posologia\": \"2 puffs\"\n}"
+              "raw": "{\n  \"utente_id\": {{utenteId}},\n  \"medico_nome\": \"joao\",\n  \"farmaco\": \"Salbutamol\",\n  \"dosagem\": \"100mcg\",\n  \"posologia\": \"2 puffs\"\n}"
             }
           }
         }
@@ -390,7 +384,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"tipo_exame\": \"Espirometria\",\n  \"exame\": \"Função Pulmonar\",\n  \"data_marcacao\": \"2026-07-01\"\n}"
+              "raw": "{\n  \"utente_id\": {{utenteId}},\n  \"tipo_exame\": \"Espirometria\",\n  \"exame\": \"Função Pulmonar\",\n  \"data_marcacao\": \"2026-07-01\"\n}"
             }
           }
         },
@@ -430,7 +424,8 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "pm.test('Retorna perguntas', () => {",
                   "  const body = pm.response.json();",
-                  "  pm.expect(body).to.be.an('array').and.to.have.length.above(0);",
+                  "  pm.expect(body).to.have.property('perguntas');",
+                  "  pm.expect(body.perguntas).to.be.an('array').and.to.have.length.above(0);",
                   "});"
                 ]
               }
@@ -442,7 +437,7 @@
           }
         },
         {
-          "name": "Criar Avaliação CARAT",
+          "name": "Criar Avaliação CARAT (Utente)",
           "event": [
             {
               "listen": "test",
@@ -453,7 +448,8 @@
                   "});",
                   "pm.test('Score retornado', () => {",
                   "  const body = pm.response.json();",
-                  "  pm.expect(body).to.have.property('scoreTotal');",
+                  "  pm.expect(body).to.have.property('avaliacao');",
+                  "  pm.expect(body.avaliacao).to.have.property('scoreTotal');",
                   "});"
                 ]
               }
@@ -468,7 +464,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"respostas\": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],\n  \"anonima\": false\n}"
+              "raw": "{\n  \"perg1\": 2,\n  \"perg2\": 2,\n  \"perg3\": 2,\n  \"perg4\": 2,\n  \"perg5\": 2,\n  \"perg6\": 2,\n  \"perg7\": 2,\n  \"perg8\": 2,\n  \"perg9\": 2,\n  \"perg10\": 2\n}"
             }
           }
         },
@@ -505,8 +501,11 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200 ou 404', () => {",
-                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Contém dados clínicos', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('utente');",
+                  "  pm.expect(body).to.have.property('carats');",
                   "});"
                 ]
               }
@@ -525,8 +524,11 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status 200 ou 404', () => {",
-                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Contém utentes e alertas', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('utentes');",
+                  "  pm.expect(body).to.have.property('alertas');",
                   "});"
                 ]
               }
@@ -548,7 +550,10 @@
                   "pm.test('Status 200', () => pm.response.to.have.status(200));",
                   "pm.test('Contém estatísticas', () => {",
                   "  const body = pm.response.json();",
-                  "  pm.expect(body).to.be.an('object');",
+                  "  pm.expect(body).to.have.property('utentes');",
+                  "  pm.expect(body).to.have.property('medicos');",
+                  "  pm.expect(body).to.have.property('avaliacoes');",
+                  "  pm.expect(body).to.have.property('alertas');",
                   "});"
                 ]
               }
@@ -650,7 +655,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"scoreMinimo\": 5,\n  \"deterioracaoPontos\": 3\n}"
+              "raw": "{\n  \"scoreMinimo\": 24,\n  \"deterioracaoPontos\": 3\n}"
             }
           }
         },
