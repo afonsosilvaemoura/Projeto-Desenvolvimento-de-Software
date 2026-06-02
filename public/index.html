@@ -36,6 +36,12 @@
 
     /* Cards e forms */
     .card{background:white;border-radius:20px;padding:28px;box-shadow:0 4px 16px rgba(0,0,0,.05);margin-bottom:22px}
+    .grafico-card{padding:24px 24px 20px;border-radius:22px;max-width:100%;background:#ffffff;box-shadow:0 8px 24px rgba(15,23,42,.08);}
+    .grafico-intro{display:flex;flex-direction:column;gap:18px;width:100%;max-width:960px;margin:0 auto;margin-top:14px;}
+    .grafico-intro svg{width:100%;height:auto;max-height:340px;border-radius:18px;}
+    .grafico-legenda{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;}
+    .grafico-legenda .nota{color:#64748b;font-size:13px;line-height:1.5;}
+    .grafico-legenda button{padding:10px 14px;font-size:13px;}
     h1.pg-title{font-size:26px;margin-bottom:20px}
     h2.sec{margin:0 0 14px;color:#374151;font-size:19px}
     .app-form{display:flex;flex-direction:column;gap:12px;max-width:500px}
@@ -122,7 +128,7 @@
   <nav>
     <h2>SAUDINOB</h2>
     <span id="navNomeUser"></span>
-    <button data-roles="utente,medico" onclick="ir('pagina-inicio')">Início</button>
+    <button data-roles="utente,medico,administrador" onclick="ir('pagina-inicio')">Início</button>
     <button data-roles="utente,medico" onclick="ir('pagina-prescricoes')"> Prescrições</button>
     <button data-roles="utente,medico" onclick="ir('pagina-exames')">Exames</button>
     <button data-roles="utente,medico" onclick="ir('pagina-carat')">CARAT</button>
@@ -137,6 +143,12 @@
     <section id="pagina-inicio" class="pagina ativa card">
       <h1 class="pg-title">Bem-vindo ao SAUDINOB</h1>
       <p style="color:#64748b">Escolha uma secção no menu lateral.</p>
+      <div id="graficoCaratInicio" class="card grafico-card" style="display:none; margin-top:20px;">
+        <h2 class="sec">Evolução CARAT</h2>
+        <div id="graficoCaratIntro" class="grafico-intro">
+          <p style="color:#64748b">A carregar gráfico…</p>
+        </div>
+      </div>
     </section>
 
     <!-- PRESCRIÇÕES -->
@@ -314,6 +326,7 @@ function ir(id) {
   document.getElementById(id)?.classList.add('ativa');
   if(id==='pagina-dashboard') carregarDash();
   if(id==='pagina-alertas')   carregarAlertas();
+  if(id==='pagina-inicio')    mostrarGraficoInicioUtente();
 }
 
 function fecharModal(id){ document.getElementById(id).classList.remove('aberto'); document.getElementById(id).style.display='none'; }
@@ -365,6 +378,75 @@ function iniciar(){
   if(role()!=='administrador'){
     carregarPrescricoes(); carregarExames(); carregarPerguntasCarat(); carregarHistoricoCARAT();
   }
+  mostrarGraficoInicioUtente();
+}
+
+async function mostrarGraficoInicioUtente(){
+  const grafico = document.getElementById('graficoCaratInicio');
+  if(role() !== 'utente'){
+    grafico.style.display='none';
+    return;
+  }
+  grafico.style.display='block';
+  await carregarGraficoCaratInicio();
+}
+
+async function carregarGraficoCaratInicio(){
+  const cont = document.getElementById('graficoCaratIntro');
+  cont.innerHTML = '<p style="color:#64748b">A carregar histórico CARAT…</p>';
+  try{
+    const r = await fetch('/carat',{headers:ah()});
+    if(!r.ok) throw new Error('Não foi possível carregar o histórico.');
+    const dados = await r.json();
+    if(!dados.length){
+      cont.innerHTML = '<p style="color:#64748b">Ainda não existe histórico CARAT.</p>';
+      return;
+    }
+    const ordenados = dados.sort((a,b)=>new Date(a.dataCriacao)-new Date(b.dataCriacao)).slice(-6);
+    renderGraficoCaratIntro(cont, ordenados);
+  } catch(err){
+    cont.innerHTML = `<p class="msg erro">${err.message||'Erro ao carregar gráfico.'}</p>`;
+  }
+}
+
+function renderGraficoCaratIntro(container, dados){
+  const largura = 660;
+  const altura = 260;
+  const padding = 36;
+  const maxScore = 30;
+  const pontos = dados.map((item,index)=>{
+    const x = padding + index * (largura - padding*2) / Math.max(1, dados.length-1);
+    const score = Number(item.scoreTotal) || 0;
+    const y = padding + (maxScore - score) * (altura - padding*2) / maxScore;
+    return { x, y, score, label: fmt(item.dataCriacao) };
+  });
+  const linha = pontos.map(p=>`${p.x},${p.y}`).join(' ');
+  const circulos = pontos.map(p=>`
+      <circle cx="${p.x}" cy="${p.y}" r="5" fill="#2563eb" />
+      <text x="${p.x}" y="${p.y - 12}" text-anchor="middle" font-size="11" fill="#0f172a">${p.score}</text>
+    `).join('');
+  const labels = pontos.map(p=>`
+      <text x="${p.x}" y="${altura - 8}" text-anchor="middle" font-size="11" fill="#475569">${p.label}</text>
+    `).join('');
+  const y24 = padding + (maxScore - 24) * (altura - padding*2) / maxScore;
+  container.innerHTML = `
+    <div class="grafico-legenda">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px">Histórico dos últimos CARAT</div>
+        <div class="nota">A linha vermelha indica o limiar de controlo (24 pontos).</div>
+      </div>
+      <button class="form-btn" type="button" onclick="carregarGraficoCaratInicio()">Atualizar</button>
+    </div>
+    <svg width="100%" viewBox="0 0 ${largura} ${altura}" style="max-width:100%;height:auto;border-radius:18px;background:#f8fafc;overflow:hidden">
+      <rect x="0" y="0" width="${largura}" height="${altura}" fill="#f8fafc" />
+      <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${altura-padding}" stroke="#e2e8f0" />
+      <line x1="${padding}" y1="${altura-padding}" x2="${largura-padding}" y2="${altura-padding}" stroke="#e2e8f0" />
+      <line x1="${padding}" y1="${y24}" x2="${largura-padding}" y2="${y24}" stroke="#dc2626" stroke-dasharray="6 4" stroke-width="1.5" />
+      <text x="${padding + 8}" y="${y24 - 8}" font-size="11" fill="#dc2626">24</text>
+      <polyline fill="none" stroke="#2563eb" stroke-width="3" points="${linha}" />
+      ${circulos}
+      ${labels}
+    </svg>`;
 }
 
 document.addEventListener('DOMContentLoaded',()=>{ if(localStorage.getItem('token')) iniciar(); });

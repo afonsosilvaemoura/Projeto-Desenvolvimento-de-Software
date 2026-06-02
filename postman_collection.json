@@ -1,0 +1,711 @@
+{
+  "info": {
+    "name": "Sistema Gestão Saúde - API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "tokenMedico", "value": "" },
+    { "key": "tokenUtente", "value": "" },
+    { "key": "tokenAdmin", "value": "" },
+    { "key": "utenteId", "value": "" },
+    { "key": "medicoId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticação",
+      "item": [
+        {
+          "name": "Login - Médico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Token presente', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('token');",
+                  "  pm.collectionVariables.set('tokenMedico', body.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"medico1\",\n  \"password\": \"password123\",\n  \"role\": \"medico\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Utente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Token presente', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('token');",
+                  "  pm.collectionVariables.set('tokenUtente', body.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"utente1\",\n  \"password\": \"password123\",\n  \"role\": \"utente\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Token presente', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('token');",
+                  "  pm.collectionVariables.set('tokenAdmin', body.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\",\n  \"role\": \"administrador\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Credenciais Inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"naoexiste\",\n  \"password\": \"errada\",\n  \"role\": \"medico\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login - Sem Token (rota protegida)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 sem token', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/prescricoes/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Registo",
+      "item": [
+        {
+          "name": "Criar Médico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 ou 200', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('ID retornado', () => {",
+                  "  const body = pm.response.json();",
+                  "  if (body.id) pm.collectionVariables.set('medicoId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/registo/medico",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Dr. João Silva\",\n  \"username\": \"drjoao\",\n  \"password\": \"senha123\",\n  \"especialidade\": \"Pneumologia\",\n  \"numero_cedula\": \"12345\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar Utente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 ou 200', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('ID retornado', () => {",
+                  "  const body = pm.response.json();",
+                  "  if (body.id) pm.collectionVariables.set('utenteId', body.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/registo/utente",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenMedico}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Costa\",\n  \"username\": \"mariacosta\",\n  \"password\": \"senha123\",\n  \"email\": \"maria@email.com\",\n  \"sexo\": \"F\",\n  \"idade\": 45,\n  \"nif\": \"123456789\",\n  \"telefone\": \"912345678\",\n  \"diagnostico_asma\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Utentes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/registo/utentes",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        },
+        {
+          "name": "Listar Médicos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/registo/medicos",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        },
+        {
+          "name": "Detalhe Utente por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 ou 404', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/registo/utente/{{utenteId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Prescrições",
+      "item": [
+        {
+          "name": "Criar Prescrição (Médico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 ou 200', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/prescricoes/",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenMedico}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"farmaco\": \"Salbutamol\",\n  \"dosagem\": \"100mcg\",\n  \"posologia\": \"2 puffs cada 4-6h se necessário\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Prescrições (Médico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/prescricoes/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        },
+        {
+          "name": "Listar Prescrições (Utente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/prescricoes/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenUtente}}" }]
+          }
+        },
+        {
+          "name": "Criar Prescrição - Sem Autorização (Utente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 403 - Utente não pode criar prescrições', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/prescricoes/",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenUtente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"farmaco\": \"Salbutamol\",\n  \"dosagem\": \"100mcg\",\n  \"posologia\": \"2 puffs\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Exames",
+      "item": [
+        {
+          "name": "Criar Exame (Médico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 ou 200', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/exames/",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenMedico}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"tipo_exame\": \"Espirometria\",\n  \"exame\": \"Função Pulmonar\",\n  \"data_marcacao\": \"2026-07-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Exames (Médico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/exames/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Avaliação CARAT",
+      "item": [
+        {
+          "name": "Obter Perguntas CARAT (Público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna perguntas', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array').and.to.have.length.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/carat/perguntas"
+          }
+        },
+        {
+          "name": "Criar Avaliação CARAT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 ou 200', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('Score retornado', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('scoreTotal');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/carat/",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenUtente}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": \"{{utenteId}}\",\n  \"respostas\": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],\n  \"anonima\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar Avaliações CARAT (Médico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/carat/",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Utente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 ou 404', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/utente/{{utenteId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenUtente}}" }]
+          }
+        },
+        {
+          "name": "Dashboard Médico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 ou 404', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/medico/{{medicoId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        },
+        {
+          "name": "Dashboard Admin - Estatísticas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Contém estatísticas', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('object');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/admin/stats",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }]
+          }
+        },
+        {
+          "name": "Dashboard Admin - Utente Clínico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 ou 404', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/dashboard/{{utenteId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Administração",
+      "item": [
+        {
+          "name": "Listar Alertas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array', () => {",
+                  "  pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/alertas",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }]
+          }
+        },
+        {
+          "name": "Obter Limiar de Alertas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Limiar tem campos esperados', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('scoreMinimo');",
+                  "  pm.expect(body).to.have.property('deterioracaoPontos');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/limiar",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }]
+          }
+        },
+        {
+          "name": "Atualizar Limiar de Alertas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/admin/limiar",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scoreMinimo\": 5,\n  \"deterioracaoPontos\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Alertas - Acesso Negado (Médico)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 403 - Médico não acede a alertas de admin', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/alertas",
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. FHIR",
+      "item": [
+        {
+          "name": "Obter Observações FHIR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 ou 502', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 502, 503]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/fhir/observations?code=8867-4&patient=patient-001",
+              "query": [
+                { "key": "code", "value": "8867-4" },
+                { "key": "patient", "value": "patient-001" }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{tokenMedico}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}
