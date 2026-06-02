@@ -1,39 +1,105 @@
-import 'reflect-metadata';
-import bcrypt from 'bcryptjs';
-import { DataSource } from 'typeorm';
-import { Utente }        from '../models/utente.entity';
-import { Medico }        from '../models/medico.entity';
-import { Administrador } from '../models/administrador.entity';
-import { Alerta }        from '../models/alerta.entity';
-import { Medicacao }     from '../models/medicacao.entity';
-import { Prescricao }    from '../models/prescricao.entity';
-import { Exame }         from '../models/exame.entity';
-import { Auditoria }     from '../models/auditoria.entity';
-import { LimiarAlerta }  from '../models/limiarAlerta.entity';
-import { AvaliacaoCARAT } from '../models/carat.entity';
+import Database from 'better-sqlite3';
+import path from 'path';
 
-export async function initializeDatabase() {
-    try {
-        if (!AppDataSource.isInitialized) {
-            await AppDataSource.initialize();
-            console.log('Base de dados inicializada');
-        }
-    } catch (error) {
-        console.error('Erro ao inicializar a base de dados:', error);
-    }
-}
+export const db = new Database(path.join(process.cwd(), 'data.db'));
 
+db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
 
-export const AppDataSource = new DataSource({
-    type: 'better-sqlite3',
-    database: 'data.db',
-    entities: [Utente, Medico, Administrador, AvaliacaoCARAT, Alerta, Medicacao, Prescricao, Exame, Auditoria, LimiarAlerta],
-    synchronize: true,
-});
+db.exec(`
+  CREATE TABLE IF NOT EXISTS utente (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT,
+    password_hash TEXT NOT NULL,
+    data_nascimento TEXT,
+    nif TEXT,
+    telefone TEXT,
+    sexo TEXT,
+    idade INTEGER,
+    diagnostico_asma INTEGER NOT NULL DEFAULT 0,
+    data_primeira_consulta TEXT,
+    medico_id INTEGER,
+    ativo INTEGER NOT NULL DEFAULT 1,
+    dataCriacao TEXT NOT NULL,
+    dataAtualizacao TEXT NOT NULL
+  );
 
-// FIX: passwords agora são hashes bcrypt para que bcrypt.compareSync funcione
-export const baseDeDadosUsers = [
-    { id: "1", username: "joao", password: bcrypt.hashSync("1234",  10), role: "utente"        },
-    { id: "2", username: "admin",      password: bcrypt.hashSync("1234.", 10), role: "administrador" },
-    { id: "3", username: "medico1",    password: bcrypt.hashSync("1234.", 10), role: "medico"        },
-];
+  CREATE TABLE IF NOT EXISTS medico (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    especialidade TEXT,
+    numero_cedula TEXT,
+    ativo INTEGER NOT NULL DEFAULT 1,
+    dataCriacao TEXT NOT NULL,
+    dataAtualizacao TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS administrador (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    dataCriacao TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS prescricao (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    utente_id INTEGER NOT NULL,
+    medico_nome TEXT NOT NULL,
+    farmaco TEXT NOT NULL,
+    dosagem TEXT NOT NULL,
+    posologia TEXT NOT NULL,
+    data_criacao TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS exame (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    utente_id INTEGER NOT NULL,
+    tipo_exame TEXT NOT NULL,
+    exame TEXT NOT NULL,
+    medico_id INTEGER,
+    data_marcacao TEXT NOT NULL,
+    data_criacao TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS avaliacao_carat (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    utente_id INTEGER,
+    medico_nome TEXT,
+    respostas TEXT NOT NULL,
+    scoreTotal INTEGER NOT NULL,
+    scoreRinite INTEGER NOT NULL,
+    scoreAsma INTEGER NOT NULL,
+    nivelControlo TEXT NOT NULL,
+    recomendacao TEXT,
+    proximoPassoSemanas INTEGER,
+    anonima INTEGER NOT NULL DEFAULT 0,
+    dataCriacao TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS alerta (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    utente_id INTEGER NOT NULL,
+    medico_nome TEXT,
+    avaliacao_id INTEGER,
+    tipo TEXT NOT NULL,
+    prioridade TEXT NOT NULL,
+    motivo TEXT,
+    estado TEXT NOT NULL DEFAULT 'NOVO',
+    dataCriacao TEXT NOT NULL,
+    dataAtualizacao TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS limiar_alerta (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    scoreMinimo INTEGER NOT NULL DEFAULT 24,
+    deterioracaoPontos INTEGER NOT NULL DEFAULT 3,
+    dataAtualizacao TEXT NOT NULL
+  );
+`);
+
+console.log('Base de dados inicializada');

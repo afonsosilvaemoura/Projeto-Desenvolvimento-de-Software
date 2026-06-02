@@ -1,28 +1,20 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { AppDataSource } from '../database/database';
-import { Utente }        from '../models/utente.entity';
-import { Medico }        from '../models/medico.entity';
-import { Administrador } from '../models/administrador.entity';
-import { appConfig }     from '../config/app.config';
+import { db } from '../database/database';
+import { appConfig } from '../config/app.config';
 
 export class AuthService {
-  async login(
-    username: string,
-    password: string,
-    role: string
-  ): Promise<{ token: string; role: string; userId: number; nome: string }> {
-
+  async login(username: string, password: string, role: string) {
     const roleNorm = role === 'admin' ? 'administrador' : role;
-    let userRow: any = null;
 
-    if (roleNorm === 'utente') {
-      userRow = await AppDataSource.getRepository(Utente).findOne({ where: { username } });
-    } else if (roleNorm === 'medico') {
-      userRow = await AppDataSource.getRepository(Medico).findOne({ where: { username } });
-    } else if (roleNorm === 'administrador') {
-      userRow = await AppDataSource.getRepository(Administrador).findOne({ where: { username } });
-    }
+    const table =
+      roleNorm === 'utente' ? 'utente' :
+      roleNorm === 'medico' ? 'medico' :
+      roleNorm === 'administrador' ? 'administrador' : null;
+
+    if (!table) throw new Error('Role inválido.');
+
+    const userRow = db.prepare(`SELECT * FROM ${table} WHERE username = ?`).get(username) as any;
 
     if (!userRow) throw new Error('Credenciais inválidas.');
     if (!bcrypt.compareSync(password, userRow.password_hash)) throw new Error('Credenciais inválidas.');

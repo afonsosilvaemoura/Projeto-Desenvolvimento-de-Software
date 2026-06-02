@@ -1,34 +1,19 @@
-import { AppDataSource } from '../database/database';
-import { Exame } from '../models/exame.entity';
-
-interface CreateExameDto {
-    utente_id: number;
-    tipo_exame: string;
-    exame: string;
-    medico_id?: number | null;
-    data_marcacao: string;
-}
+import { db } from '../database/database';
 
 export class ExameService {
-    private repo = AppDataSource.getRepository(Exame);
+  criarExame(dados: { utente_id: number; tipo_exame: string; exame: string; medico_id?: number | null; data_marcacao: string }) {
+    const result = db.prepare(
+      'INSERT INTO exame (utente_id, tipo_exame, exame, medico_id, data_marcacao, data_criacao) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(dados.utente_id, dados.tipo_exame, dados.exame, dados.medico_id ?? null, dados.data_marcacao, new Date().toISOString());
 
-    async criarExame(dados: CreateExameDto): Promise<Exame> {
-        const novo = this.repo.create({
-            utente_id:     dados.utente_id,
-            tipo_exame:    dados.tipo_exame,
-            exame:         dados.exame,
-            medico_id:     dados.medico_id ?? null,
-            data_marcacao: new Date(dados.data_marcacao),
-            data_criacao:  new Date(),
-        });
-        return this.repo.save(novo);
-    }
+    return db.prepare('SELECT * FROM exame WHERE id = ?').get(result.lastInsertRowid);
+  }
 
-    async listarExames(): Promise<Exame[]> {
-        return this.repo.find();
-    }
+  listarExames() {
+    return db.prepare('SELECT * FROM exame ORDER BY data_criacao DESC').all();
+  }
 
-    async listarExamesParaUtente(utenteId: number): Promise<Exame[]> {
-        return this.repo.find({ where: { utente_id: utenteId } });
-    }
+  listarExamesParaUtente(utenteId: number) {
+    return db.prepare('SELECT * FROM exame WHERE utente_id = ? ORDER BY data_criacao DESC').all(utenteId);
+  }
 }

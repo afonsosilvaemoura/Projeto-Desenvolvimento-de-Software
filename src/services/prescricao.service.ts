@@ -1,97 +1,25 @@
-import { AppDataSource } from '../database/database';
-import { Prescricao } from '../models/prescricao.entity';
-import { CreatePrescricaoDto } from '../dtos/prescricao/create-prescricao.dto';
-import { PrescricaoResponseDto } from '../dtos/prescricao/prescricao-response.dto';
+import { db } from '../database/database';
 
 export class PrescricaoService {
+  criarPrescricaoDTO(dados: { utente_id: number; medico_nome: string; farmaco: string; dosagem: string; posologia: string }) {
+    const jaExiste = db.prepare(
+      'SELECT id FROM prescricao WHERE utente_id=? AND farmaco=? AND dosagem=? AND medico_nome=? AND posologia=?'
+    ).get(dados.utente_id, dados.farmaco, dados.dosagem, dados.medico_nome, dados.posologia);
 
-    private repo = AppDataSource.getRepository(Prescricao);
+    if (jaExiste) throw new Error('Já existe uma prescrição com os mesmos dados registada no sistema.');
 
-    async criarPrescricao(
-        dados: { utente_id: number; farmaco: string; dosagem: string; medico_nome: string; posologia: string }
-    ): Promise<Prescricao> {
-        const jaExiste = await this.repo.findOneBy({
-            utente_id: dados.utente_id,
-            farmaco: dados.farmaco,
-            dosagem: dados.dosagem,
-            medico_nome: dados.medico_nome,
-            posologia: dados.posologia,
-        });
+    const result = db.prepare(
+      'INSERT INTO prescricao (utente_id, medico_nome, farmaco, dosagem, posologia, data_criacao) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(dados.utente_id, dados.medico_nome, dados.farmaco, dados.dosagem, dados.posologia, new Date().toISOString());
 
-        if (jaExiste) {
-            throw new Error('Já existe uma prescrição com os mesmos dados registada no sistema.');
-        }
+    return db.prepare('SELECT * FROM prescricao WHERE id = ?').get(result.lastInsertRowid);
+  }
 
-        const nova = this.repo.create({
-            ...dados,
-            data_criacao: new Date(),
-        });
-         
-        return this.repo.save(nova);
-    }
+  listarPrescricoesComDTO() {
+    return db.prepare('SELECT * FROM prescricao ORDER BY data_criacao DESC').all();
+  }
 
-    async criarPrescricaoDTO(
-        dados: CreatePrescricaoDto
-    ): Promise<Prescricao> {
-        const jaExiste = await this.repo.findOneBy({
-            utente_id: dados.utente_id,
-            farmaco: dados.farmaco,
-            dosagem: dados.dosagem,
-            medico_nome: dados.medico_nome,
-            posologia: dados.posologia,
-        });
-
-        if (jaExiste) {
-            throw new Error('Já existe uma prescrição com os mesmos dados registada no sistema.');
-        }
-
-        const nova = this.repo.create({
-            ...dados,
-            data_criacao: new Date(),
-        });
-
-        const guardada = await this.repo.save(nova);
-        return this.toResponseDto(guardada); 
-    }
-
-      async listarPrescricoes(): Promise<Prescricao[]> {
-        return this.repo.find();
-    }
-
-    async listarPrescricoesParaUtente(utenteId: number): Promise<Prescricao[]> {
-        return this.repo.find({ where: { utente_id: utenteId } });
-    }
-
-    async listarPrescricoesComDTO(): Promise<PrescricaoResponseDto[]> {
-        const prescricoes = await this.repo.find();
-        return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
-    }
-
-    async listarPrescricoesComDTOParaUtente(utenteId: number): Promise<PrescricaoResponseDto[]> {
-        const prescricoes = await this.repo.find({ where: { utente_id: utenteId } });
-        return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
-    }
-
-/*
-
-    async listarComFiltro(nomeMedico: string): Promise<PrescricaoResponseDto[]> {
-        const prescricoes = await this.repo.find({
-            where: { medico_nome: nomeMedico },
-        });
-        
-        return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
-    }
-*/
-
-    private toResponseDto(prescricao: Prescricao): PrescricaoResponseDto {
-        return {
-            id: prescricao.id,
-            utente_id: prescricao.utente_id,
-            farmaco: prescricao.farmaco,
-            dosagem: prescricao.dosagem,
-            medico_nome: prescricao.medico_nome,
-            posologia: prescricao.posologia,
-            data_criacao: prescricao.data_criacao,
-        };
-    }
+  listarPrescricoesComDTOParaUtente(utenteId: number) {
+    return db.prepare('SELECT * FROM prescricao WHERE utente_id = ? ORDER BY data_criacao DESC').all(utenteId);
+  }
 }

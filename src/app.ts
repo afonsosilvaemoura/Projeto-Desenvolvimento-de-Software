@@ -1,15 +1,14 @@
-import 'reflect-metadata';
 import express from 'express';
 import path from 'path';
-import { initializeDatabase } from './database/database';
+import './database/database';
 
-import authRoutes    from './routes/auth.routes';
-import prescRoutes   from './routes/prescricao';
-import exameRoutes   from './routes/exame';
-import caratRoutes   from './routes/carat';
-import fhirRoutes    from './routes/fhir';
-import registoRoutes from './routes/registo.routes';
-import adminRoutes   from './routes/admin.routes';
+import authRoutes      from './routes/auth.routes';
+import prescRoutes     from './routes/prescricao';
+import exameRoutes     from './routes/exame';
+import caratRoutes     from './routes/carat';
+import fhirRoutes      from './routes/fhir';
+import registoRoutes   from './routes/registo.routes';
+import adminRoutes     from './routes/admin.routes';
 import dashboardRoutes from './routes/dashboard.api';
 
 const app = express();
@@ -27,9 +26,7 @@ app.use('/registo',   registoRoutes);
 app.use('/admin',     adminRoutes);
 app.use('/dashboard', dashboardRoutes);
 
-initializeDatabase().then(() => {
-  app.listen(3000, () => {
-    console.log('\nSAUDINOB a correr em http://localhost:3000');
-    console.log('   Para popular a BD: npx ts-node src/database/seed.ts');
-  });
+app.listen(3000, () => {
+  console.log('\nSAUDINOB a correr em http://localhost:3000');
+  console.log('   Para popular a BD: npx ts-node src/database/seed.ts');
 });
