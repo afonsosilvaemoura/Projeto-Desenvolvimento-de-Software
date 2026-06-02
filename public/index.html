@@ -150,6 +150,7 @@
     <button data-roles="utente,medico" onclick="ir('pagina-prescricoes')"> Prescrições</button>
     <button data-roles="utente,medico" onclick="ir('pagina-exames')">Exames</button>
     <button data-roles="utente,medico" onclick="ir('pagina-carat')">CARAT</button>
+    <button data-roles="utente,medico,administrador" onclick="ir('pagina-fhir')">FHIR</button>
     <button data-roles="utente,medico" onclick="ir('pagina-dashboard')">Dashboard</button>
     <button data-roles="administrador" class="btn-registo" onclick="abrirModalRegisto()">Novo Registo</button>
     <button data-roles="administrador" onclick="ir('pagina-medicos')">Médicos</button>
@@ -258,7 +259,13 @@
     <!-- CARAT -->
     <section id="pagina-carat" class="pagina">
       <h1 class="pg-title">Questionário CARAT</h1>
-      <div class="card">
+      <div id="caratSelectorMedico" class="card" style="display:none">
+        <h2 class="sec">Selecionar Utente</h2>
+        <select id="caratSelectUtente" class="dropdown" onchange="selecionarUtenteParaCarat(this.value)">
+          <option value="">— Escolha um utente —</option>
+        </select>
+      </div>
+      <div class="card" id="caratFormCard">
         <h2 class="sec">Responder ao Questionário</h2>
         <form id="formCarat" class="app-form">
           <div id="perguntasContainer"><p style="color:#64748b">A carregar perguntas…</p></div>
@@ -334,6 +341,30 @@
       <div class="card">
         <h2 class="sec">Alertas Ativos</h2>
         <div id="listaAlertas"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+    </section>
+
+    <!-- FHIR -->
+    <section id="pagina-fhir" class="pagina">
+      <h1 class="pg-title">Recursos FHIR</h1>
+      <div class="card">
+        <h2 class="sec">Observações — Servidor HL7 PT (R5)</h2>
+        <div style="display:flex;gap:10px;margin-bottom:14px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1">
+            <label style="font-size:13px;font-weight:500;color:#374151;display:block;margin-bottom:4px">Código LOINC</label>
+            <input id="fhirCode" value="8310-5" placeholder="ex: 8310-5" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;background:#f9fafb">
+          </div>
+          <button class="form-btn" onclick="carregarObservacoes()" style="width:auto;padding:10px 20px">Pesquisar</button>
+        </div>
+        <div id="listaObservacoes"><p style="color:#64748b">Introduza um código LOINC e clique em Pesquisar.</p></div>
+      </div>
+      <div class="card">
+        <h2 class="sec">Prescrições — FHIR MedicationRequest (R5)</h2>
+        <div id="listaMedicationRequests"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+      <div class="card">
+        <h2 class="sec">Exames — FHIR ServiceRequest (R5)</h2>
+        <div id="listaServiceRequests"><p style="color:#64748b">A carregar…</p></div>
       </div>
     </section>
 
@@ -458,6 +489,8 @@ function ir(id) {
   if(id==='pagina-alertas')   carregarAlertas();
   if(id==='pagina-medicos')   carregarMedicos();
   if(id==='pagina-utentes')   carregarUtentesAdmin();
+  if(id==='pagina-carat')     iniciarCarat();
+  if(id==='pagina-fhir')      carregarFhir();
   if(id==='pagina-inicio')    mostrarGraficoInicioUtente();
 }
 
@@ -509,6 +542,7 @@ function iniciar(){
   // Carregar dados
   if(role()!=='administrador'){
     carregarPrescricoes(); carregarExames(); carregarPerguntasCarat(); carregarHistoricoCARAT();
+    iniciarCarat();
   }
   mostrarGraficoInicioUtente();
 }
@@ -715,8 +749,10 @@ document.getElementById('formCarat').addEventListener('submit', async e=>{
     if(!sel){erEl.textContent=`Responda à pergunta ${i+1}.`;return;}
     respostas.push(parseInt(sel.value));
   }
+  if(role()==='medico' && !_caratUtenteId){erEl.textContent='Selecione um utente antes de submeter.';return;}
   try{
     const body=Object.fromEntries(respostas.map((v,i)=>[`perg${i+1}`,v]));
+    if(role()==='medico') body.utente_id=_caratUtenteId;
     const r=await fetch('/carat',{method:'POST',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify(body)});
     const d=await r.json();
     if(!r.ok) throw new Error(d.erro||'Erro');
@@ -735,6 +771,11 @@ document.getElementById('formCarat').addEventListener('submit', async e=>{
     document.getElementById('modalCarat').style.display='flex';
     document.getElementById('modalCarat').classList.add('aberto');
     document.getElementById('formCarat').reset();
+    if(role()==='medico'){
+      _caratUtenteId=null;
+      document.getElementById('caratSelectUtente').value='';
+      document.getElementById('caratFormCard').style.display='none';
+    }
     await carregarHistoricoCARAT();
   } catch(er){erEl.textContent=er.message;}
 });
@@ -827,6 +868,103 @@ function renderDash(d){
       </tbody></table></div>`:''}`;
 }
 
+// ── CARAT — seletor de utente para médicos ────────────────────────────────────
+async function iniciarCarat(){
+  const sel = document.getElementById('caratSelectorMedico');
+  const formCard = document.getElementById('caratFormCard');
+  if(role()==='medico'){
+    sel.style.display='block';
+    formCard.style.display='none';
+    _caratUtenteId=null;
+    await carregarUtentesCarat();
+  } else {
+    sel.style.display='none';
+    formCard.style.display='block';
+  }
+}
+
+async function carregarUtentesCarat(){
+  try{
+    const r=await fetch('/registo/utentes',{headers:ah()});
+    const utentes=await r.json();
+    const sel=document.getElementById('caratSelectUtente');
+    sel.innerHTML='<option value="">— Escolha um utente —</option>';
+    utentes.forEach(u=>{
+      const o=document.createElement('option');
+      o.value=u.id; o.textContent=`ID ${u.id} - ${u.nome}`; sel.appendChild(o);
+    });
+  } catch(e){console.error(e);}
+}
+
+function selecionarUtenteParaCarat(utenteId){
+  _caratUtenteId = utenteId ? Number(utenteId) : null;
+  document.getElementById('caratFormCard').style.display = utenteId ? 'block' : 'none';
+}
+
+// ── FHIR ──────────────────────────────────────────────────────────────────────
+async function carregarFhir(){
+  carregarMedicationRequests();
+  carregarServiceRequests();
+}
+
+async function carregarObservacoes(){
+  const code=(document.getElementById('fhirCode').value.trim()||'8310-5');
+  const patientParam=role()==='utente'?`&patient=${uid()}`:'';
+  const c=document.getElementById('listaObservacoes');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  try{
+    const r=await fetch(`/fhir/observations?code=${encodeURIComponent(code)}${patientParam}`,{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Sem observações para este código.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>ID</th><th>Estado</th><th>Código</th><th>Descrição</th><th>Valor</th><th>Unidade</th><th>Data</th><th>Sujeito</th></tr></thead><tbody>
+      ${d.map(o=>`<tr><td>${o.id}</td><td>${o.status}</td><td>${o.code}</td><td>${o.display}</td>
+        <td>${o.value}</td><td>${o.unit||'—'}</td><td>${fmt(o.effectiveDateTime)}</td><td>${o.subject}</td></tr>`).join('')}
+    </tbody></table>`;
+  } catch{c.innerHTML='<p class="msg erro">Erro ao contactar servidor FHIR.</p>';}
+}
+
+async function carregarMedicationRequests(){
+  const c=document.getElementById('listaMedicationRequests');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  const patientParam=role()==='utente'?`?patient=${uid()}`:'';
+  try{
+    const r=await fetch(`/fhir/medication-requests${patientParam}`,{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Sem prescrições FHIR.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>ID</th><th>Medicação</th><th>Posologia</th><th>Prescritor</th><th>Utente (ref.)</th><th>Data</th></tr></thead><tbody>
+      ${d.map(m=>`<tr>
+        <td>${m.id}</td>
+        <td>${m.medication?.concept?.text||'—'}</td>
+        <td>${m.dosageInstruction?.[0]?.text||'—'}</td>
+        <td>${m.requester?.display||'—'}</td>
+        <td><span class="badge-info">${m.subject?.reference||'—'}</span></td>
+        <td>${fmt(m.authoredOn)}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar MedicationRequests.</p>';}
+}
+
+async function carregarServiceRequests(){
+  const c=document.getElementById('listaServiceRequests');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  const patientParam=role()==='utente'?`?patient=${uid()}`:'';
+  try{
+    const r=await fetch(`/fhir/service-requests${patientParam}`,{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Sem exames FHIR.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>ID</th><th>Categoria</th><th>Exame</th><th>Utente (ref.)</th><th>Médico (ref.)</th><th>Data Marcação</th></tr></thead><tbody>
+      ${d.map(s=>`<tr>
+        <td>${s.id}</td>
+        <td>${s.category?.[0]?.text||'—'}</td>
+        <td>${s.code?.concept?.text||'—'}</td>
+        <td><span class="badge-info">${s.subject?.reference||'—'}</span></td>
+        <td><span class="badge-info">${s.requester?.reference||'—'}</span></td>
+        <td>${fmt(s.occurrenceDateTime)}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar ServiceRequests.</p>';}
+}
+
 // ── Médicos (admin) ──────────────────────────────────────────────────────────
 async function carregarMedicos(){
   const c=document.getElementById('listaMedicos');
@@ -850,6 +988,7 @@ async function carregarMedicos(){
 let _medicoParaDesativar = null;
 let _utenteParaInativar  = null;
 let _utentesAdminCache   = {};
+let _caratUtenteId       = null;
 
 async function toggleMedico(id, ativo){
   if(ativo){

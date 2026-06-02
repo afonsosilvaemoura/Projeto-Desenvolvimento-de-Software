@@ -1,4 +1,7 @@
 import { ObservationDTO } from '../dtos/fhir/Observation';
+import { MedicationRequestDTO } from '../dtos/fhir/MedicationRequest';
+import { ServiceRequestDTO } from '../dtos/fhir/ServiceRequest';
+import { db } from '../database/database';
 
 const FHIR_BASE_URL = 'https://fhir.hl7.pt/r5/fhir';
 
@@ -36,4 +39,41 @@ export async function getObservationsFromFhir(
       subject:           String(r?.subject?.reference ?? r?.subject?.display ?? ''),
     } satisfies ObservationDTO;
   }) ?? [];
+}
+
+export function getPrescricoesAsFhir(utenteId?: number): MedicationRequestDTO[] {
+  const rows = utenteId
+    ? db.prepare('SELECT * FROM prescricao WHERE utente_id = ? ORDER BY data_criacao DESC').all(utenteId) as any[]
+    : db.prepare('SELECT * FROM prescricao ORDER BY data_criacao DESC').all() as any[];
+
+  return rows.map(p => ({
+    resourceType: 'MedicationRequest',
+    id: String(p.id),
+    status: 'active',
+    intent: 'order',
+    medication: { concept: { text: p.farmaco } },
+    subject: { reference: `Patient/${p.utente_id}` },
+    requester: { display: p.medico_nome },
+    dosageInstruction: [{ text: `${p.dosagem} — ${p.posologia}` }],
+    authoredOn: p.data_criacao,
+  } satisfies MedicationRequestDTO));
+}
+
+export function getExamesAsFhir(utenteId?: number): ServiceRequestDTO[] {
+  const rows = utenteId
+    ? db.prepare('SELECT * FROM exame WHERE utente_id = ? ORDER BY data_criacao DESC').all(utenteId) as any[]
+    : db.prepare('SELECT * FROM exame ORDER BY data_criacao DESC').all() as any[];
+
+  return rows.map(e => ({
+    resourceType: 'ServiceRequest',
+    id: String(e.id),
+    status: 'active',
+    intent: 'order',
+    category: [{ text: e.tipo_exame }],
+    code: { concept: { text: e.exame } },
+    subject: { reference: `Patient/${e.utente_id}` },
+    requester: { reference: `Practitioner/${e.medico_id ?? 'unknown'}` },
+    occurrenceDateTime: e.data_marcacao,
+    authoredOn: e.data_criacao,
+  } satisfies ServiceRequestDTO));
 }
