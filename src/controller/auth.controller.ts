@@ -9,6 +9,7 @@ import { AuthService } from '../services/auth.services';
 export class AuthController {
     private authService = new AuthService();
 
+
     async login(req: Request, res: Response) {
         try {
             const { username, password } = req.body;
@@ -24,4 +25,6 @@ export class AuthController {
         }
     }
 }
+console.log('AuthController carregado');
+
 
