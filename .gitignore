@@ -138,7 +138,4 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# ignorar base dados
-database.db
-data.db-shm
-data.db-wal
+
