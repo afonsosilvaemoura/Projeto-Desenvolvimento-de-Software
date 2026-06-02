@@ -100,6 +100,19 @@ db.exec(`
     deterioracaoPontos INTEGER NOT NULL DEFAULT 3,
     dataAtualizacao TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS auditoria (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    admin_id INTEGER NOT NULL,
+    admin_nome TEXT NOT NULL,
+    acao TEXT NOT NULL,
+    entidade TEXT NOT NULL,
+    entidade_id INTEGER,
+    detalhes TEXT,
+    dataCriacao TEXT NOT NULL
+  );
 `);
+
+try { db.exec('ALTER TABLE utente ADD COLUMN motivo_inativacao TEXT'); } catch {}
 
 console.log('Base de dados inicializada');

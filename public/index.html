@@ -134,6 +134,8 @@
     <button data-roles="utente,medico" onclick="ir('pagina-carat')">CARAT</button>
     <button data-roles="utente,medico" onclick="ir('pagina-dashboard')">Dashboard</button>
     <button data-roles="administrador" class="btn-registo" onclick="abrirModalRegisto()">Novo Registo</button>
+    <button data-roles="administrador" onclick="ir('pagina-medicos')">Médicos</button>
+    <button data-roles="administrador" onclick="ir('pagina-utentes')">Utentes</button>
     <button data-roles="administrador" onclick="ir('pagina-alertas')">Alertas</button>
     <button class="btn-logout" onclick="sair()">Sair</button>
   </nav>
@@ -225,6 +227,24 @@
       </div>
     </section>
 
+    <!-- MÉDICOS (só admin) -->
+    <section id="pagina-medicos" class="pagina">
+      <h1 class="pg-title">Gestão de Médicos</h1>
+      <div class="card">
+        <h2 class="sec">Lista de Médicos</h2>
+        <div id="listaMedicos"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+    </section>
+
+    <!-- UTENTES (só admin) -->
+    <section id="pagina-utentes" class="pagina">
+      <h1 class="pg-title">Gestão de Utentes</h1>
+      <div class="card">
+        <h2 class="sec">Lista de Utentes</h2>
+        <div id="listaUtentesAdmin"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+    </section>
+
     <!-- ALERTAS (só admin) -->
     <section id="pagina-alertas" class="pagina">
       <h1 class="pg-title">Alertas e Limiares</h1>
@@ -304,6 +324,54 @@
   </div>
 </div>
 
+<!-- MODAL DESATIVAR MÉDICO (dupla confirmação com password + realocação) -->
+<div id="overlayDesativarMedico" class="overlay" onclick="fecharSeFora(event,'overlayDesativarMedico')">
+  <div class="modal">
+    <h2 style="color:#dc2626">Desativar Médico <button class="modal-close" onclick="fecharModal('overlayDesativarMedico')">✕</button></h2>
+    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:12px;padding:14px 16px;margin-bottom:18px">
+      <p id="desativarMedicoAviso" style="color:#991b1b;font-size:14px;line-height:1.6"></p>
+    </div>
+    <div id="secaoRealocar" style="display:none;margin-bottom:16px">
+      <p style="font-size:13px;color:#374151;margin-bottom:10px">Selecione os utentes a realocar e o médico de destino (identificados por ID):</p>
+      <div id="realocarLista" style="max-height:220px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;padding:4px 10px"></div>
+      <div style="margin:16px 0;border-top:1px solid #e5e7eb"></div>
+    </div>
+    <div>
+      <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Confirme a sua password de administrador</label>
+      <input type="password" id="desativarMedicoPassword" placeholder="Password do administrador"
+        style="width:100%;padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="form-btn" style="flex:1;background:#6b7280" onclick="fecharModal('overlayDesativarMedico')">Cancelar</button>
+      <button class="form-btn" style="flex:1;background:#dc2626" onclick="confirmarDesativarMedico()">Confirmar Desativação</button>
+    </div>
+    <p id="desativarMedicoErro" class="msg erro" style="margin-top:8px"></p>
+  </div>
+</div>
+
+<!-- MODAL INATIVAR UTENTE -->
+<div id="overlayInativarUtente" class="overlay" onclick="fecharSeFora(event,'overlayInativarUtente')">
+  <div class="modal">
+    <h2 style="color:#dc2626">Inativar Utente <button class="modal-close" onclick="fecharModal('overlayInativarUtente')">✕</button></h2>
+    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:12px;padding:14px 16px;margin-bottom:18px">
+      <p id="inativarUtenteNome" style="color:#991b1b;font-size:14px;font-weight:600"></p>
+    </div>
+    <div class="fg">
+      <label style="font-size:13px;font-weight:500;color:#374151;display:block;margin-bottom:6px">Motivo de inativação</label>
+      <select id="motivoInativacao" style="width:100%;padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb">
+        <option value="morte">Morte</option>
+        <option value="pedido_rgpd">Pedido RGPD</option>
+        <option value="duplicado">Duplicado</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="form-btn" style="flex:1;background:#6b7280" onclick="fecharModal('overlayInativarUtente')">Cancelar</button>
+      <button class="form-btn" style="flex:1;background:#dc2626" onclick="confirmarInativarUtente()">Inativar</button>
+    </div>
+    <p id="inativarUtenteErro" class="msg erro" style="margin-top:8px"></p>
+  </div>
+</div>
+
 <!-- MODAL RESULTADO CARAT -->
 <div id="modalCarat">
   <div class="modal">
@@ -326,6 +394,8 @@ function ir(id) {
   document.getElementById(id)?.classList.add('ativa');
   if(id==='pagina-dashboard') carregarDash();
   if(id==='pagina-alertas')   carregarAlertas();
+  if(id==='pagina-medicos')   carregarMedicos();
+  if(id==='pagina-utentes')   carregarUtentesAdmin();
   if(id==='pagina-inicio')    mostrarGraficoInicioUtente();
 }
 
@@ -338,7 +408,7 @@ document.getElementById('loginForm').addEventListener('submit', async e=>{
   const erEl = document.getElementById('loginErro');
   erEl.style.display='none';
   try{
-    const res  = await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},
+    const res  = await fetch('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({username:document.getElementById('username').value,
         password:document.getElementById('password').value, role:document.getElementById('role').value})});
     const d = await res.json();
@@ -461,7 +531,7 @@ async function carregarPrescricoes(){
     if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhuma prescrição registada.</p>';return;}
     c.innerHTML=`<table><thead><tr><th>#</th><th>Fármaco</th><th>Dosagem</th><th>Médico</th><th>Data</th></tr></thead><tbody>
       ${d.map(p=>`<tr><td>${p.id}</td><td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>
-        <td>${fmt(p.data_criacao??p.dataCriacao)}</td></tr>`).join('')}
+        <td>${p.medico_nome??'—'}</td><td>${fmt(p.data_criacao??p.dataCriacao)}</td></tr>`).join('')}
     </tbody></table>`;
   } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
 }
@@ -608,7 +678,7 @@ async function carregarListaUtentes(){
     const sel=document.getElementById('selectUtente');
     sel.innerHTML='<option value="">— Escolha um utente —</option>';
     utentes.forEach(u=>{
-      const o=document.createElement('option'); o.value=u.id; o.textContent=u.nome; sel.appendChild(o);
+      const o=document.createElement('option'); o.value=u.id; o.textContent=`ID ${u.id} - ${u.nome}`; sel.appendChild(o);
     });
   } catch(e){console.error(e);}
 }
@@ -673,6 +743,158 @@ function renderDash(d){
       ${d.exames.map(x=>`<tr><td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
         <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
       </tbody></table></div>`:''}`;
+}
+
+// ── Médicos (admin) ──────────────────────────────────────────────────────────
+async function carregarMedicos(){
+  const c=document.getElementById('listaMedicos');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  try{
+    const r=await fetch('/admin/medicos',{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum médico registado.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Nome</th><th>Username</th><th>Especialidade</th><th>Nº Cédula</th><th>Estado</th><th>Ação</th></tr></thead><tbody>
+      ${d.map(m=>`<tr>
+        <td>${m.id}</td><td>${m.nome}</td><td>${m.username}</td>
+        <td>${m.especialidade||'—'}</td><td>${m.numero_cedula||'—'}</td>
+        <td><span class="${m.ativo?'badge-ok':'badge-nok'}">${m.ativo?'Ativo':'Inativo'}</span></td>
+        <td><button class="form-btn" style="padding:6px 14px;font-size:12px;background:${m.ativo?'#dc2626':'#16a34a'}"
+          onclick="toggleMedico(${m.id},${!m.ativo})">${m.ativo?'Desativar':'Ativar'}</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  } catch {c.innerHTML='<p class="msg erro">Erro ao carregar médicos.</p>';}
+}
+
+let _medicoParaDesativar = null;
+let _utenteParaInativar  = null;
+let _utentesAdminCache   = {};
+
+async function toggleMedico(id, ativo){
+  if(ativo){
+    try{
+      const r=await fetch(`/admin/medico/${id}/ativo`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({ativo:true})});
+      if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+      await carregarMedicos();
+    } catch(er){alert(er.message);}
+    return;
+  }
+  try{
+    const [uR,mR]=await Promise.all([
+      fetch(`/admin/medico/${id}/utentes`,{headers:ah()}),
+      fetch('/admin/medicos',{headers:ah()})
+    ]);
+    const utentes=await uR.json();
+    const medicos=await mR.json();
+    _medicoParaDesativar=id;
+    const atual=medicos.find(m=>m.id===id);
+
+    if(utentes.length){
+      const ativos=medicos.filter(m=>m.ativo&&m.id!==id);
+      if(!ativos.length){alert('Não existem outros médicos ativos para realocar os utentes.');return;}
+      document.getElementById('desativarMedicoAviso').innerHTML=
+        `O médico <strong>${atual?.nome}</strong> tem <strong>${utentes.length}</strong> utente(s) ativo(s).<br>Selecione um médico para os realocar antes de desativar.`;
+      const opsMedicos=ativos.map(m=>`<option value="${m.id}">${m.nome}</option>`).join('');
+      document.getElementById('realocarLista').innerHTML=utentes.map(u=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9">
+          <input type="checkbox" id="chk_u${u.id}" value="${u.id}" style="width:16px;height:16px;cursor:pointer;accent-color:#dc2626">
+          <label for="chk_u${u.id}" style="font-size:13px;font-weight:700;min-width:70px;color:#1f2937">ID #${u.id}</label>
+          <select id="sel_u${u.id}" style="flex:1;padding:6px 8px;border:1px solid #d1d5db;border-radius:8px;font-size:12px;background:#f9fafb">
+            <option value="">— médico —</option>${opsMedicos}
+          </select>
+        </div>`).join('');
+      document.getElementById('secaoRealocar').style.display='block';
+    } else {
+      document.getElementById('desativarMedicoAviso').innerHTML=
+        `Tem a certeza que deseja desativar o médico <strong>${atual?.nome}</strong>?`;
+      document.getElementById('secaoRealocar').style.display='none';
+    }
+
+    document.getElementById('desativarMedicoPassword').value='';
+    document.getElementById('desativarMedicoErro').textContent='';
+    document.getElementById('overlayDesativarMedico').style.display='flex';
+    document.getElementById('overlayDesativarMedico').classList.add('aberto');
+  } catch(er){alert(er.message);}
+}
+
+async function confirmarDesativarMedico(){
+  const erEl=document.getElementById('desativarMedicoErro'); erEl.textContent='';
+  const password=document.getElementById('desativarMedicoPassword').value;
+  if(!password){erEl.textContent='Introduza a sua password para confirmar.';return;}
+  const realocacoes=[];
+  if(document.getElementById('secaoRealocar').style.display!=='none'){
+    const chks=document.querySelectorAll('#realocarLista input[type=checkbox]');
+    for(const chk of chks){
+      if(chk.checked){
+        const uid=Number(chk.value);
+        const novoMedicoId=Number(document.getElementById(`sel_u${uid}`).value);
+        if(!novoMedicoId){erEl.textContent=`Selecione um médico para o Utente ID #${uid}.`;return;}
+        realocacoes.push({utenteId:uid,novoMedicoId});
+      }
+    }
+  }
+  try{
+    const r=await fetch(`/admin/medico/${_medicoParaDesativar}/desativar`,{
+      method:'POST',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({password,realocacoes})
+    });
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+    fecharModal('overlayDesativarMedico');
+    await carregarMedicos();
+  } catch(er){erEl.textContent=er.message;}
+}
+
+// ── Utentes admin ─────────────────────────────────────────────────────────────
+const motivoLabels={morte:'Morte',pedido_rgpd:'Pedido RGPD',duplicado:'Duplicado'};
+
+async function carregarUtentesAdmin(){
+  const c=document.getElementById('listaUtentesAdmin');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  try{
+    const r=await fetch('/admin/utentes',{headers:ah()});
+    const d=await r.json();
+    if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum utente registado.</p>';return;}
+    _utentesAdminCache={};
+    d.forEach(u=>{ _utentesAdminCache[u.id]=u; });
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Nome</th><th>Username</th><th>Médico</th><th>Estado</th><th>Motivo</th><th>Ação</th></tr></thead><tbody>
+      ${d.map(u=>`<tr>
+        <td>${u.id}</td><td>${u.nome}</td><td>${u.username}</td>
+        <td>${u.medico_nome||'—'}</td>
+        <td><span class="${u.ativo?'badge-ok':'badge-nok'}">${u.ativo?'Ativo':'Inativo'}</span></td>
+        <td>${u.motivo_inativacao?motivoLabels[u.motivo_inativacao]||u.motivo_inativacao:'—'}</td>
+        <td><button class="form-btn" style="padding:6px 14px;font-size:12px;background:${u.ativo?'#dc2626':'#16a34a'}"
+          onclick="${u.ativo?`abrirInativarUtente(${u.id})`:`ativarUtente(${u.id})`}">${u.ativo?'Inativar':'Ativar'}</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar utentes.</p>';}
+}
+
+function abrirInativarUtente(id){
+  _utenteParaInativar=id;
+  const u=_utentesAdminCache[id];
+  document.getElementById('inativarUtenteNome').textContent=`Utente: ${u?.nome||'#'+id}`;
+  document.getElementById('inativarUtenteErro').textContent='';
+  document.getElementById('motivoInativacao').value='morte';
+  document.getElementById('overlayInativarUtente').style.display='flex';
+  document.getElementById('overlayInativarUtente').classList.add('aberto');
+}
+
+async function confirmarInativarUtente(){
+  const erEl=document.getElementById('inativarUtenteErro'); erEl.textContent='';
+  const motivo=document.getElementById('motivoInativacao').value;
+  try{
+    const r=await fetch(`/admin/utente/${_utenteParaInativar}/ativo`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({ativo:false,motivo})});
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+    fecharModal('overlayInativarUtente');
+    await carregarUtentesAdmin();
+  } catch(er){erEl.textContent=er.message;}
+}
+
+async function ativarUtente(id){
+  try{
+    const r=await fetch(`/admin/utente/${id}/ativo`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({ativo:true})});
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+    await carregarUtentesAdmin();
+  } catch(er){alert(er.message);}
 }
 
 // ── Alertas (admin) ───────────────────────────────────────────────────────────
