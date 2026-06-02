@@ -45,6 +45,24 @@ router.get('/utente/:userId', authMiddleware, (req: AuthRequest, res: Response) 
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
 
+router.get('/medico/alertas-utentes', authMiddleware, authorize(['medico']), (req: AuthRequest, res: Response) => {
+  try {
+    const medicoId = req.user!.id;
+    const utentes = db.prepare('SELECT id, nome FROM utente WHERE medico_id = ? AND ativo = 1').all(medicoId) as any[];
+    if (!utentes.length) return res.json([]);
+    const ph = utentes.map(() => '?').join(',');
+    const alertas = db.prepare(`
+      SELECT a.id, a.utente_id, a.tipo, a.prioridade, a.motivo, a.estado, a.dataCriacao,
+             u.nome as utente_nome,
+             (SELECT scoreTotal FROM avaliacao_carat WHERE utente_id = a.utente_id ORDER BY dataCriacao DESC LIMIT 1) as ultimo_score
+      FROM alerta a JOIN utente u ON a.utente_id = u.id
+      WHERE a.utente_id IN (${ph}) AND a.estado = 'NOVO'
+      ORDER BY CASE a.prioridade WHEN 'CRITICA' THEN 1 WHEN 'ALTA' THEN 2 ELSE 3 END, a.dataCriacao DESC
+    `).all(...utentes.map(u => u.id));
+    return res.json(alertas);
+  } catch (e: any) { return res.status(500).json({ erro: e.message }); }
+});
+
 router.get('/medico/:medicoId', authMiddleware, authorize(['medico']), (req: AuthRequest, res: Response) => {
   try {
     const medicoId = Number(req.params.medicoId);

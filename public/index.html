@@ -138,6 +138,12 @@
         maria, pedro, ana, rui, sofia, miguel… / 1234
       </div>
     </details>
+    <div style="border-top:1px solid #e5e7eb;margin-top:18px;padding-top:16px;text-align:center">
+      <p style="font-size:13px;color:#64748b;margin-bottom:10px">Não tem conta? Faça o questionário de triagem.</p>
+      <button type="button" onclick="abrirCaratAnonimo()" style="width:100%;padding:12px;background:#059669;color:white;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer">
+        Questionário CARAT Anónimo
+      </button>
+    </div>
   </div>
 </div>
 
@@ -150,7 +156,8 @@
     <button data-roles="utente,medico" onclick="ir('pagina-prescricoes')"> Prescrições</button>
     <button data-roles="utente,medico" onclick="ir('pagina-exames')">Exames</button>
     <button data-roles="utente,medico" onclick="ir('pagina-carat')">CARAT</button>
-    <button data-roles="utente,medico,administrador" onclick="ir('pagina-fhir')">FHIR</button>
+    <button data-roles="medico" onclick="ir('pagina-fhir')">FHIR</button>
+    <button data-roles="utente" onclick="ir('pagina-perfil')">Perfil</button>
     <button data-roles="utente,medico" onclick="ir('pagina-dashboard')">Dashboard</button>
     <button data-roles="administrador" class="btn-registo" onclick="abrirModalRegisto()">Novo Registo</button>
     <button data-roles="administrador" onclick="ir('pagina-medicos')">Médicos</button>
@@ -172,6 +179,15 @@
           <p style="color:#64748b">A carregar gráfico…</p>
         </div>
       </div>
+      <!-- Painel Médico (alertas) -->
+      <div id="medicoDashboard" style="display:none">
+        <div class="admin-panel-header">
+          <h1>Painel do Médico</h1>
+          <p>Utentes com alertas CARAT ativos.</p>
+        </div>
+        <div id="medicoDashAlertas"><p style="color:#64748b">A carregar alertas…</p></div>
+      </div>
+
       <!-- Painel Admin -->
       <div id="adminDashboard" style="display:none">
         <div class="admin-panel-header">
@@ -219,12 +235,17 @@
     <!-- PRESCRIÇÕES -->
     <section id="pagina-prescricoes" class="pagina">
       <h1 class="pg-title">Prescrições</h1>
-      <div class="card">
+      <div class="card" id="cardNovaPrescricao">
         <h2 class="sec">Nova Prescrição</h2>
         <form id="formPrescricao" class="app-form">
+          <div>
+            <label>Utente</label>
+            <select id="prescricaoUtente" required style="padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb;width:100%">
+              <option value="">— Selecione o utente —</option>
+            </select>
+          </div>
           <div><label>Medicamento</label><input id="medicamento" placeholder="ex: Salbutamol 100mcg" required></div>
           <div><label>Dose</label><input id="dose" placeholder="ex: 2 inalações 3x/dia" required></div>
-          <div><label>Nome do Médico</label><input id="prescricaoMedico" placeholder="ex: Dr. Carlos" required></div>
           <button class="form-btn" type="submit">Criar Prescrição</button>
           <p id="msgPrescricao" class="msg"></p>
         </form>
@@ -238,7 +259,7 @@
     <!-- EXAMES -->
     <section id="pagina-exames" class="pagina">
       <h1 class="pg-title">Exames</h1>
-      <div class="card">
+      <div class="card" id="cardCriarExame">
         <h2 class="sec">Criar Exame</h2>
         <form id="formExame" class="app-form">
           <div><label>ID do Utente</label><input id="exUtenteId" type="number" placeholder="ex: 1" required></div>
@@ -341,6 +362,53 @@
       <div class="card">
         <h2 class="sec">Alertas Ativos</h2>
         <div id="listaAlertas"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+    </section>
+
+    <!-- PERFIL (só utente) -->
+    <section id="pagina-perfil" class="pagina">
+      <h1 class="pg-title">Os Meus Dados Pessoais</h1>
+      <div class="card">
+        <h2 class="sec">Informação Pessoal</h2>
+        <p style="font-size:13px;color:#64748b;margin-bottom:18px">
+          Estes dados são confidenciais e apenas visíveis por si e pelo seu médico responsável.
+        </p>
+        <form id="formPerfil" class="app-form">
+          <div>
+            <label>Nome</label>
+            <input id="perfilNome" disabled style="background:#f1f5f9;color:#94a3b8;cursor:not-allowed">
+          </div>
+          <div>
+            <label>Username</label>
+            <input id="perfilUsername" disabled style="background:#f1f5f9;color:#94a3b8;cursor:not-allowed">
+          </div>
+          <div>
+            <label>Email</label>
+            <input id="perfilEmail" type="email" placeholder="ex: joao@email.com">
+          </div>
+          <div>
+            <label>Telefone</label>
+            <input id="perfilTelefone" type="tel" placeholder="ex: 912 345 678">
+          </div>
+          <div>
+            <label>Data de Nascimento</label>
+            <input id="perfilNascimento" type="date">
+          </div>
+          <div>
+            <label>NIF</label>
+            <input id="perfilNif" placeholder="ex: 123456789" maxlength="9">
+          </div>
+          <div>
+            <label>Morada</label>
+            <input id="perfilMorada" placeholder="ex: Rua das Flores, 12, 2º Dto, 4000-123 Porto">
+          </div>
+          <div>
+            <label>Alergias conhecidas</label>
+            <input id="perfilAlergia" placeholder="ex: Penicilina, ácaros, amendoins">
+          </div>
+          <button class="form-btn" type="submit">Guardar Dados Pessoais</button>
+          <p id="msgPerfil" class="msg"></p>
+        </form>
       </div>
     </section>
 
@@ -465,6 +533,57 @@
   </div>
 </div>
 
+<!-- MODAL CARAT ANÓNIMO -->
+<div id="overlayCaratAnonimo" class="overlay">
+  <div class="modal" style="max-width:600px;max-height:90vh;overflow-y:auto">
+    <h2 style="color:#059669">Questionário CARAT Anónimo <button class="modal-close" onclick="fecharCaratAnonimo()">✕</button></h2>
+
+    <!-- Guia de pontuação -->
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px">
+      <p style="font-weight:600;color:#15803d;margin-bottom:8px">Escala de respostas (por pergunta):</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 16px;color:#374151">
+        <span><strong>3</strong> — Nunca</span>
+        <span><strong>1</strong> — Mais de 2 dias por semana</span>
+        <span><strong>2</strong> — 1 a 2x por semana</span>
+        <span><strong>0</strong> — Quase ou todos os dias</span>
+      </div>
+      <p style="font-weight:600;color:#15803d;margin-top:10px;margin-bottom:6px">Interpretação (total 0–30 pontos):</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 16px;color:#374151">
+        <span>✅ > 24 — Controlado</span>
+        <span>⚠️ 17–24 — Vigiar</span>
+        <span>❌ ≤ 16 — Urgente</span>
+        <span>🚨 &lt; 10 — Estado Crítico</span>
+      </div>
+    </div>
+
+    <!-- Formulário -->
+    <div id="secaoFormAnonimo">
+      <form id="formCaratAnonimo" class="app-form">
+        <div id="perguntasAnonimas"><p style="color:#64748b">A carregar perguntas…</p></div>
+        <button class="form-btn" type="submit" style="background:#059669">Ver Resultado</button>
+        <p id="erroCaratAnonimo" class="msg erro"></p>
+      </form>
+    </div>
+
+    <!-- Resultado -->
+    <div id="secaoResultadoAnonimo" style="display:none">
+      <div id="resultadoAnonimoScores"></div>
+      <div id="alertaCriticoAnonimo" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:14px;padding:20px;margin:16px 0;text-align:center">
+        <p style="font-size:17px;font-weight:700;color:#991b1b;margin-bottom:10px">🚨 Estado Crítico</p>
+        <p style="color:#7f1d1d;font-size:14px;line-height:1.8">
+          Entre em contacto connosco para marcar uma consulta o mais rapidamente possível!<br>
+          <strong>Tel:</strong> 229 229 229<br>
+          <strong>Email:</strong> clinicarespiratoria@ds.fmup.pt
+        </p>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="form-btn" style="flex:1;background:#6b7280" onclick="fecharCaratAnonimo()">Fechar</button>
+        <button class="form-btn" style="flex:1;background:#059669" onclick="repetirCaratAnonimo()">Repetir Questionário</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL RESULTADO CARAT -->
 <div id="modalCarat">
   <div class="modal">
@@ -489,8 +608,10 @@ function ir(id) {
   if(id==='pagina-alertas')   carregarAlertas();
   if(id==='pagina-medicos')   carregarMedicos();
   if(id==='pagina-utentes')   carregarUtentesAdmin();
+  if(id==='pagina-prescricoes' && role()==='medico') carregarUtentesPrescricao();
   if(id==='pagina-carat')     iniciarCarat();
   if(id==='pagina-fhir')      carregarFhir();
+  if(id==='pagina-perfil')    carregarPerfil();
   if(id==='pagina-inicio')    mostrarGraficoInicioUtente();
 }
 
@@ -543,6 +664,11 @@ function iniciar(){
   if(role()!=='administrador'){
     carregarPrescricoes(); carregarExames(); carregarPerguntasCarat(); carregarHistoricoCARAT();
     iniciarCarat();
+    if(role()==='medico') carregarUtentesPrescricao();
+    if(role()==='utente'){
+      document.getElementById('cardNovaPrescricao').style.display='none';
+      document.getElementById('cardCriarExame').style.display='none';
+    }
   }
   mostrarGraficoInicioUtente();
 }
@@ -559,8 +685,18 @@ async function mostrarGraficoInicioUtente(){
     await carregarAdminDashboard();
     return;
   }
+  const medicoDiv = document.getElementById('medicoDashboard');
+  if(role() === 'medico'){
+    benvindo.style.display='none';
+    grafico.style.display='none';
+    adminDiv.style.display='none';
+    medicoDiv.style.display='block';
+    await carregarMedicoDashboard();
+    return;
+  }
   benvindo.style.display='block';
   adminDiv.style.display='none';
+  medicoDiv.style.display='none';
   if(role() !== 'utente'){ grafico.style.display='none'; return; }
   grafico.style.display='block';
   await carregarGraficoCaratInicio();
@@ -645,9 +781,13 @@ async function carregarPrescricoes(){
     const r=await fetch('/prescricoes',{headers:ah()});
     const d=await r.json();
     if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhuma prescrição registada.</p>';return;}
-    c.innerHTML=`<table><thead><tr><th>#</th><th>Fármaco</th><th>Dosagem</th><th>Médico</th><th>Data</th></tr></thead><tbody>
-      ${d.map(p=>`<tr><td>${p.id}</td><td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>
-        <td>${p.medico_nome??'—'}</td><td>${fmt(p.data_criacao??p.dataCriacao)}</td></tr>`).join('')}
+    const isMed=role()==='medico';
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Utente ID</th><th>Fármaco</th><th>Dosagem</th>${isMed?'':'<th>Médico</th>'}<th>Estado</th><th>Data</th>${isMed?'<th>Ação</th>':''}</tr></thead><tbody>
+      ${d.map(p=>{
+        const badgeAtivo=p.ativo?'<span class="badge-ok">Ativa</span>':'<span class="badge-nok">Inativa</span>';
+        const btnToggle=isMed?`<td><button class="form-btn" style="padding:4px 12px;font-size:12px;background:${p.ativo?'#dc2626':'#16a34a'}" onclick="togglePrescricaoAtivo(${p.id},${!p.ativo})">${p.ativo?'Inativar':'Ativar'}</button></td>`:'';
+        return `<tr><td>${p.id}</td><td><span class="badge-info">ID ${p.utente_id??'—'}</span></td><td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>${isMed?'':'<td>'+(p.medico_nome??'—')+'</td>'}<td>${badgeAtivo}</td><td>${fmt(p.data_criacao??p.dataCriacao)}</td>${btnToggle}</tr>`;
+      }).join('')}
     </tbody></table>`;
   } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
 }
@@ -658,11 +798,11 @@ document.getElementById('formPrescricao').addEventListener('submit', async e=>{
   try{
     const res=await fetch('/prescricoes',{method:'POST',headers:ah({'Content-Type':'application/json'}),
       body:JSON.stringify({
-        utente_id: uid(),
-        farmaco:   document.getElementById('medicamento').value.trim(),
-        dosagem:   document.getElementById('dose').value.trim(),
-        posologia: document.getElementById('dose').value.trim(),
-        medico_nome: document.getElementById('prescricaoMedico').value.trim()
+        utente_id:   Number(document.getElementById('prescricaoUtente').value),
+        farmaco:     document.getElementById('medicamento').value.trim(),
+        dosagem:     document.getElementById('dose').value.trim(),
+        posologia:   document.getElementById('dose').value.trim(),
+        medico_nome: localStorage.getItem('userNome')||''
       })});
     if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
     document.getElementById('formPrescricao').reset();
@@ -846,11 +986,28 @@ function renderDash(d){
         </div>
       </div>
     </div>
+    <div class="admin-stats-grid" style="margin-bottom:20px">
+      <div class="admin-stat-card">
+        <div><div class="admin-stat-label">Score CARAT atual</div><div class="admin-stat-value">${uc?uc.scoreTotal+'/30':'—'}</div></div>
+        <div class="admin-stat-icon g"><svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      </div>
+      <div class="admin-stat-card">
+        <div><div class="admin-stat-label">Avaliações</div><div class="admin-stat-value">${d.totalCarats}</div></div>
+        <div class="admin-stat-icon g"><svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      </div>
+      <div class="admin-stat-card">
+        <div><div class="admin-stat-label">Alertas ativos</div><div class="admin-stat-value">${d.alertasAtivos??0}</div></div>
+        <div class="admin-stat-icon r"><svg width="22" height="22" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+      </div>
+      <div class="admin-stat-card">
+        <div><div class="admin-stat-label">Medicações ativas</div><div class="admin-stat-value">${d.medicacoesAtivas??0}</div></div>
+        <div class="admin-stat-icon g"><svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg></div>
+      </div>
+    </div>
     <div class="stat-grid">
-      <div class="stat"><div class="num">${d.totalExames}</div><div class="lbl">Exames Registados</div></div>
-      <div class="stat"><div class="num">${d.totalCarats}</div><div class="lbl">Avaliações CARAT</div></div>
       ${uc?`<div class="stat" style="background:#fff7ed"><div class="num" style="color:#d97706;font-size:22px">${uc.scoreRinite}/12</div><div class="lbl">Rinite (último)</div></div>
-            <div class="stat" style="background:#f0fdf4"><div class="num" style="color:#16a34a;font-size:22px">${uc.scoreAsma}/18</div><div class="lbl">Asma (último)</div></div>`:''}
+            <div class="stat" style="background:#f0fdf4"><div class="num" style="color:#16a34a;font-size:22px">${uc.scoreAsma}/18</div><div class="lbl">Asma (último)</div></div>
+            <div class="stat"><div class="num">${d.totalExames}</div><div class="lbl">Exames</div></div>`:''}
     </div>
     ${d.carats.length?`<div class="card">
       <h2 class="sec">Histórico CARAT</h2>
@@ -866,6 +1023,65 @@ function renderDash(d){
       ${d.exames.map(x=>`<tr><td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
         <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
       </tbody></table></div>`:''}`;
+}
+
+// ── Painel médico (alertas no login) ─────────────────────────────────────────
+async function carregarMedicoDashboard(){
+  const c=document.getElementById('medicoDashAlertas');
+  try{
+    const r=await fetch('/dashboard/medico/alertas-utentes',{headers:ah()});
+    const alertas=await r.json();
+    if(!alertas.length){
+      c.innerHTML='<div class="card"><p style="color:#16a34a;font-weight:500">✅ Sem alertas ativos para os seus utentes.</p></div>';
+      return;
+    }
+    const criticos=alertas.filter(a=>a.prioridade==='CRITICA');
+    const altos=alertas.filter(a=>a.prioridade==='ALTA');
+    const outros=alertas.filter(a=>!['CRITICA','ALTA'].includes(a.prioridade));
+    const linha=(a)=>`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;gap:12px">
+        <div>
+          <span style="font-weight:700">${a.utente_nome}</span>
+          <span class="badge-info" style="margin-left:8px;font-size:11px">${a.tipo==='SCORE_BAIXO'?'Score Baixo':'Deterioração'}</span>
+          ${a.ultimo_score!=null?`<span style="margin-left:8px;font-size:12px;color:#64748b">Score atual: <strong>${a.ultimo_score}/30</strong></span>`:''}
+          <div style="font-size:12px;color:#64748b;margin-top:3px">${a.motivo||''}</div>
+        </div>
+        <span style="font-size:12px;color:#94a3b8;white-space:nowrap">${fmt(a.dataCriacao)}</span>
+      </div>`;
+    c.innerHTML=`
+      ${criticos.length?`<div class="card" style="border-left:4px solid #dc2626">
+        <h2 class="sec" style="color:#dc2626">🚨 Crítico (${criticos.length})</h2>
+        ${criticos.map(linha).join('')}</div>`:''}
+      ${altos.length?`<div class="card" style="border-left:4px solid #d97706">
+        <h2 class="sec" style="color:#d97706">⚠️ Alta prioridade (${altos.length})</h2>
+        ${altos.map(linha).join('')}</div>`:''}
+      ${outros.length?`<div class="card">
+        <h2 class="sec">ℹ️ Outros alertas (${outros.length})</h2>
+        ${outros.map(linha).join('')}</div>`:''}`;
+  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar alertas.</p>';}
+}
+
+// ── Toggle activo/inactivo de prescrição ──────────────────────────────────────
+async function togglePrescricaoAtivo(id,ativo){
+  try{
+    const r=await fetch(`/prescricoes/${id}/ativo`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({ativo})});
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+    await carregarPrescricoes();
+  } catch(er){alert(er.message);}
+}
+
+// ── Selector de utente para prescrições (médico) ──────────────────────────────
+async function carregarUtentesPrescricao(){
+  try{
+    const r=await fetch('/registo/utentes',{headers:ah()});
+    const utentes=await r.json();
+    const sel=document.getElementById('prescricaoUtente');
+    sel.innerHTML='<option value="">— Selecione o utente —</option>';
+    utentes.forEach(u=>{
+      const o=document.createElement('option');
+      o.value=u.id; o.textContent=`ID ${u.id} - ${u.nome}`; sel.appendChild(o);
+    });
+  } catch(e){console.error(e);}
 }
 
 // ── CARAT — seletor de utente para médicos ────────────────────────────────────
@@ -900,6 +1116,42 @@ function selecionarUtenteParaCarat(utenteId){
   _caratUtenteId = utenteId ? Number(utenteId) : null;
   document.getElementById('caratFormCard').style.display = utenteId ? 'block' : 'none';
 }
+
+// ── Perfil utente ─────────────────────────────────────────────────────────────
+async function carregarPerfil(){
+  try{
+    const r=await fetch('/registo/perfil',{headers:ah()});
+    const d=await r.json();
+    document.getElementById('perfilNome').value=d.nome||'';
+    document.getElementById('perfilUsername').value=d.username||'';
+    document.getElementById('perfilEmail').value=d.email||'';
+    document.getElementById('perfilTelefone').value=d.telefone||'';
+    document.getElementById('perfilNascimento').value=d.data_nascimento||'';
+    document.getElementById('perfilNif').value=d.nif||'';
+    document.getElementById('perfilMorada').value=d.morada||'';
+    document.getElementById('perfilAlergia').value=d.alergia||'';
+    document.getElementById('msgPerfil').textContent='';
+  } catch(e){document.getElementById('msgPerfil').textContent='Erro ao carregar perfil.';}
+}
+
+document.getElementById('formPerfil').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const m=document.getElementById('msgPerfil'); m.textContent=''; m.className='msg';
+  try{
+    const res=await fetch('/registo/perfil',{method:'PUT',headers:ah({'Content-Type':'application/json'}),
+      body:JSON.stringify({
+        email:document.getElementById('perfilEmail').value.trim()||null,
+        telefone:document.getElementById('perfilTelefone').value.trim()||null,
+        data_nascimento:document.getElementById('perfilNascimento').value||null,
+        nif:document.getElementById('perfilNif').value.trim()||null,
+        morada:document.getElementById('perfilMorada').value.trim()||null,
+        alergia:document.getElementById('perfilAlergia').value.trim()||null
+      })});
+    const d=await res.json();
+    if(!res.ok) throw new Error(d.erro||'Erro');
+    m.textContent=d.mensagem; m.className='msg ok';
+  } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
 
 // ── FHIR ──────────────────────────────────────────────────────────────────────
 async function carregarFhir(){
@@ -1211,6 +1463,77 @@ document.getElementById('formRegistoMedico').addEventListener('submit', async e=
     document.getElementById('formRegistoMedico').reset();
     m.textContent='Médico criado com sucesso!'; m.className='msg ok';
   } catch(er){m.textContent=er.message; m.className='msg erro';}
+});
+
+// ── CARAT Anónimo ─────────────────────────────────────────────────────────────
+function abrirCaratAnonimo(){
+  const el=document.getElementById('overlayCaratAnonimo');
+  el.style.display='flex'; el.classList.add('aberto');
+  document.getElementById('secaoFormAnonimo').style.display='block';
+  document.getElementById('secaoResultadoAnonimo').style.display='none';
+  document.getElementById('erroCaratAnonimo').textContent='';
+  carregarPerguntasAnonimas();
+}
+function fecharCaratAnonimo(){
+  const el=document.getElementById('overlayCaratAnonimo');
+  el.style.display='none'; el.classList.remove('aberto');
+}
+function repetirCaratAnonimo(){
+  document.getElementById('formCaratAnonimo').reset();
+  document.getElementById('secaoFormAnonimo').style.display='block';
+  document.getElementById('secaoResultadoAnonimo').style.display='none';
+}
+async function carregarPerguntasAnonimas(){
+  const c=document.getElementById('perguntasAnonimas');
+  c.innerHTML='<p style="color:#64748b">A carregar perguntas…</p>';
+  try{
+    const r=await fetch('/carat/perguntas');
+    const d=await r.json();
+    c.innerHTML=d.perguntas.map((p,i)=>`
+      <div style="margin-bottom:14px;padding:12px;border:1px solid #e5e7eb;border-radius:10px">
+        <label style="font-size:13px;font-weight:600;color:#0f172a;display:block;margin-bottom:8px">${i+1}. ${p}</label>
+        ${d.opcoes.map(o=>`<label style="display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px;cursor:pointer">
+          <input type="radio" name="a_perg_${i}" value="${o.valor}" required>
+          <span><strong>${o.valor}</strong> — ${o.label}</span>
+        </label>`).join('')}
+      </div>`).join('');
+  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar perguntas.</p>';}
+}
+document.getElementById('formCaratAnonimo').addEventListener('submit',function(e){
+  e.preventDefault();
+  const erEl=document.getElementById('erroCaratAnonimo'); erEl.textContent='';
+  const respostas=[];
+  for(let i=0;i<10;i++){
+    const sel=document.querySelector(`input[name="a_perg_${i}"]:checked`);
+    if(!sel){erEl.textContent=`Responda à pergunta ${i+1}.`;return;}
+    respostas.push(parseInt(sel.value));
+  }
+  const scoreTotal=respostas.reduce((a,v)=>a+v,0);
+  const scoreRinite=respostas.slice(0,4).reduce((a,v)=>a+v,0);
+  const scoreAsma=respostas.slice(4).reduce((a,v)=>a+v,0);
+  let nivel,cor,emoji;
+  if(scoreTotal>24){nivel='Controlado';cor='#16a34a';emoji='✅';}
+  else if(scoreTotal>16){nivel='Não Controlado — Vigiar';cor='#d97706';emoji='⚠️';}
+  else{nivel='Urgente — Consulte o médico';cor='#dc2626';emoji='🚨';}
+  document.getElementById('resultadoAnonimoScores').innerHTML=`
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0">
+      <div style="background:#eef2ff;border-radius:12px;padding:14px 20px;text-align:center;min-width:88px">
+        <div style="font-size:26px;font-weight:700;color:#2563eb">${scoreTotal}/30</div>
+        <div style="font-size:11px;color:#64748b;margin-top:3px">Total</div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:12px;padding:14px 20px;text-align:center;min-width:88px">
+        <div style="font-size:26px;font-weight:700;color:#16a34a">${scoreRinite}/12</div>
+        <div style="font-size:11px;color:#64748b;margin-top:3px">Rinite</div>
+      </div>
+      <div style="background:#fff7ed;border-radius:12px;padding:14px 20px;text-align:center;min-width:88px">
+        <div style="font-size:26px;font-weight:700;color:#d97706">${scoreAsma}/18</div>
+        <div style="font-size:11px;color:#64748b;margin-top:3px">Asma</div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:16px;font-weight:600;color:${cor};margin-bottom:8px">${emoji} ${nivel}</p>`;
+  document.getElementById('alertaCriticoAnonimo').style.display=scoreTotal<10?'block':'none';
+  document.getElementById('secaoFormAnonimo').style.display='none';
+  document.getElementById('secaoResultadoAnonimo').style.display='block';
 });
 </script>
 </body>

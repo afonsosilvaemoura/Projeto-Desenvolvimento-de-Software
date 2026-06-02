@@ -165,6 +165,8 @@ router.get('/dashboard/:utenteId', authMiddleware, (req: AuthRequest, res: Respo
       } : null,
       totalExames: (exames as any[]).length,
       totalCarats: carats.length,
+      alertasAtivos: (db.prepare("SELECT COUNT(*) as c FROM alerta WHERE utente_id = ? AND estado = 'NOVO'").get(id) as any).c,
+      medicacoesAtivas: (db.prepare('SELECT COUNT(*) as c FROM prescricao WHERE utente_id = ? AND ativo = 1').get(id) as any).c,
     });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });

@@ -114,5 +114,8 @@ db.exec(`
 `);
 
 try { db.exec('ALTER TABLE utente ADD COLUMN motivo_inativacao TEXT'); } catch {}
+try { db.exec('ALTER TABLE prescricao ADD COLUMN ativo INTEGER NOT NULL DEFAULT 1'); } catch {}
+try { db.exec('ALTER TABLE utente ADD COLUMN morada TEXT'); } catch {}
+try { db.exec('ALTER TABLE utente ADD COLUMN alergia TEXT'); } catch {}
 
 console.log('Base de dados inicializada');
