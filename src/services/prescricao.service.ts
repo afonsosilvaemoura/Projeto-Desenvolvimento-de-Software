@@ -58,8 +58,17 @@ export class PrescricaoService {
         return this.repo.find();
     }
 
+    async listarPrescricoesParaUtente(utenteId: number): Promise<Prescricao[]> {
+        return this.repo.find({ where: { utente_id: utenteId } });
+    }
+
     async listarPrescricoesComDTO(): Promise<PrescricaoResponseDto[]> {
         const prescricoes = await this.repo.find();
+        return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
+    }
+
+    async listarPrescricoesComDTOParaUtente(utenteId: number): Promise<PrescricaoResponseDto[]> {
+        const prescricoes = await this.repo.find({ where: { utente_id: utenteId } });
         return prescricoes.map((prescricao) => this.toResponseDto(prescricao));
     }
 

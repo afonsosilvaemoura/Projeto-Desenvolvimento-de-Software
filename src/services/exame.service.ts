@@ -27,4 +27,8 @@ export class ExameService {
     async listarExames(): Promise<Exame[]> {
         return this.repo.find();
     }
+
+    async listarExamesParaUtente(utenteId: number): Promise<Exame[]> {
+        return this.repo.find({ where: { utente_id: utenteId } });
+    }
 }

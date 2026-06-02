@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { criarAvaliacaoCarat, listarAvaliacoesCarat } from '../controller/carat.controller';
-import { authMiddleware } from '../middleware/auth.middleware';
+import { authMiddleware, authorize } from '../middleware/auth.middleware';
 import { PERGUNTAS_CARAT, OPCOES_RESPOSTA } from '../services/carat.service';
 
 const routes = Router();
@@ -11,9 +11,9 @@ routes.get('/perguntas', (_req, res) => {
 });
 
 // GET /carat — lista avaliações (autenticado)
-routes.get('/', authMiddleware, listarAvaliacoesCarat);
+routes.get('/', authMiddleware, authorize(['medico', 'utente']), listarAvaliacoesCarat);
 
 // POST /carat — criar avaliação (autenticado)
-routes.post('/', authMiddleware, criarAvaliacaoCarat);
+routes.post('/', authMiddleware, authorize(['medico', 'utente']), criarAvaliacaoCarat);
 
 export default routes;

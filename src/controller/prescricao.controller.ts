@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/auth.middleware';
 import { PrescricaoService } from '../services/prescricao.service';
 import { CreatePrescricaoDto } from '../dtos/prescricao/create-prescricao.dto';
 
@@ -10,9 +11,15 @@ export class PrescricaoController {
         return res.json(prescricoes);
     }
 
-    async listarComDTO(req: Request, res: Response) {
-        const prescricoes = await this.service.listarPrescricoesComDTO();
-        return res.json(prescricoes);
+    async listarComDTO(req: AuthRequest, res: Response) {
+        try {
+            const prescricoes = req.user?.role === 'utente'
+                ? await this.service.listarPrescricoesComDTOParaUtente(req.user.id)
+                : await this.service.listarPrescricoesComDTO();
+            return res.json(prescricoes);
+        } catch (error: any) {
+            return res.status(500).json({ erro: error.message });
+        }
     }
 
     // Versão sem DTOs: os dados são usados diretamente a partir do req.body

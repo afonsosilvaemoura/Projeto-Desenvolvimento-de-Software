@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/auth.middleware';
 import { ExameService } from '../services/exame.service';
 
 export class ExameController {
     private service = new ExameService();
 
-    async listar(_req: Request, res: Response) {
+    async listar(req: AuthRequest, res: Response) {
         try {
+            if (req.user?.role === 'utente') {
+                return res.json(await this.service.listarExamesParaUtente(req.user.id));
+            }
             return res.json(await this.service.listarExames());
         } catch (error: any) {
             return res.status(500).json({ erro: error.message });
