@@ -117,5 +117,11 @@ try { db.exec('ALTER TABLE utente ADD COLUMN motivo_inativacao TEXT'); } catch {
 try { db.exec('ALTER TABLE prescricao ADD COLUMN ativo INTEGER NOT NULL DEFAULT 1'); } catch {}
 try { db.exec('ALTER TABLE utente ADD COLUMN morada TEXT'); } catch {}
 try { db.exec('ALTER TABLE utente ADD COLUMN alergia TEXT'); } catch {}
+try { db.exec('ALTER TABLE utente ADD COLUMN rua TEXT'); } catch {}
+try { db.exec('ALTER TABLE utente ADD COLUMN numero_porta TEXT'); } catch {}
+try { db.exec('ALTER TABLE utente ADD COLUMN codigo_postal TEXT'); } catch {}
+try { db.exec('ALTER TABLE utente ADD COLUMN localidade TEXT'); } catch {}
+try { db.exec('ALTER TABLE prescricao ADD COLUMN embalagens_total INTEGER NOT NULL DEFAULT 0'); } catch {}
+try { db.exec('ALTER TABLE prescricao ADD COLUMN embalagens_levantadas INTEGER NOT NULL DEFAULT 0'); } catch {}
 
 console.log('Base de dados inicializada');

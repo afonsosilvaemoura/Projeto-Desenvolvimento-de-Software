@@ -51,7 +51,7 @@ router.patch('/medico/:id/ativo', ...adminOnly, (req: AuthRequest, res: Response
     const medico = db.prepare('SELECT id FROM medico WHERE id = ?').get(id);
     if (!medico) return res.status(404).json({ erro: 'Médico não encontrado.' });
     db.prepare('UPDATE medico SET ativo = ?, dataAtualizacao = ? WHERE id = ?').run(ativo ? 1 : 0, new Date().toISOString(), id);
-    return res.json({ mensagem: `Médico ${ativo ? 'ativado' : 'desativado'} com sucesso.` });
+    return res.json({ mensagem: `Médico ${ativo ? 'ativado' : 'inativado'} com sucesso.` });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
 
@@ -69,12 +69,18 @@ router.get('/utentes', ...adminOnly, (_req, res: Response) => {
 router.patch('/utente/:id/ativo', ...adminOnly, (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { ativo, motivo } = req.body;
+    const { ativo, motivo, password } = req.body;
     if (typeof ativo !== 'boolean') return res.status(400).json({ erro: 'Campo "ativo" deve ser boolean.' });
+    if (!ativo) {
+      if (!password) return res.status(400).json({ erro: 'Password é obrigatória para inativar.' });
+      const admin = db.prepare('SELECT * FROM administrador WHERE id = ?').get(req.user!.id) as any;
+      if (!admin || !bcrypt.compareSync(password, admin.password_hash))
+        return res.status(401).json({ erro: 'Password incorreta.' });
+    }
     if (!db.prepare('SELECT id FROM utente WHERE id = ?').get(id)) return res.status(404).json({ erro: 'Utente não encontrado.' });
     db.prepare('UPDATE utente SET ativo = ?, motivo_inativacao = ?, dataAtualizacao = ? WHERE id = ?')
       .run(ativo ? 1 : 0, ativo ? null : (motivo || null), new Date().toISOString(), id);
-    return res.json({ mensagem: `Utente ${ativo ? 'ativado' : 'desativado'} com sucesso.` });
+    return res.json({ mensagem: `Utente ${ativo ? 'ativado' : 'inativado'} com sucesso.` });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
 
@@ -113,7 +119,7 @@ router.post('/medico/:id/desativar', ...adminOnly, (req: AuthRequest, res: Respo
       .run(req.user!.id, req.user!.nome, 'DESATIVAR_MEDICO', 'medico', id,
         JSON.stringify({ medicoNome: medico.nome, utentesMigrados, realocacoes }), now);
 
-    return res.json({ mensagem: 'Médico desativado e auditoria registada.' });
+    return res.json({ mensagem: 'Médico inativado e auditoria registada.' });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
 
@@ -145,12 +151,17 @@ router.get('/dashboard/:utenteId', authMiddleware, (req: AuthRequest, res: Respo
     const utente = db.prepare('SELECT * FROM utente WHERE id = ?').get(id) as any;
     if (!utente) return res.status(404).json({ erro: 'Utente não encontrado.' });
 
+    if (req.user?.role === 'medico' && (utente as any).medico_id !== req.user.id)
+      return res.status(403).json({ erro: 'Acesso negado: utente não está atribuído a este médico.' });
+
     const carats = db.prepare('SELECT * FROM avaliacao_carat WHERE utente_id = ? ORDER BY dataCriacao DESC').all(id) as any[];
     const exames = db.prepare('SELECT * FROM exame WHERE utente_id = ?').all(id);
+    const prescricoes = db.prepare('SELECT * FROM prescricao WHERE utente_id = ? ORDER BY data_criacao DESC').all(id);
 
     return res.json({
       utente: {
         id: utente.id, nome: utente.nome, sexo: utente.sexo, idade: utente.idade,
+        data_nascimento: utente.data_nascimento,
         diagnostico_asma: !!utente.diagnostico_asma,
         data_primeira_consulta: utente.data_primeira_consulta, medico_id: utente.medico_id,
       },
@@ -163,6 +174,7 @@ router.get('/dashboard/:utenteId', authMiddleware, (req: AuthRequest, res: Respo
         scoreTotal: carats[0].scoreTotal, scoreRinite: carats[0].scoreRinite,
         scoreAsma: carats[0].scoreAsma, controloTotal: carats[0].nivelControlo,
       } : null,
+      prescricoes,
       totalExames: (exames as any[]).length,
       totalCarats: carats.length,
       alertasAtivos: (db.prepare("SELECT COUNT(*) as c FROM alerta WHERE utente_id = ? AND estado = 'NOVO'").get(id) as any).c,

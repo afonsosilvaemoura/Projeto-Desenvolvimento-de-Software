@@ -68,7 +68,7 @@ router.post('/medico', authMiddleware, (req: AuthRequest, res: Response) => {
 router.get('/perfil', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     if (req.user?.role !== 'utente') return res.status(403).json({ erro: 'Apenas utentes.' });
-    const row = db.prepare('SELECT id, nome, username, email, telefone, data_nascimento, nif, morada, alergia, sexo, idade FROM utente WHERE id = ?').get(req.user.id);
+    const row = db.prepare('SELECT id, nome, username, email, telefone, data_nascimento, nif, rua, numero_porta, codigo_postal, localidade, alergia, sexo, idade FROM utente WHERE id = ?').get(req.user.id);
     return res.json(row);
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
@@ -76,9 +76,9 @@ router.get('/perfil', authMiddleware, (req: AuthRequest, res: Response) => {
 router.put('/perfil', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     if (req.user?.role !== 'utente') return res.status(403).json({ erro: 'Apenas utentes.' });
-    const { email, telefone, data_nascimento, nif, morada, alergia } = req.body;
-    db.prepare('UPDATE utente SET email=?, telefone=?, data_nascimento=?, nif=?, morada=?, alergia=?, dataAtualizacao=? WHERE id=?')
-      .run(email || null, telefone || null, data_nascimento || null, nif || null, morada || null, alergia || null, new Date().toISOString(), req.user.id);
+    const { email, telefone, data_nascimento, nif, rua, numero_porta, codigo_postal, localidade, alergia } = req.body;
+    db.prepare('UPDATE utente SET email=?, telefone=?, data_nascimento=?, nif=?, rua=?, numero_porta=?, codigo_postal=?, localidade=?, alergia=?, dataAtualizacao=? WHERE id=?')
+      .run(email||null, telefone||null, data_nascimento||null, nif||null, rua||null, numero_porta||null, codigo_postal||null, localidade||null, alergia||null, new Date().toISOString(), req.user.id);
     return res.json({ mensagem: 'Dados pessoais atualizados com sucesso.' });
   } catch (e: any) { return res.status(400).json({ erro: e.message }); }
 });

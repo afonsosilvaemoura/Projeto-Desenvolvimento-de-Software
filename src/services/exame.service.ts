@@ -10,10 +10,28 @@ export class ExameService {
   }
 
   listarExames() {
-    return db.prepare('SELECT * FROM exame ORDER BY data_criacao DESC').all();
+    return db.prepare(`
+      SELECT e.*, u.nome as utente_nome
+      FROM exame e LEFT JOIN utente u ON e.utente_id = u.id
+      ORDER BY e.data_criacao DESC
+    `).all();
   }
 
   listarExamesParaUtente(utenteId: number) {
-    return db.prepare('SELECT * FROM exame WHERE utente_id = ? ORDER BY data_criacao DESC').all(utenteId);
+    return db.prepare(`
+      SELECT e.*, u.nome as utente_nome
+      FROM exame e LEFT JOIN utente u ON e.utente_id = u.id
+      WHERE e.utente_id = ?
+      ORDER BY e.data_criacao DESC
+    `).all(utenteId);
+  }
+
+  listarExamesParaMedico(medicoId: number) {
+    return db.prepare(`
+      SELECT e.*, u.nome as utente_nome
+      FROM exame e JOIN utente u ON e.utente_id = u.id
+      WHERE u.medico_id = ?
+      ORDER BY e.data_criacao DESC
+    `).all(medicoId);
   }
 }

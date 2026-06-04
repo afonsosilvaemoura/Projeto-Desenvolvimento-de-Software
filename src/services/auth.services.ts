@@ -18,6 +18,8 @@ export class AuthService {
 
     if (!userRow) throw new Error('Credenciais inválidas.');
     if (!bcrypt.compareSync(password, userRow.password_hash)) throw new Error('Credenciais inválidas.');
+    if (table !== 'administrador' && userRow.ativo === 0)
+      throw new Error('Conta inativa. Contacte o administrador.');
 
     const token = jwt.sign(
       { id: userRow.id, username: userRow.username, role: roleNorm, nome: userRow.nome },

@@ -38,6 +38,24 @@ const controller = new PrescricaoController();
 routes.get('/', authMiddleware, authorize(['medico', 'utente']), controller.listarComDTO.bind(controller));
 routes.post('/', authMiddleware, authorize(['medico']), controller.criarComDTO.bind(controller));
 
+routes.patch('/:id/levantamento', authMiddleware, authorize(['medico']), (req: AuthRequest, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const { delta } = req.body;
+    if (typeof delta !== 'number' || ![1, -1].includes(delta))
+      return res.status(400).json({ erro: 'delta deve ser 1 ou -1.' });
+    const presc = db.prepare(`
+      SELECT p.id, p.embalagens_total, p.embalagens_levantadas
+      FROM prescricao p JOIN utente u ON p.utente_id = u.id
+      WHERE p.id = ? AND u.medico_id = ?
+    `).get(id, req.user!.id) as any;
+    if (!presc) return res.status(404).json({ erro: 'Prescrição não encontrada.' });
+    const novoValor = Math.max(0, Math.min(presc.embalagens_total, presc.embalagens_levantadas + delta));
+    db.prepare('UPDATE prescricao SET embalagens_levantadas = ? WHERE id = ?').run(novoValor, id);
+    return res.json({ embalagens_levantadas: novoValor });
+  } catch (e: any) { return res.status(500).json({ erro: e.message }); }
+});
+
 routes.patch('/:id/ativo', authMiddleware, authorize(['medico']), (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);

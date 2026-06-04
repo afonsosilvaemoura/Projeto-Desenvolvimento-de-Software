@@ -192,7 +192,7 @@
       <div id="adminDashboard" style="display:none">
         <div class="admin-panel-header">
           <h1>Painel de Administração</h1>
-          <p>Visão global do sistema SaudiNoB.</p>
+          <p>Visão global do sistema SAUDINOB.</p>
         </div>
         <div class="admin-stats-grid">
           <div class="admin-stat-card">
@@ -245,13 +245,19 @@
             </select>
           </div>
           <div><label>Medicamento</label><input id="medicamento" placeholder="ex: Salbutamol 100mcg" required></div>
-          <div><label>Dose</label><input id="dose" placeholder="ex: 2 inalações 3x/dia" required></div>
+          <div><label>Dose / Posologia</label><input id="dose" placeholder="ex: 2 inalações 3x/dia" required></div>
+          <div><label>Nº de embalagens prescritas</label><input id="prescEmbalagens" type="number" min="0" value="0" placeholder="0 = não rastreado"></div>
           <button class="form-btn" type="submit">Criar Prescrição</button>
           <p id="msgPrescricao" class="msg"></p>
         </form>
       </div>
       <div class="card">
         <h2 class="sec">Lista de Prescrições</h2>
+        <div id="filtroPrescricaoContainer" style="display:none;margin-bottom:14px">
+          <select id="filtroPrescricaoUtente" style="padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:13px;background:#f9fafb;min-width:220px" onchange="filtrarPrescricoes()">
+            <option value="">Todos os utentes</option>
+          </select>
+        </div>
         <div id="listaPrescricoes"><p style="color:#64748b">A carregar…</p></div>
       </div>
     </section>
@@ -262,10 +268,14 @@
       <div class="card" id="cardCriarExame">
         <h2 class="sec">Criar Exame</h2>
         <form id="formExame" class="app-form">
-          <div><label>ID do Utente</label><input id="exUtenteId" type="number" placeholder="ex: 1" required></div>
+          <div>
+            <label>Utente</label>
+            <select id="exUtenteId" required style="padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb;width:100%">
+              <option value="">— Selecione o utente —</option>
+            </select>
+          </div>
           <div><label>Tipo de Exame</label><input id="exTipo" placeholder="ex: Espirometria" required></div>
           <div><label>Exame</label><input id="exNome" placeholder="ex: FVC, FEV1" required></div>
-          <div><label>ID do Médico</label><input id="exMedicoId" type="number" placeholder="ex: 2" required></div>
           <div><label>Data de Marcação</label><input id="exData" type="date" required></div>
           <button class="form-btn" type="submit">Criar Exame</button>
           <p id="msgExame" class="msg"></p>
@@ -273,6 +283,11 @@
       </div>
       <div class="card">
         <h2 class="sec">Lista de Exames</h2>
+        <div id="filtroExameContainer" style="display:none;margin-bottom:14px">
+          <select id="filtroExameUtente" style="padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:13px;background:#f9fafb;min-width:220px" onchange="filtrarExames()">
+            <option value="">Todos os utentes</option>
+          </select>
+        </div>
         <div id="listaExames"><p style="color:#64748b">A carregar…</p></div>
       </div>
     </section>
@@ -388,7 +403,10 @@
           </div>
           <div>
             <label>Telefone</label>
-            <input id="perfilTelefone" type="tel" placeholder="ex: 912 345 678">
+            <div style="display:flex;border:1px solid #d1d5db;border-radius:11px;overflow:hidden;background:#f9fafb">
+              <span style="padding:11px 12px;background:#e5e7eb;color:#374151;font-size:14px;font-weight:500;border-right:1px solid #d1d5db;white-space:nowrap">+351</span>
+              <input id="perfilTelefone" type="tel" placeholder="912345678" maxlength="9" pattern="[0-9]{9}" inputmode="numeric" style="flex:1;border:none;padding:11px;background:transparent;font-size:14px;outline:none;min-width:0">
+            </div>
           </div>
           <div>
             <label>Data de Nascimento</label>
@@ -396,11 +414,23 @@
           </div>
           <div>
             <label>NIF</label>
-            <input id="perfilNif" placeholder="ex: 123456789" maxlength="9">
+            <input id="perfilNif" placeholder="ex: 123456789" maxlength="9" pattern="[0-9]{9}" inputmode="numeric">
           </div>
           <div>
-            <label>Morada</label>
-            <input id="perfilMorada" placeholder="ex: Rua das Flores, 12, 2º Dto, 4000-123 Porto">
+            <label>Rua</label>
+            <input id="perfilRua" placeholder="ex: Rua das Flores">
+          </div>
+          <div>
+            <label>Nº / Porta</label>
+            <input id="perfilNumeroPorta" placeholder="ex: 12, 2º Dto">
+          </div>
+          <div>
+            <label>Código Postal</label>
+            <input id="perfilCodigoPostal" placeholder="ex: 4000-123" maxlength="8" pattern="[0-9]{4}-[0-9]{3}" inputmode="numeric">
+          </div>
+          <div>
+            <label>Localidade</label>
+            <input id="perfilLocalidade" placeholder="ex: Porto">
           </div>
           <div>
             <label>Alergias conhecidas</label>
@@ -488,7 +518,7 @@
 <!-- MODAL DESATIVAR MÉDICO (dupla confirmação com password + realocação) -->
 <div id="overlayDesativarMedico" class="overlay" onclick="fecharSeFora(event,'overlayDesativarMedico')">
   <div class="modal">
-    <h2 style="color:#dc2626">Desativar Médico <button class="modal-close" onclick="fecharModal('overlayDesativarMedico')">✕</button></h2>
+    <h2 style="color:#dc2626">Inativar Médico <button class="modal-close" onclick="fecharModal('overlayDesativarMedico')">✕</button></h2>
     <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:12px;padding:14px 16px;margin-bottom:18px">
       <p id="desativarMedicoAviso" style="color:#991b1b;font-size:14px;line-height:1.6"></p>
     </div>
@@ -504,7 +534,7 @@
     </div>
     <div style="display:flex;gap:10px;margin-top:20px">
       <button class="form-btn" style="flex:1;background:#6b7280" onclick="fecharModal('overlayDesativarMedico')">Cancelar</button>
-      <button class="form-btn" style="flex:1;background:#dc2626" onclick="confirmarDesativarMedico()">Confirmar Desativação</button>
+      <button class="form-btn" style="flex:1;background:#dc2626" onclick="confirmarDesativarMedico()">Confirmar Inativação</button>
     </div>
     <p id="desativarMedicoErro" class="msg erro" style="margin-top:8px"></p>
   </div>
@@ -524,6 +554,11 @@
         <option value="pedido_rgpd">Pedido RGPD</option>
         <option value="duplicado">Duplicado</option>
       </select>
+    </div>
+    <div style="margin-top:14px">
+      <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:6px">Confirme a sua password de administrador</label>
+      <input type="password" id="inativarUtentePassword" placeholder="Password do administrador"
+        style="width:100%;padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb">
     </div>
     <div style="display:flex;gap:10px;margin-top:20px">
       <button class="form-btn" style="flex:1;background:#6b7280" onclick="fecharModal('overlayInativarUtente')">Cancelar</button>
@@ -597,6 +632,7 @@
 <script>
 // ── Utilitários ──────────────────────────────────────────────────────────────
 const ah = (extra={}) => ({'Authorization':'Bearer '+localStorage.getItem('token'),...extra});
+function calcularIdade(dataNasc){ if(!dataNasc) return null; const n=new Date(dataNasc),h=new Date(); let i=h.getFullYear()-n.getFullYear(); if(h.getMonth()<n.getMonth()||(h.getMonth()===n.getMonth()&&h.getDate()<n.getDate())) i--; return i>=0?i:null; }
 const fmt = v => v ? new Date(v).toLocaleDateString('pt-PT') : '—';
 const role  = () => localStorage.getItem('userRole');
 const uid   = () => Number(localStorage.getItem('userId'));
@@ -609,6 +645,7 @@ function ir(id) {
   if(id==='pagina-medicos')   carregarMedicos();
   if(id==='pagina-utentes')   carregarUtentesAdmin();
   if(id==='pagina-prescricoes' && role()==='medico') carregarUtentesPrescricao();
+  if(id==='pagina-exames'      && role()==='medico') carregarUtentesExame();
   if(id==='pagina-carat')     iniciarCarat();
   if(id==='pagina-fhir')      carregarFhir();
   if(id==='pagina-perfil')    carregarPerfil();
@@ -664,7 +701,7 @@ function iniciar(){
   if(role()!=='administrador'){
     carregarPrescricoes(); carregarExames(); carregarPerguntasCarat(); carregarHistoricoCARAT();
     iniciarCarat();
-    if(role()==='medico') carregarUtentesPrescricao();
+    if(role()==='medico'){ carregarUtentesPrescricao(); carregarUtentesExame(); }
     if(role()==='utente'){
       document.getElementById('cardNovaPrescricao').style.display='none';
       document.getElementById('cardCriarExame').style.display='none';
@@ -774,22 +811,46 @@ function renderGraficoCaratIntro(container, dados){
 document.addEventListener('DOMContentLoaded',()=>{ if(localStorage.getItem('token')) iniciar(); });
 
 // ── Prescrições ──────────────────────────────────────────────────────────────
-async function carregarPrescricoes(){
+function renderPrescricoes(dados){
   const c=document.getElementById('listaPrescricoes');
-  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+  if(!dados.length){c.innerHTML='<p style="color:#64748b">Nenhuma prescrição encontrada.</p>';return;}
+  const isMed=role()==='medico';
+  c.innerHTML=`<table><thead><tr><th>#</th>${isMed?'<th>Utente</th>':''}<th>Fármaco</th><th>Dosagem</th>${isMed?'':'<th>Médico</th>'}<th>Estado</th>${isMed?'<th>Embalagens</th>':''}<th>Data</th>${isMed?'<th>Ação</th>':''}</tr></thead><tbody>
+    ${dados.map(p=>{
+      const badgeAtivo=p.ativo?'<span class="badge-ok">Ativa</span>':'<span class="badge-nok">Inativa</span>';
+      const tdUtente=isMed?`<td><span class="badge-info">ID ${p.utente_id??'—'}</span>${p.utente_nome?` — ${p.utente_nome}`:''}</td>`:'';
+      const tot=p.embalagens_total||0; const lev=p.embalagens_levantadas||0;
+      const corEmb=tot===0?'#94a3b8':lev>=tot?'#16a34a':lev>0?'#d97706':'#dc2626';
+      const tdEmb=isMed?`<td style="white-space:nowrap"><span style="font-weight:600;color:${corEmb}">${tot>0?lev+'/'+tot:'—'}</span>${tot>0&&lev<tot?` <button class="form-btn" style="padding:3px 8px;font-size:11px;background:#2563eb;margin-left:4px" onclick="atualizarLevantamento(${p.id},1)">+1</button>`:''}${tot>0&&lev>0?` <button class="form-btn" style="padding:3px 8px;font-size:11px;background:#6b7280;margin-left:2px" onclick="atualizarLevantamento(${p.id},-1)">-1</button>`:''}</td>`:'';
+      const btnToggle=isMed?`<td><button class="form-btn" style="padding:4px 10px;font-size:11px;background:${p.ativo?'#dc2626':'#16a34a'}" onclick="togglePrescricaoAtivo(${p.id},${!p.ativo})">${p.ativo?'Inativar':'Ativar'}</button></td>`:'';
+      return `<tr><td>${p.id}</td>${tdUtente}<td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>${isMed?'':'<td>'+(p.medico_nome??'—')+'</td>'}<td>${badgeAtivo}</td>${tdEmb}<td>${fmt(p.data_criacao??p.dataCriacao)}</td>${btnToggle}</tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+function filtrarPrescricoes(){
+  const v=document.getElementById('filtroPrescricaoUtente')?.value||'';
+  renderPrescricoes(v?_prescricoesData.filter(p=>String(p.utente_id)===v):_prescricoesData);
+}
+
+async function carregarPrescricoes(){
+  document.getElementById('listaPrescricoes').innerHTML='<p style="color:#64748b">A carregar…</p>';
   try{
     const r=await fetch('/prescricoes',{headers:ah()});
     const d=await r.json();
-    if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhuma prescrição registada.</p>';return;}
-    const isMed=role()==='medico';
-    c.innerHTML=`<table><thead><tr><th>#</th><th>Utente ID</th><th>Fármaco</th><th>Dosagem</th>${isMed?'':'<th>Médico</th>'}<th>Estado</th><th>Data</th>${isMed?'<th>Ação</th>':''}</tr></thead><tbody>
-      ${d.map(p=>{
-        const badgeAtivo=p.ativo?'<span class="badge-ok">Ativa</span>':'<span class="badge-nok">Inativa</span>';
-        const btnToggle=isMed?`<td><button class="form-btn" style="padding:4px 12px;font-size:12px;background:${p.ativo?'#dc2626':'#16a34a'}" onclick="togglePrescricaoAtivo(${p.id},${!p.ativo})">${p.ativo?'Inativar':'Ativar'}</button></td>`:'';
-        return `<tr><td>${p.id}</td><td><span class="badge-info">ID ${p.utente_id??'—'}</span></td><td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>${isMed?'':'<td>'+(p.medico_nome??'—')+'</td>'}<td>${badgeAtivo}</td><td>${fmt(p.data_criacao??p.dataCriacao)}</td>${btnToggle}</tr>`;
-      }).join('')}
-    </tbody></table>`;
-  } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
+    _prescricoesData=d;
+    const filtroPr=document.getElementById('filtroPrescricaoContainer');
+    if(filtroPr) filtroPr.style.display=role()==='medico'?'block':'none';
+    if(role()==='medico'){
+      const sel=document.getElementById('filtroPrescricaoUtente');
+      if(sel){
+        const seen=new Set();
+        sel.innerHTML='<option value="">Todos os utentes</option>';
+        d.forEach(p=>{if(p.utente_id&&!seen.has(p.utente_id)){seen.add(p.utente_id);const o=document.createElement('option');o.value=p.utente_id;o.textContent=`ID ${p.utente_id}${p.utente_nome?` — ${p.utente_nome}`:''}`;sel.appendChild(o);}});
+      }
+    }
+    renderPrescricoes(d);
+  } catch {document.getElementById('listaPrescricoes').innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
 }
 
 document.getElementById('formPrescricao').addEventListener('submit', async e=>{
@@ -802,7 +863,8 @@ document.getElementById('formPrescricao').addEventListener('submit', async e=>{
         farmaco:     document.getElementById('medicamento').value.trim(),
         dosagem:     document.getElementById('dose').value.trim(),
         posologia:   document.getElementById('dose').value.trim(),
-        medico_nome: localStorage.getItem('userNome')||''
+        medico_nome: localStorage.getItem('userNome')||'',
+        embalagens_total: Number(document.getElementById('prescEmbalagens')?.value)||0
       })});
     if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
     document.getElementById('formPrescricao').reset();
@@ -812,17 +874,40 @@ document.getElementById('formPrescricao').addEventListener('submit', async e=>{
 });
 
 // ── Exames ───────────────────────────────────────────────────────────────────
+function renderExames(dados){
+  const c=document.getElementById('listaExames');
+  if(!dados.length){c.innerHTML='<p style="color:#64748b">Nenhum exame encontrado.</p>';return;}
+  const isMedEx=role()==='medico';
+  c.innerHTML=`<table><thead><tr><th>#</th>${isMedEx?'<th>Utente</th>':''}<th>Tipo</th><th>Exame</th><th>Médico ID</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
+    ${dados.map(x=>`<tr><td>${x.id}</td>${isMedEx?`<td><span class="badge-info">ID ${x.utente_id??'—'}</span>${x.utente_nome?` — ${x.utente_nome}`:''}</td>`:''}<td>${x.tipo_exame??''}</td><td>${x.exame??''}</td>
+      <td><span class="badge-info">ID ${x.medico_id??'—'}</span></td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+function filtrarExames(){
+  const v=document.getElementById('filtroExameUtente')?.value||'';
+  renderExames(v?_examesData.filter(x=>String(x.utente_id)===v):_examesData);
+}
+
 async function carregarExames(){
   const c=document.getElementById('listaExames');
   c.innerHTML='<p style="color:#64748b">A carregar…</p>';
   try{
     const r=await fetch('/exames',{headers:ah()});
     const d=await r.json();
+    _examesData=d;
+    const filtroEx=document.getElementById('filtroExameContainer');
+    if(filtroEx) filtroEx.style.display=role()==='medico'?'block':'none';
+    if(role()==='medico'){
+      const sel=document.getElementById('filtroExameUtente');
+      if(sel){
+        const seen=new Set();
+        sel.innerHTML='<option value="">Todos os utentes</option>';
+        d.forEach(x=>{if(x.utente_id&&!seen.has(x.utente_id)){seen.add(x.utente_id);const o=document.createElement('option');o.value=x.utente_id;o.textContent=`ID ${x.utente_id}${x.utente_nome?` — ${x.utente_nome}`:''}`;sel.appendChild(o);}});
+      }
+    }
     if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum exame registado.</p>';return;}
-    c.innerHTML=`<table><thead><tr><th>#</th><th>Utente ID</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
-      ${d.map(x=>`<tr><td>${x.id}</td><td>${x.utente_id??''}</td><td>${x.tipo_exame??''}</td><td>${x.exame??''}</td>
-        <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
-    </tbody></table>`;
+    renderExames(d);
   } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
 }
 
@@ -832,10 +917,10 @@ document.getElementById('formExame').addEventListener('submit', async e=>{
   try{
     const res=await fetch('/exames',{method:'POST',headers:ah({'Content-Type':'application/json'}),
       body:JSON.stringify({
-        utente_id:    document.getElementById('exUtenteId').value,
+        utente_id:    Number(document.getElementById('exUtenteId').value),
         tipo_exame:   document.getElementById('exTipo').value.trim(),
         exame:        document.getElementById('exNome').value.trim(),
-        medico_id:    document.getElementById('exMedicoId').value,
+        medico_id:    uid(),
         data_marcacao:document.getElementById('exData').value
       })});
     if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
@@ -870,9 +955,10 @@ async function carregarHistoricoCARAT(){
     const r=await fetch('/carat',{headers:ah()});
     const d=await r.json();
     if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum questionário registado.</p>';return;}
-    c.innerHTML=`<table><thead><tr><th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th></tr></thead><tbody>
+    const isMedCarat=role()==='medico';
+    c.innerHTML=`<table><thead><tr>${isMedCarat?'<th>Utente ID</th>':''}<th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th></tr></thead><tbody>
       ${d.map(c=>{const ok=c.nivelControlo==='CONTROLADA'||c.controloTotal==='CONTROLADA';
-        return `<tr><td>${c.id}</td><td><strong>${c.scoreTotal}/30</strong></td><td>${c.scoreRinite}/12</td>
+        return `<tr>${isMedCarat?`<td><span class="badge-info">ID ${c.utente_id??'—'}</span></td>`:''}<td>${c.id}</td><td><strong>${c.scoreTotal}/30</strong></td><td>${c.scoreRinite}/12</td>
           <td>${c.scoreAsma}/18</td>
           <td><span class="${ok?'badge-ok':'badge-nok'}">${ok?'Controlada':'Não Controlada'}</span></td>
           <td>${fmt(c.dataCriacao)}</td></tr>`}).join('')}
@@ -921,6 +1007,11 @@ document.getElementById('formCarat').addEventListener('submit', async e=>{
 });
 
 // ── Dashboard ────────────────────────────────────────────────────────────────
+function irParaDashUtente(utenteId){
+  _autoDashUtenteId=Number(utenteId);
+  ir('pagina-dashboard');
+}
+
 async function carregarDash(){
   const r=role();
   document.getElementById('dashMedico').style.display='none';
@@ -928,6 +1019,11 @@ async function carregarDash(){
   if(r==='medico'){
     document.getElementById('dashMedico').style.display='block';
     await carregarListaUtentes();
+    if(_autoDashUtenteId){
+      document.getElementById('selectUtente').value=_autoDashUtenteId;
+      await carregarDashUtente(_autoDashUtenteId);
+      _autoDashUtenteId=null;
+    }
   } else if(r==='utente'){
     document.getElementById('dashUtente').style.display='block';
     await carregarDashProprio();
@@ -973,7 +1069,7 @@ function renderDash(d){
     <div class="card">
       <h2 class="sec">Ficha Clínica — ${u.nome}</h2>
       <div class="ficha">
-        <div class="ficha-item"><div class="val">${u.idade??'—'}</div><div class="lbl">Idade</div></div>
+        <div class="ficha-item"><div class="val">${calcularIdade(u.data_nascimento)??u.idade??'—'}</div><div class="lbl">Idade</div></div>
         <div class="ficha-item"><div class="val">${u.sexo==='M'?'♂ Masc':u.sexo==='F'?'♀ Fem':'—'}</div><div class="lbl">Sexo</div></div>
         <div class="ficha-item">
           <div class="val" style="font-size:15px">${u.diagnostico_asma?'<span class="badge-nok">Sim</span>':'<span class="badge-ok">Não</span>'}</div>
@@ -1022,6 +1118,17 @@ function renderDash(d){
       <table><thead><tr><th>#</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
       ${d.exames.map(x=>`<tr><td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
         <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
+      </tbody></table></div>`:''}
+    ${d.prescricoes?.length?`<div class="card">
+      <h2 class="sec">Prescrições</h2>
+      <table><thead><tr><th>#</th><th>Fármaco</th><th>Dosagem</th><th>Médico</th><th>Estado</th><th>Embalagens</th><th>Data</th></tr></thead><tbody>
+      ${d.prescricoes.map(p=>{const tot=p.embalagens_total||0;const lev=p.embalagens_levantadas||0;return `<tr>
+        <td>${p.id}</td><td>${p.farmaco||'—'}</td><td>${p.dosagem||'—'}</td>
+        <td>${p.medico_nome||'—'}</td>
+        <td><span class="${p.ativo?'badge-ok':'badge-nok'}">${p.ativo?'Ativa':'Inativa'}</span></td>
+        <td>${tot>0?lev+'/'+tot:'—'}</td>
+        <td>${fmt(p.data_criacao)}</td>
+      </tr>`;}).join('')}
       </tbody></table></div>`:''}`;
 }
 
@@ -1039,11 +1146,11 @@ async function carregarMedicoDashboard(){
     const altos=alertas.filter(a=>a.prioridade==='ALTA');
     const outros=alertas.filter(a=>!['CRITICA','ALTA'].includes(a.prioridade));
     const linha=(a)=>`
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;gap:12px">
+      <div onclick="irParaDashUtente(${a.utente_id})" style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f1f5f9;gap:12px;cursor:pointer;transition:background .15s;border-radius:8px;padding:10px 8px" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
         <div>
-          <span style="font-weight:700">${a.utente_nome}</span>
+          <span style="font-weight:700;color:#2563eb;text-decoration:underline dotted">${a.utente_nome}</span>
           <span class="badge-info" style="margin-left:8px;font-size:11px">${a.tipo==='SCORE_BAIXO'?'Score Baixo':'Deterioração'}</span>
-          ${a.ultimo_score!=null?`<span style="margin-left:8px;font-size:12px;color:#64748b">Score atual: <strong>${a.ultimo_score}/30</strong></span>`:''}
+          ${a.ultimo_score!=null?`<span style="margin-left:8px;font-size:12px;color:#64748b">Score: <strong>${a.ultimo_score}/30</strong></span>`:''}
           <div style="font-size:12px;color:#64748b;margin-top:3px">${a.motivo||''}</div>
         </div>
         <span style="font-size:12px;color:#94a3b8;white-space:nowrap">${fmt(a.dataCriacao)}</span>
@@ -1070,12 +1177,21 @@ async function togglePrescricaoAtivo(id,ativo){
   } catch(er){alert(er.message);}
 }
 
-// ── Selector de utente para prescrições (médico) ──────────────────────────────
-async function carregarUtentesPrescricao(){
+async function atualizarLevantamento(id,delta){
+  try{
+    const r=await fetch(`/prescricoes/${id}/levantamento`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({delta})});
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+    await carregarPrescricoes();
+  } catch(er){alert(er.message);}
+}
+
+// ── Selector de utente para prescrições e exames (médico) ─────────────────────
+async function popularSelectUtentes(selectId){
   try{
     const r=await fetch('/registo/utentes',{headers:ah()});
     const utentes=await r.json();
-    const sel=document.getElementById('prescricaoUtente');
+    const sel=document.getElementById(selectId);
+    if(!sel) return;
     sel.innerHTML='<option value="">— Selecione o utente —</option>';
     utentes.forEach(u=>{
       const o=document.createElement('option');
@@ -1083,6 +1199,8 @@ async function carregarUtentesPrescricao(){
     });
   } catch(e){console.error(e);}
 }
+async function carregarUtentesPrescricao(){ await popularSelectUtentes('prescricaoUtente'); }
+async function carregarUtentesExame(){ await popularSelectUtentes('exUtenteId'); }
 
 // ── CARAT — seletor de utente para médicos ────────────────────────────────────
 async function iniciarCarat(){
@@ -1127,8 +1245,12 @@ async function carregarPerfil(){
     document.getElementById('perfilEmail').value=d.email||'';
     document.getElementById('perfilTelefone').value=d.telefone||'';
     document.getElementById('perfilNascimento').value=d.data_nascimento||'';
+    document.getElementById('perfilNascimento').max=new Date().toISOString().split('T')[0];
     document.getElementById('perfilNif').value=d.nif||'';
-    document.getElementById('perfilMorada').value=d.morada||'';
+    document.getElementById('perfilRua').value=d.rua||'';
+    document.getElementById('perfilNumeroPorta').value=d.numero_porta||'';
+    document.getElementById('perfilCodigoPostal').value=d.codigo_postal||'';
+    document.getElementById('perfilLocalidade').value=d.localidade||'';
     document.getElementById('perfilAlergia').value=d.alergia||'';
     document.getElementById('msgPerfil').textContent='';
   } catch(e){document.getElementById('msgPerfil').textContent='Erro ao carregar perfil.';}
@@ -1137,6 +1259,12 @@ async function carregarPerfil(){
 document.getElementById('formPerfil').addEventListener('submit',async e=>{
   e.preventDefault();
   const m=document.getElementById('msgPerfil'); m.textContent=''; m.className='msg';
+  const tel=document.getElementById('perfilTelefone').value.trim();
+  if(tel && !/^[0-9]{9}$/.test(tel)){m.textContent='Telefone deve ter exatamente 9 dígitos (sem espaços).';m.className='msg erro';return;}
+  const nif=document.getElementById('perfilNif').value.trim();
+  if(nif && !/^[0-9]{9}$/.test(nif)){m.textContent='NIF deve ter exatamente 9 dígitos numéricos.';m.className='msg erro';return;}
+  const nasc=document.getElementById('perfilNascimento').value;
+  if(nasc && new Date(nasc)>new Date()){m.textContent='Data de nascimento não pode ser uma data futura.';m.className='msg erro';return;}
   try{
     const res=await fetch('/registo/perfil',{method:'PUT',headers:ah({'Content-Type':'application/json'}),
       body:JSON.stringify({
@@ -1144,7 +1272,10 @@ document.getElementById('formPerfil').addEventListener('submit',async e=>{
         telefone:document.getElementById('perfilTelefone').value.trim()||null,
         data_nascimento:document.getElementById('perfilNascimento').value||null,
         nif:document.getElementById('perfilNif').value.trim()||null,
-        morada:document.getElementById('perfilMorada').value.trim()||null,
+        rua:document.getElementById('perfilRua').value.trim()||null,
+        numero_porta:document.getElementById('perfilNumeroPorta').value.trim()||null,
+        codigo_postal:document.getElementById('perfilCodigoPostal').value.trim()||null,
+        localidade:document.getElementById('perfilLocalidade').value.trim()||null,
         alergia:document.getElementById('perfilAlergia').value.trim()||null
       })});
     const d=await res.json();
@@ -1231,7 +1362,7 @@ async function carregarMedicos(){
         <td>${m.especialidade||'—'}</td><td>${m.numero_cedula||'—'}</td>
         <td><span class="${m.ativo?'badge-ok':'badge-nok'}">${m.ativo?'Ativo':'Inativo'}</span></td>
         <td><button class="form-btn" style="padding:6px 14px;font-size:12px;background:${m.ativo?'#dc2626':'#16a34a'}"
-          onclick="toggleMedico(${m.id},${!m.ativo})">${m.ativo?'Desativar':'Ativar'}</button></td>
+          onclick="toggleMedico(${m.id},${!m.ativo})">${m.ativo?'Inativar':'Ativar'}</button></td>
       </tr>`).join('')}
     </tbody></table>`;
   } catch {c.innerHTML='<p class="msg erro">Erro ao carregar médicos.</p>';}
@@ -1241,6 +1372,9 @@ let _medicoParaDesativar = null;
 let _utenteParaInativar  = null;
 let _utentesAdminCache   = {};
 let _caratUtenteId       = null;
+let _autoDashUtenteId    = null;
+let _examesData          = [];
+let _prescricoesData     = [];
 
 async function toggleMedico(id, ativo){
   if(ativo){
@@ -1265,7 +1399,7 @@ async function toggleMedico(id, ativo){
       const ativos=medicos.filter(m=>m.ativo&&m.id!==id);
       if(!ativos.length){alert('Não existem outros médicos ativos para realocar os utentes.');return;}
       document.getElementById('desativarMedicoAviso').innerHTML=
-        `O médico <strong>${atual?.nome}</strong> tem <strong>${utentes.length}</strong> utente(s) ativo(s).<br>Selecione um médico para os realocar antes de desativar.`;
+        `O médico <strong>${atual?.nome}</strong> tem <strong>${utentes.length}</strong> utente(s) ativo(s).<br>Selecione um médico para os realocar antes de inativar.`;
       const opsMedicos=ativos.map(m=>`<option value="${m.id}">${m.nome}</option>`).join('');
       document.getElementById('realocarLista').innerHTML=utentes.map(u=>`
         <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9">
@@ -1278,7 +1412,7 @@ async function toggleMedico(id, ativo){
       document.getElementById('secaoRealocar').style.display='block';
     } else {
       document.getElementById('desativarMedicoAviso').innerHTML=
-        `Tem a certeza que deseja desativar o médico <strong>${atual?.nome}</strong>?`;
+        `Tem a certeza que deseja inativar o médico <strong>${atual?.nome}</strong>?`;
       document.getElementById('secaoRealocar').style.display='none';
     }
 
@@ -1347,6 +1481,7 @@ function abrirInativarUtente(id){
   document.getElementById('inativarUtenteNome').textContent=`Utente: ${u?.nome||'#'+id}`;
   document.getElementById('inativarUtenteErro').textContent='';
   document.getElementById('motivoInativacao').value='morte';
+  document.getElementById('inativarUtentePassword').value='';
   document.getElementById('overlayInativarUtente').style.display='flex';
   document.getElementById('overlayInativarUtente').classList.add('aberto');
 }
@@ -1354,8 +1489,10 @@ function abrirInativarUtente(id){
 async function confirmarInativarUtente(){
   const erEl=document.getElementById('inativarUtenteErro'); erEl.textContent='';
   const motivo=document.getElementById('motivoInativacao').value;
+  const password=document.getElementById('inativarUtentePassword').value;
+  if(!password){erEl.textContent='Introduza a sua password para confirmar.';return;}
   try{
-    const r=await fetch(`/admin/utente/${_utenteParaInativar}/ativo`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({ativo:false,motivo})});
+    const r=await fetch(`/admin/utente/${_utenteParaInativar}/ativo`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({ativo:false,motivo,password})});
     if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
     fecharModal('overlayInativarUtente');
     await carregarUtentesAdmin();
