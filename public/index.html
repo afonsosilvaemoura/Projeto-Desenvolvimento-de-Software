@@ -405,7 +405,7 @@
             <label>Telefone</label>
             <div style="display:flex;border:1px solid #d1d5db;border-radius:11px;overflow:hidden;background:#f9fafb">
               <span style="padding:11px 12px;background:#e5e7eb;color:#374151;font-size:14px;font-weight:500;border-right:1px solid #d1d5db;white-space:nowrap">+351</span>
-              <input id="perfilTelefone" type="tel" placeholder="912345678" maxlength="9" pattern="[0-9]{9}" inputmode="numeric" style="flex:1;border:none;padding:11px;background:transparent;font-size:14px;outline:none;min-width:0">
+              <input id="perfilTelefone" type="tel" placeholder="912345678" maxlength="9" inputmode="numeric" style="flex:1;border:none;padding:11px;background:transparent;font-size:14px;outline:none;min-width:0">
             </div>
           </div>
           <div>
@@ -414,7 +414,7 @@
           </div>
           <div>
             <label>NIF</label>
-            <input id="perfilNif" placeholder="ex: 123456789" maxlength="9" pattern="[0-9]{9}" inputmode="numeric">
+            <input id="perfilNif" placeholder="ex: 123456789" maxlength="9" inputmode="numeric">
           </div>
           <div>
             <label>Rua</label>
@@ -426,7 +426,7 @@
           </div>
           <div>
             <label>Código Postal</label>
-            <input id="perfilCodigoPostal" placeholder="ex: 4000-123" maxlength="8" pattern="[0-9]{4}-[0-9]{3}" inputmode="numeric">
+            <input id="perfilCodigoPostal" placeholder="ex: 4000-123" maxlength="8" oninput="formatarCodigoPostal(this)">
           </div>
           <div>
             <label>Localidade</label>
@@ -632,6 +632,11 @@
 <script>
 // ── Utilitários ──────────────────────────────────────────────────────────────
 const ah = (extra={}) => ({'Authorization':'Bearer '+localStorage.getItem('token'),...extra});
+function formatarCodigoPostal(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>4) v=v.slice(0,4)+'-'+v.slice(4,7);
+  el.value=v;
+}
 function calcularIdade(dataNasc){ if(!dataNasc) return null; const n=new Date(dataNasc),h=new Date(); let i=h.getFullYear()-n.getFullYear(); if(h.getMonth()<n.getMonth()||(h.getMonth()===n.getMonth()&&h.getDate()<n.getDate())) i--; return i>=0?i:null; }
 const fmt = v => v ? new Date(v).toLocaleDateString('pt-PT') : '—';
 const role  = () => localStorage.getItem('userRole');
@@ -1132,9 +1137,9 @@ function renderDash(d){
       </tbody></table></div>`:''}
     ${d.exames.length?`<div class="card">
       <h2 class="sec">Exames</h2>
-      <table><thead><tr><th>#</th><th>Tipo</th><th>Exame</th><th>ID Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
+      <table><thead><tr><th>#</th><th>Tipo</th><th>Exame</th><th>Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
       ${d.exames.map(x=>`<tr><td>${x.id}</td><td>${x.tipo_exame}</td><td>${x.exame}</td>
-        <td>${x.medico_id??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
+        <td>${x.medico_nome??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
       </tbody></table></div>`:''}
     ${d.prescricoes?.length?`<div class="card">
       <h2 class="sec">Prescrições</h2>
@@ -1286,9 +1291,11 @@ document.getElementById('formPerfil').addEventListener('submit',async e=>{
   e.preventDefault();
   const m=document.getElementById('msgPerfil'); m.textContent=''; m.className='msg';
   const tel=document.getElementById('perfilTelefone').value.trim();
-  if(tel && !/^[0-9]{9}$/.test(tel)){m.textContent='Telefone deve ter exatamente 9 dígitos (sem espaços).';m.className='msg erro';return;}
+  if(tel && !/^[0-9]{9}$/.test(tel)){m.textContent='Por favor introduza 9 números.';m.className='msg erro';return;}
   const nif=document.getElementById('perfilNif').value.trim();
-  if(nif && !/^[0-9]{9}$/.test(nif)){m.textContent='NIF deve ter exatamente 9 dígitos numéricos.';m.className='msg erro';return;}
+  if(nif && !/^[0-9]{9}$/.test(nif)){m.textContent='Por favor introduza 9 números.';m.className='msg erro';return;}
+  const cp=document.getElementById('perfilCodigoPostal').value.trim();
+  if(cp && !/^[0-9]{4}-[0-9]{3}$/.test(cp)){m.textContent='Código postal inválido. Formato: XXXX-XXX (ex: 4000-123).';m.className='msg erro';return;}
   const nasc=document.getElementById('perfilNascimento').value;
   if(nasc && new Date(nasc)>new Date()){m.textContent='Data de nascimento não pode ser uma data futura.';m.className='msg erro';return;}
   try{

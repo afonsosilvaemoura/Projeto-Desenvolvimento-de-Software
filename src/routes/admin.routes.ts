@@ -155,7 +155,11 @@ router.get('/dashboard/:utenteId', authMiddleware, (req: AuthRequest, res: Respo
       return res.status(403).json({ erro: 'Acesso negado: utente não está atribuído a este médico.' });
 
     const carats = db.prepare('SELECT * FROM avaliacao_carat WHERE utente_id = ? ORDER BY dataCriacao DESC').all(id) as any[];
-    const exames = db.prepare('SELECT * FROM exame WHERE utente_id = ?').all(id);
+    const exames = db.prepare(`
+      SELECT e.*, m.nome as medico_nome
+      FROM exame e LEFT JOIN medico m ON e.medico_id = m.id
+      WHERE e.utente_id = ?
+    `).all(id);
     const prescricoes = db.prepare('SELECT * FROM prescricao WHERE utente_id = ? ORDER BY data_criacao DESC').all(id);
 
     return res.json({
