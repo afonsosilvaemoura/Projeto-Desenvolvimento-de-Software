@@ -27,10 +27,14 @@ routes.post(
 
 export default routes;*/
 
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import { PrescricaoController } from '../controller/prescricao.controller';
 import { authMiddleware, authorize, AuthRequest } from '../middleware/auth.middleware';
+import { auditoriaService } from '../services/auditoria.service';
 import { db } from '../database/database';
+
+const ip = (req: Request) =>
+  (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || '?';
 
 const routes = Router();
 const controller = new PrescricaoController();

@@ -1,17 +1,19 @@
 import { db } from '../database/database';
 
 export type AcaoAuditoria =
-  | 'LOGIN_SUCESSO'
-  | 'LOGIN_FALHA'
-  | 'CRIAR_UTENTE'
-  | 'CRIAR_MEDICO'
+  | 'LOGIN_SUCESSO'           | 'LOGIN_FALHA'
+  | 'CRIAR_UTENTE'            | 'CRIAR_MEDICO'
   | 'ATUALIZAR_PERFIL_UTENTE'
-  | 'INATIVAR_UTENTE'
-  | 'ATIVAR_UTENTE'
-  | 'INATIVAR_MEDICO'
-  | 'ATIVAR_MEDICO'
-  | 'DESATIVAR_MEDICO'
-  | 'CONSULTAR_DASHBOARD_UTENTE';
+  | 'INATIVAR_UTENTE'         | 'ATIVAR_UTENTE'
+  | 'INATIVAR_MEDICO'         | 'ATIVAR_MEDICO'   | 'DESATIVAR_MEDICO'
+  | 'CONSULTAR_DASHBOARD_UTENTE'
+  | 'RESPOSTA_CARAT_UTENTE'   | 'RESPOSTA_CARAT_MEDICO'
+  | 'CRIAR_PRESCRICAO'
+  | 'INATIVAR_PRESCRICAO'     | 'ATIVAR_PRESCRICAO'
+  | 'CRIAR_EXAME'
+  | 'CONSULTAR_ALERTAS'
+  | 'ATUALIZAR_ESTADO_ALERTA'
+  | 'REALOCACAO_UTENTE_MEDICO';
 
 interface RegistarParams {
   acao: AcaoAuditoria | string;
@@ -114,6 +116,64 @@ export class AuditoriaService {
       acao: 'ATIVAR_MEDICO', entidade: 'medico', entidade_id: medicoId,
       utilizador_id: atorId, utilizador_nome: atorNome, utilizador_role: 'administrador',
       ip,
+    });
+  }
+
+  respostaCarat(utenteId: number, utenteName: string, role: string, scoreTotal: number, avaliacaoId: number, ip?: string): void {
+    const acao: AcaoAuditoria = role === 'medico' ? 'RESPOSTA_CARAT_MEDICO' : 'RESPOSTA_CARAT_UTENTE';
+    this.registar({
+      acao, entidade: 'avaliacao_carat', entidade_id: avaliacaoId,
+      utilizador_id: utenteId, utilizador_nome: utenteName, utilizador_role: role,
+      detalhes: { scoreTotal }, ip,
+    });
+  }
+
+  criarPrescricao(medicoId: number, medicoNome: string, prescricaoId: number, utenteId: number, farmaco: string, ip?: string): void {
+    this.registar({
+      acao: 'CRIAR_PRESCRICAO', entidade: 'prescricao', entidade_id: prescricaoId,
+      utilizador_id: medicoId, utilizador_nome: medicoNome, utilizador_role: 'medico',
+      detalhes: { utenteId, farmaco }, ip,
+    });
+  }
+
+  togglePrescricao(medicoId: number, medicoNome: string, prescricaoId: number, ativo: boolean, ip?: string): void {
+    this.registar({
+      acao: ativo ? 'ATIVAR_PRESCRICAO' : 'INATIVAR_PRESCRICAO',
+      entidade: 'prescricao', entidade_id: prescricaoId,
+      utilizador_id: medicoId, utilizador_nome: medicoNome, utilizador_role: 'medico',
+      ip,
+    });
+  }
+
+  criarExame(medicoId: number, medicoNome: string, exameId: number, utenteId: number, tipo: string, ip?: string): void {
+    this.registar({
+      acao: 'CRIAR_EXAME', entidade: 'exame', entidade_id: exameId,
+      utilizador_id: medicoId, utilizador_nome: medicoNome, utilizador_role: 'medico',
+      detalhes: { utenteId, tipo }, ip,
+    });
+  }
+
+  consultarAlertas(medicoId: number, medicoNome: string, total: number, ip?: string): void {
+    this.registar({
+      acao: 'CONSULTAR_ALERTAS', entidade: 'alerta',
+      utilizador_id: medicoId, utilizador_nome: medicoNome, utilizador_role: 'medico',
+      detalhes: { totalAlertas: total }, ip,
+    });
+  }
+
+  atualizarEstadoAlerta(medicoId: number, medicoNome: string, alertaId: number, estado: string, ip?: string): void {
+    this.registar({
+      acao: 'ATUALIZAR_ESTADO_ALERTA', entidade: 'alerta', entidade_id: alertaId,
+      utilizador_id: medicoId, utilizador_nome: medicoNome, utilizador_role: 'medico',
+      detalhes: { novoEstado: estado }, ip,
+    });
+  }
+
+  realocacaoUtente(adminId: number, adminNome: string, utenteId: number, novoMedicoId: number, ip?: string): void {
+    this.registar({
+      acao: 'REALOCACAO_UTENTE_MEDICO', entidade: 'utente', entidade_id: utenteId,
+      utilizador_id: adminId, utilizador_nome: adminNome, utilizador_role: 'administrador',
+      detalhes: { novoMedicoId }, ip,
     });
   }
 

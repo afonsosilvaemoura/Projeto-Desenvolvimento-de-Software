@@ -148,7 +148,7 @@
           </div>
           <div><label>Medicamento</label><input id="medicamento" placeholder="ex: Salbutamol 100mcg" required></div>
           <div><label>Dose / Posologia</label><input id="dose" placeholder="ex: 2 inalações 3x/dia" required></div>
-          <div><label>Nº de embalagens prescritas</label><input id="prescEmbalagens" type="number" min="0" value="0" placeholder="0 = não rastreado"></div>
+
           <button class="form-btn" type="submit">Criar Prescrição</button>
           <p id="msgPrescricao" class="msg"></p>
         </form>
@@ -768,15 +768,13 @@ function renderPrescricoes(dados){
   const c=document.getElementById('listaPrescricoes');
   if(!dados.length){c.innerHTML='<p style="color:#64748b">Nenhuma prescrição encontrada.</p>';return;}
   const isMed=role()==='medico';
-  c.innerHTML=`<table><thead><tr><th>#</th>${isMed?'<th>Utente</th>':''}<th>Fármaco</th><th>Dosagem</th>${isMed?'':'<th>Médico</th>'}<th>Estado</th>${isMed?'<th>Embalagens</th>':''}<th>Data</th>${isMed?'<th>Ação</th>':''}</tr></thead><tbody>
+  c.innerHTML=`<table><thead><tr><th>#</th>${isMed?'<th>Utente</th>':''}<th>Fármaco</th><th>Dosagem</th>${isMed?'':'<th>Médico</th>'}<th>Estado</th><th>Data</th>${isMed?'<th>Ação</th>':''}</tr></thead><tbody>
     ${dados.map(p=>{
       const badgeAtivo=p.ativo?'<span class="badge-ok">Ativa</span>':'<span class="badge-nok">Inativa</span>';
       const tdUtente=isMed?`<td><span class="badge-info">ID ${p.utente_id??'—'}</span>${p.utente_nome?` — ${p.utente_nome}`:''}</td>`:'';
-      const tot=p.embalagens_total||0; const lev=p.embalagens_levantadas||0;
-      const corEmb=tot===0?'#94a3b8':lev>=tot?'#16a34a':lev>0?'#d97706':'#dc2626';
-      const tdEmb=isMed?`<td style="white-space:nowrap"><span style="font-weight:600;color:${corEmb}">${tot>0?lev+'/'+tot:'—'}</span>${tot>0&&lev<tot?` <button class="form-btn" style="padding:3px 8px;font-size:11px;background:#2563eb;margin-left:4px" onclick="atualizarLevantamento(${p.id},1)">+1</button>`:''}${tot>0&&lev>0?` <button class="form-btn" style="padding:3px 8px;font-size:11px;background:#6b7280;margin-left:2px" onclick="atualizarLevantamento(${p.id},-1)">-1</button>`:''}</td>`:'';
+      const farmaco=(p.farmaco??p.medicamento??'').replace(/\s*\([^)]*\)/g,'').trim();
       const btnToggle=isMed?`<td><button class="form-btn" style="padding:4px 10px;font-size:11px;background:${p.ativo?'#dc2626':'#16a34a'}" onclick="togglePrescricaoAtivo(${p.id},${!p.ativo})">${p.ativo?'Inativar':'Ativar'}</button></td>`:'';
-      return `<tr><td>${p.id}</td>${tdUtente}<td>${p.farmaco??p.medicamento??''}</td><td>${p.dosagem??p.dose??''}</td>${isMed?'':'<td>'+(p.medico_nome??'—')+'</td>'}<td>${badgeAtivo}</td>${tdEmb}<td>${fmt(p.data_criacao??p.dataCriacao)}</td>${btnToggle}</tr>`;
+      return `<tr><td>${p.id}</td>${tdUtente}<td>${farmaco}</td><td>${p.dosagem??p.dose??''}</td>${isMed?'':'<td>'+(p.medico_nome??'—')+'</td>'}<td>${badgeAtivo}</td><td>${fmt(p.data_criacao??p.dataCriacao)}</td>${btnToggle}</tr>`;
     }).join('')}
   </tbody></table>`;
 }
@@ -1082,14 +1080,13 @@ function renderDash(d){
       </tbody></table></div>`:''}
     ${d.prescricoes?.length?`<div class="card">
       <h2 class="sec">Prescrições</h2>
-      <table><thead><tr><th>#</th><th>Fármaco</th><th>Dosagem</th><th>Médico</th><th>Estado</th><th>Embalagens</th><th>Data</th></tr></thead><tbody>
-      ${d.prescricoes.map(p=>{const tot=p.embalagens_total||0;const lev=p.embalagens_levantadas||0;return `<tr>
-        <td>${p.id}</td><td>${p.farmaco||'—'}</td><td>${p.dosagem||'—'}</td>
+      <table><thead><tr><th>#</th><th>Fármaco</th><th>Dosagem</th><th>Médico</th><th>Estado</th><th>Data</th></tr></thead><tbody>
+      ${d.prescricoes.map(p=>`<tr>
+        <td>${p.id}</td><td>${(p.farmaco||'—').replace(/\s*\([^)]*\)/g,'').trim()}</td><td>${p.dosagem||'—'}</td>
         <td>${p.medico_nome||'—'}</td>
         <td><span class="${p.ativo?'badge-ok':'badge-nok'}">${p.ativo?'Ativa':'Inativa'}</span></td>
-        <td>${tot>0?lev+'/'+tot:'—'}</td>
         <td>${fmt(p.data_criacao)}</td>
-      </tr>`;}).join('')}
+      </tr>`).join('')}
       </tbody></table></div>`:''}`;
 }
 

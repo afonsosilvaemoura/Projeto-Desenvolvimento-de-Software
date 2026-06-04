@@ -2,6 +2,10 @@ import { Response } from 'express';
 import { calcularCARAT, PERGUNTAS_CARAT, OPCOES_RESPOSTA } from '../services/carat.service';
 import { db } from '../database/database';
 import { AuthRequest } from '../middleware/auth.middleware';
+import { auditoriaService } from '../services/auditoria.service';
+
+const ip = (req: any) =>
+  (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || '?';
 
 export async function criarAvaliacaoCarat(req: AuthRequest, res: Response) {
   try {
@@ -48,6 +52,11 @@ export async function criarAvaliacaoCarat(req: AuthRequest, res: Response) {
     );
 
     gerarAlertas(targetUtenteId, resultado.scoreTotal, Number(result.lastInsertRowid));
+
+    auditoriaService.respostaCarat(
+      req.user!.id, req.user!.nome, req.user!.role,
+      resultado.scoreTotal, Number(result.lastInsertRowid), ip(req)
+    );
 
     return res.status(201).json({
       mensagem: 'Questionário CARAT processado com sucesso!',

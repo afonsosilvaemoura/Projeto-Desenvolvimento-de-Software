@@ -1,7 +1,11 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { PrescricaoService } from '../services/prescricao.service';
+import { auditoriaService } from '../services/auditoria.service';
 import { db } from '../database/database';
+
+const ip = (req: any) =>
+  (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || '?';
 
 export class PrescricaoController {
   private service = new PrescricaoService();
@@ -25,7 +29,16 @@ export class PrescricaoController {
         if (!utente) return res.status(404).json({ erro: 'Utente não encontrado.' });
         if (utente.medico_id !== req.user.id) return res.status(403).json({ erro: 'Utente não está atribuído a este médico.' });
       }
-      const nova = this.service.criarPrescricaoDTO(req.body);
+      const nova = this.service.criarPrescricaoDTO(req.body) as any;
+
+      auditoriaService.criarPrescricao(
+        req.user!.id, req.user!.nome,
+        Number(nova.id),
+        Number(req.body.utente_id),
+        req.body.farmaco ?? req.body.medicamento ?? '?',
+        ip(req)
+      );
+
       return res.status(201).json(nova);
     } catch (error: any) {
       return res.status(400).json({ erro: error.message });
