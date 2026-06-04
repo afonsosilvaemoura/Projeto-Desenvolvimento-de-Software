@@ -1,8 +1,12 @@
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { db } from '../database/database';
 import { authMiddleware, authorize, AuthRequest } from '../middleware/auth.middleware';
 import { AlertaController } from '../controller/alerta.controller';
+import { auditoriaService } from '../services/auditoria.service';
+
+const ip = (req: Request) =>
+  (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || '?';
 
 const router = Router();
 const adminOnly = [authMiddleware, authorize(['administrador'])] as const;
@@ -27,6 +31,7 @@ router.patch('/medico/:id/ativo', ...adminOnly, (req: AuthRequest, res: Response
     const medico = db.prepare('SELECT id FROM medico WHERE id = ?').get(id);
     if (!medico) return res.status(404).json({ erro: 'Médico não encontrado.' });
     db.prepare('UPDATE medico SET ativo = ?, dataAtualizacao = ? WHERE id = ?').run(ativo ? 1 : 0, new Date().toISOString(), id);
+    if (ativo) auditoriaService.ativarMedico(req.user!.id, req.user!.nome, id, ip(req));
     return res.json({ mensagem: `Médico ${ativo ? 'ativado' : 'inativado'} com sucesso.` });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
@@ -56,6 +61,8 @@ router.patch('/utente/:id/ativo', ...adminOnly, (req: AuthRequest, res: Response
     if (!db.prepare('SELECT id FROM utente WHERE id = ?').get(id)) return res.status(404).json({ erro: 'Utente não encontrado.' });
     db.prepare('UPDATE utente SET ativo = ?, motivo_inativacao = ?, dataAtualizacao = ? WHERE id = ?')
       .run(ativo ? 1 : 0, ativo ? null : (motivo || null), new Date().toISOString(), id);
+    if (ativo) auditoriaService.ativarUtente(req.user!.id, req.user!.nome, id, ip(req));
+    else        auditoriaService.inativarUtente(req.user!.id, req.user!.nome, id, motivo || 'sem motivo', ip(req));
     return res.json({ mensagem: `Utente ${ativo ? 'ativado' : 'inativado'} com sucesso.` });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
@@ -91,9 +98,11 @@ router.post('/medico/:id/desativar', ...adminOnly, (req: AuthRequest, res: Respo
 
     db.prepare('UPDATE medico SET ativo = 0, dataAtualizacao = ? WHERE id = ?').run(now, id);
 
-    db.prepare('INSERT INTO auditoria (admin_id, admin_nome, acao, entidade, entidade_id, detalhes, dataCriacao) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run(req.user!.id, req.user!.nome, 'DESATIVAR_MEDICO', 'medico', id,
-        JSON.stringify({ medicoNome: medico.nome, utentesMigrados, realocacoes }), now);
+    auditoriaService.inativarMedico(
+      req.user!.id, req.user!.nome, id,
+      { medicoNome: medico.nome, utentesMigrados, realocacoes },
+      ip(req)
+    );
 
     return res.json({ mensagem: 'Médico inativado e auditoria registada.' });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
@@ -138,7 +147,7 @@ router.get('/dashboard/:utenteId', authMiddleware, (req: AuthRequest, res: Respo
     `).all(id);
     const prescricoes = db.prepare('SELECT * FROM prescricao WHERE utente_id = ? ORDER BY data_criacao DESC').all(id);
 
-    return res.json({
+    const payload = {
       utente: {
         id: utente.id, nome: utente.nome, sexo: utente.sexo, idade: utente.idade,
         data_nascimento: utente.data_nascimento,
@@ -159,7 +168,16 @@ router.get('/dashboard/:utenteId', authMiddleware, (req: AuthRequest, res: Respo
       totalCarats: carats.length,
       alertasAtivos: (db.prepare("SELECT COUNT(*) as c FROM alerta WHERE utente_id = ? AND estado = 'NOVO'").get(id) as any).c,
       medicacoesAtivas: (db.prepare('SELECT COUNT(*) as c FROM prescricao WHERE utente_id = ? AND ativo = 1').get(id) as any).c,
-    });
+    };
+
+    if (req.user?.role !== 'utente') {
+      auditoriaService.consultarDashboardUtente(
+        req.user!.id, req.user!.nome, req.user!.role,
+        id, utente.nome, ip(req)
+      );
+    }
+
+    return res.json(payload);
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });
 

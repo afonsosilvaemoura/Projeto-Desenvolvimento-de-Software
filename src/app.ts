@@ -11,6 +11,7 @@ import registoRoutes   from './routes/registo.routes';
 import adminRoutes     from './routes/admin.routes';
 import dashboardRoutes from './routes/dashboard.api';
 import alertaRoutes    from './routes/alerta.routes';
+import auditoriaRoutes from './routes/auditoria.routes';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/registo',   registoRoutes);
 app.use('/admin',     adminRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/alertas',   alertaRoutes);
+app.use('/auditoria', auditoriaRoutes);
 
 app.listen(3000, () => {
   console.log('\nSAUDINOB a correr em http://localhost:3000');

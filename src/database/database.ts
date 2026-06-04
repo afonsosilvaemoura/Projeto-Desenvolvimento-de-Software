@@ -123,5 +123,8 @@ try { db.exec('ALTER TABLE utente ADD COLUMN codigo_postal TEXT'); } catch {}
 try { db.exec('ALTER TABLE utente ADD COLUMN localidade TEXT'); } catch {}
 try { db.exec('ALTER TABLE prescricao ADD COLUMN embalagens_total INTEGER NOT NULL DEFAULT 0'); } catch {}
 try { db.exec('ALTER TABLE prescricao ADD COLUMN embalagens_levantadas INTEGER NOT NULL DEFAULT 0'); } catch {}
+try { db.exec('ALTER TABLE auditoria ADD COLUMN utilizador_role TEXT'); } catch {}
+try { db.exec('ALTER TABLE auditoria ADD COLUMN ip_address TEXT'); } catch {}
+try { db.exec('ALTER TABLE auditoria ADD COLUMN sucesso INTEGER NOT NULL DEFAULT 1'); } catch {}
 
 console.log('Base de dados inicializada');

@@ -56,6 +56,7 @@
     <button data-roles="administrador" onclick="ir('pagina-medicos')">Médicos</button>
     <button data-roles="administrador" onclick="ir('pagina-utentes')">Utentes</button>
     <button data-roles="medico,administrador" onclick="_alertaFiltroUtente=null;ir('pagina-alertas')">Alertas</button>
+    <button data-roles="administrador" onclick="ir('pagina-auditoria')">Auditoria</button>
     <button class="btn-logout" onclick="sair()">Sair</button>
   </nav>
   <main>
@@ -123,6 +124,11 @@
             <div class="admin-action-icon"><svg width="20" height="20" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg></div>
             <div class="admin-action-title">Parâmetros</div>
             <div class="admin-action-sub">Limiares de alerta CARAT</div>
+          </div>
+          <div class="admin-action-card" onclick="ir('pagina-auditoria')">
+            <div class="admin-action-icon"><svg width="20" height="20" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+            <div class="admin-action-title">Auditoria</div>
+            <div class="admin-action-sub">Registo de ações e acessos</div>
           </div>
         </div>
       </div>
@@ -243,6 +249,21 @@
       <div class="card">
         <h2 class="sec">Lista de Utentes</h2>
         <div id="listaUtentesAdmin"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+    </section>
+
+    <!-- AUDITORIA (só admin) -->
+    <section id="pagina-auditoria" class="pagina">
+      <h1 class="pg-title">Registo de Auditoria</h1>
+      <div class="card">
+        <div class="panel-header-flex" style="margin-bottom:14px">
+          <div>
+            <h2 class="sec" style="margin-bottom:4px">Últimas ações do sistema</h2>
+            <p class="hint-text" style="margin-bottom:0">Registo de acessos, criações, alterações e inativações.</p>
+          </div>
+          <button onclick="exportarAuditoria()" class="btn-primary-sm">⬇ Exportar .txt</button>
+        </div>
+        <div id="listaAuditoria"><p class="text-muted">A carregar…</p></div>
       </div>
     </section>
 
@@ -565,6 +586,7 @@ function ir(id) {
   if(id==='pagina-alertas')   carregarAlertas();
   if(id==='pagina-medicos')   carregarMedicos();
   if(id==='pagina-utentes')   carregarUtentesAdmin();
+  if(id==='pagina-auditoria') carregarAuditoria();
   if(id==='pagina-prescricoes' && role()==='medico') carregarUtentesPrescricao();
   if(id==='pagina-exames'      && role()==='medico') carregarUtentesExame();
   if(id==='pagina-carat')     iniciarCarat();
@@ -1463,6 +1485,58 @@ async function ativarUtente(id){
     if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
     await carregarUtentesAdmin();
   } catch(er){alert(er.message);}
+}
+
+// ── Auditoria (admin) ────────────────────────────────────────────────────────
+async function exportarAuditoria(){
+  try{
+    const r=await fetch('/auditoria/exportar',{headers:ah()});
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||`Erro ${r.status}`);}
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`auditoria_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  } catch(e){alert('Erro ao exportar: '+(e.message||e));}
+}
+
+async function carregarAuditoria(){
+  const c=document.getElementById('listaAuditoria');
+  c.innerHTML='<p class="text-muted">A carregar…</p>';
+  try{
+    const r=await fetch('/auditoria',{headers:ah()});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.erro||`Erro ${r.status}`);
+    if(!d.length){c.innerHTML='<p class="text-muted">Sem registos de auditoria.</p>';return;}
+    const acaoBadge=(a)=>{
+      if(a==='LOGIN_SUCESSO') return '<span class="badge-ok">Login</span>';
+      if(a==='LOGIN_FALHA')   return '<span class="badge-nok">Login Falhado</span>';
+      if(a.startsWith('CRIAR_')) return '<span class="badge-info">Criação</span>';
+      if(a.startsWith('ATUALIZAR_')) return '<span class="badge-info" style="background:#fef9c3;color:#92400e">Atualização</span>';
+      if(a.includes('INATIVAR')) return '<span class="badge-nok">Inativação</span>';
+      if(a.includes('ATIVAR'))   return '<span class="badge-ok">Ativação</span>';
+      return `<span class="badge-info">${a}</span>`;
+    };
+    c.innerHTML=`<table><thead><tr><th>#</th><th>Data / Hora</th><th>Utilizador</th><th>Perfil</th><th>Ação</th><th>Entidade</th><th>ID</th><th>IP</th><th>Detalhes</th></tr></thead><tbody>
+      ${d.map(a=>{
+        let det='—';
+        try{const o=JSON.parse(a.detalhes||'null');if(o) det=Object.entries(o).map(([k,v])=>`<span style="font-size:11px"><b>${k}:</b> ${v??'—'}</span>`).join(' ');}catch{}
+        return `<tr>
+          <td>${a.id}</td>
+          <td style="white-space:nowrap;font-size:12px">${a.dataCriacao?new Date(a.dataCriacao).toLocaleString('pt-PT'):'—'}</td>
+          <td><strong>${a.utilizador_nome||'—'}</strong></td>
+          <td>${a.utilizador_role||'—'}</td>
+          <td>${acaoBadge(a.acao)} <span style="font-size:11px;color:#64748b">${a.acao}</span></td>
+          <td>${a.entidade||'—'}</td>
+          <td>${a.entidade_id??'—'}</td>
+          <td style="font-size:11px;color:#64748b">${a.ip_address||'—'}</td>
+          <td style="font-size:11px;max-width:200px;word-break:break-all">${det}</td>
+        </tr>`;
+      }).join('')}
+    </tbody></table>`;
+  } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar auditoria: ${e.message||e}</p>`;}
 }
 
 // ── Alertas (admin + médico) ──────────────────────────────────────────────────
