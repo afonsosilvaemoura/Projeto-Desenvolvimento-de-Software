@@ -116,7 +116,7 @@ export async function listarAvaliacoesCarat(req: AuthRequest, res: Response) {
     }
 
     return res.json(lista.map(c => ({
-      id: c.id, scoreTotal: c.scoreTotal, scoreRinite: c.scoreRinite,
+      id: c.id, utente_id: c.utente_id, scoreTotal: c.scoreTotal, scoreRinite: c.scoreRinite,
       scoreAsma: c.scoreAsma, nivelControlo: c.nivelControlo, controloTotal: c.nivelControlo,
       dataCriacao: c.dataCriacao,
     })));

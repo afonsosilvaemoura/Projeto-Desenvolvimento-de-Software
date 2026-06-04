@@ -2,40 +2,16 @@ import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { db } from '../database/database';
 import { authMiddleware, authorize, AuthRequest } from '../middleware/auth.middleware';
+import { AlertaController } from '../controller/alerta.controller';
 
 const router = Router();
 const adminOnly = [authMiddleware, authorize(['administrador'])] as const;
+const alertaController = new AlertaController();
 
-router.get('/alertas', ...adminOnly, (_req, res: Response) => {
-  try {
-    return res.json(db.prepare('SELECT * FROM alerta ORDER BY dataCriacao DESC').all());
-  } catch (e: any) { return res.status(500).json({ erro: e.message }); }
-});
-
-router.get('/limiar', ...adminOnly, (_req, res: Response) => {
-  try {
-    let limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get() as any;
-    if (!limiar) {
-      db.prepare('INSERT INTO limiar_alerta (scoreMinimo, deterioracaoPontos, dataAtualizacao) VALUES (24, 3, ?)').run(new Date().toISOString());
-      limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get();
-    }
-    return res.json(limiar);
-  } catch (e: any) { return res.status(500).json({ erro: e.message }); }
-});
-
-router.put('/limiar', ...adminOnly, (req: AuthRequest, res: Response) => {
-  try {
-    const { scoreMinimo, deterioracaoPontos } = req.body;
-    const now = new Date().toISOString();
-    const limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get() as any;
-    if (!limiar) {
-      db.prepare('INSERT INTO limiar_alerta (scoreMinimo, deterioracaoPontos, dataAtualizacao) VALUES (?, ?, ?)').run(Number(scoreMinimo), Number(deterioracaoPontos), now);
-    } else {
-      db.prepare('UPDATE limiar_alerta SET scoreMinimo=?, deterioracaoPontos=?, dataAtualizacao=? WHERE id=?').run(Number(scoreMinimo), Number(deterioracaoPontos), now, limiar.id);
-    }
-    return res.json({ mensagem: 'Limiar atualizado.', limiar: db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get() });
-  } catch (e: any) { return res.status(400).json({ erro: e.message }); }
-});
+// Alertas e limiares — lógica centralizada em AlertaService/AlertaController
+router.get('/alertas', ...adminOnly, alertaController.getAllAlertas.bind(alertaController));
+router.get('/limiar',  ...adminOnly, alertaController.getLimiar.bind(alertaController));
+router.put('/limiar',  ...adminOnly, alertaController.updateLimiar.bind(alertaController));
 
 router.get('/medicos', ...adminOnly, (_req, res: Response) => {
   try {

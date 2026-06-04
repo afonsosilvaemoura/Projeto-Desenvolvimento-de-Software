@@ -11,16 +11,20 @@ export class ExameService {
 
   listarExames() {
     return db.prepare(`
-      SELECT e.*, u.nome as utente_nome
-      FROM exame e LEFT JOIN utente u ON e.utente_id = u.id
+      SELECT e.*, u.nome as utente_nome, m.nome as medico_nome
+      FROM exame e
+      LEFT JOIN utente u ON e.utente_id = u.id
+      LEFT JOIN medico m ON e.medico_id = m.id
       ORDER BY e.data_criacao DESC
     `).all();
   }
 
   listarExamesParaUtente(utenteId: number) {
     return db.prepare(`
-      SELECT e.*, u.nome as utente_nome
-      FROM exame e LEFT JOIN utente u ON e.utente_id = u.id
+      SELECT e.*, u.nome as utente_nome, m.nome as medico_nome
+      FROM exame e
+      LEFT JOIN utente u ON e.utente_id = u.id
+      LEFT JOIN medico m ON e.medico_id = m.id
       WHERE e.utente_id = ?
       ORDER BY e.data_criacao DESC
     `).all(utenteId);
@@ -28,8 +32,10 @@ export class ExameService {
 
   listarExamesParaMedico(medicoId: number) {
     return db.prepare(`
-      SELECT e.*, u.nome as utente_nome
-      FROM exame e JOIN utente u ON e.utente_id = u.id
+      SELECT e.*, u.nome as utente_nome, m.nome as medico_nome
+      FROM exame e
+      JOIN utente u ON e.utente_id = u.id
+      LEFT JOIN medico m ON e.medico_id = m.id
       WHERE u.medico_id = ?
       ORDER BY e.data_criacao DESC
     `).all(medicoId);

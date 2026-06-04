@@ -10,6 +10,7 @@ import fhirRoutes      from './routes/fhir';
 import registoRoutes   from './routes/registo.routes';
 import adminRoutes     from './routes/admin.routes';
 import dashboardRoutes from './routes/dashboard.api';
+import alertaRoutes    from './routes/alerta.routes';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/fhir',      fhirRoutes);
 app.use('/registo',   registoRoutes);
 app.use('/admin',     adminRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/alertas',   alertaRoutes);
 
 app.listen(3000, () => {
   console.log('\nSAUDINOB a correr em http://localhost:3000');

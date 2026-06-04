@@ -162,7 +162,7 @@
     <button data-roles="administrador" class="btn-registo" onclick="abrirModalRegisto()">Novo Registo</button>
     <button data-roles="administrador" onclick="ir('pagina-medicos')">Médicos</button>
     <button data-roles="administrador" onclick="ir('pagina-utentes')">Utentes</button>
-    <button data-roles="administrador" onclick="ir('pagina-alertas')">Alertas</button>
+    <button data-roles="medico,administrador" onclick="_alertaFiltroUtente=null;ir('pagina-alertas')">Alertas</button>
     <button class="btn-logout" onclick="sair()">Sair</button>
   </nav>
   <main>
@@ -181,9 +181,12 @@
       </div>
       <!-- Painel Médico (alertas) -->
       <div id="medicoDashboard" style="display:none">
-        <div class="admin-panel-header">
-          <h1>Painel do Médico</h1>
-          <p>Utentes com alertas CARAT ativos.</p>
+        <div class="admin-panel-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+          <div>
+            <h1>Painel do Médico</h1>
+            <p>Utentes com alertas CARAT ativos.</p>
+          </div>
+          <button onclick="ir('pagina-alertas')" style="padding:8px 16px;background:#2563eb;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap">Gerir Alertas</button>
         </div>
         <div id="medicoDashAlertas"><p style="color:#64748b">A carregar alertas…</p></div>
       </div>
@@ -350,33 +353,50 @@
       </div>
     </section>
 
-    <!-- ALERTAS (só admin) -->
+    <!-- ALERTAS (admin + médico) -->
     <section id="pagina-alertas" class="pagina">
-      <h1 class="pg-title">Alertas e Limiares</h1>
-      <div class="card">
-        <h2 class="sec">Configurar Limiares de Alerta</h2>
-        <form id="formLimiar" class="limiar-form">
-          <div>
-            <label>Score mínimo CARAT (abaixo gera alerta)</label>
-            <div class="range-row">
-              <input type="range" id="sliderScore" min="0" max="30" value="24" oninput="document.getElementById('valScore').textContent=this.value">
-              <span class="range-val" id="valScore">24</span><span style="font-size:13px;color:#64748b">/30</span>
-            </div>
-          </div>
-          <div>
-            <label>Deterioração mínima entre avaliações (pontos)</label>
-            <div class="range-row">
-              <input type="number" id="inputDeteri" min="1" max="15" value="3" style="width:90px">
-              <span style="font-size:13px;color:#64748b">pontos</span>
-            </div>
-          </div>
-          <button class="form-btn" type="submit">Guardar Limiares</button>
-          <p id="msgLimiar" class="msg"></p>
-        </form>
+      <h1 class="pg-title">Alertas</h1>
+
+      <!-- Secção do médico -->
+      <div id="alertasMedicoSection" style="display:none">
+        <div id="alertasFiltroBar" style="display:none;margin-bottom:12px;padding:10px 16px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <span style="font-size:13px;color:#1e40af">A mostrar alertas de <strong id="alertasFiltroNome"></strong></span>
+          <button onclick="_alertaFiltroUtente=null;carregarAlertasMedico()" style="font-size:12px;padding:4px 12px;border:1px solid #93c5fd;background:#fff;color:#2563eb;border-radius:8px;cursor:pointer">Ver todos</button>
+        </div>
+        <div class="card">
+          <h2 class="sec" id="alertasMedicoTitulo">Alertas dos Meus Utentes</h2>
+          <p style="font-size:13px;color:#64748b;margin-bottom:16px">Gerir o estado dos alertas CARAT ativos.</p>
+          <div id="listaAlertasMedico"><p style="color:#64748b">A carregar…</p></div>
+        </div>
       </div>
-      <div class="card">
-        <h2 class="sec">Alertas Ativos</h2>
-        <div id="listaAlertas"><p style="color:#64748b">A carregar…</p></div>
+
+      <!-- Secção do administrador -->
+      <div id="alertasAdminSection" style="display:none">
+        <div class="card">
+          <h2 class="sec">Configurar Limiares de Alerta</h2>
+          <form id="formLimiar" class="limiar-form">
+            <div>
+              <label>Score mínimo CARAT (abaixo gera alerta)</label>
+              <div class="range-row">
+                <input type="range" id="sliderScore" min="0" max="30" value="24" oninput="document.getElementById('valScore').textContent=this.value">
+                <span class="range-val" id="valScore">24</span><span style="font-size:13px;color:#64748b">/30</span>
+              </div>
+            </div>
+            <div>
+              <label>Deterioração mínima entre avaliações (pontos)</label>
+              <div class="range-row">
+                <input type="number" id="inputDeteri" min="1" max="15" value="3" style="width:90px">
+                <span style="font-size:13px;color:#64748b">pontos</span>
+              </div>
+            </div>
+            <button class="form-btn" type="submit">Guardar Limiares</button>
+            <p id="msgLimiar" class="msg"></p>
+          </form>
+        </div>
+        <div class="card">
+          <h2 class="sec">Alertas Ativos</h2>
+          <div id="listaAlertas"><p style="color:#64748b">A carregar…</p></div>
+        </div>
       </div>
     </section>
 
@@ -407,6 +427,7 @@
               <span style="padding:11px 12px;background:#e5e7eb;color:#374151;font-size:14px;font-weight:500;border-right:1px solid #d1d5db;white-space:nowrap">+351</span>
               <input id="perfilTelefone" type="tel" placeholder="912345678" maxlength="9" inputmode="numeric" style="flex:1;border:none;padding:11px;background:transparent;font-size:14px;outline:none;min-width:0">
             </div>
+            <p id="erroTelefone" class="msg erro" style="display:none;margin-top:4px;font-size:12px"></p>
           </div>
           <div>
             <label>Data de Nascimento</label>
@@ -415,6 +436,7 @@
           <div>
             <label>NIF</label>
             <input id="perfilNif" placeholder="ex: 123456789" maxlength="9" inputmode="numeric">
+            <p id="erroNif" class="msg erro" style="display:none;margin-top:4px;font-size:12px"></p>
           </div>
           <div>
             <label>Rua</label>
@@ -427,6 +449,7 @@
           <div>
             <label>Código Postal</label>
             <input id="perfilCodigoPostal" placeholder="ex: 4000-123" maxlength="8" oninput="formatarCodigoPostal(this)">
+            <p id="erroCodigoPostal" class="msg erro" style="display:none;margin-top:4px;font-size:12px"></p>
           </div>
           <div>
             <label>Localidade</label>
@@ -728,6 +751,7 @@ async function mostrarGraficoInicioUtente(){
     benvindo.style.display='none';
     grafico.style.display='none';
     adminDiv.style.display='block';
+    document.getElementById('medicoDashboard').style.display='none';
     await carregarAdminDashboard();
     return;
   }
@@ -892,9 +916,9 @@ function renderExames(dados){
   const c=document.getElementById('listaExames');
   if(!dados.length){c.innerHTML='<p style="color:#64748b">Nenhum exame encontrado.</p>';return;}
   const isMedEx=role()==='medico';
-  c.innerHTML=`<table><thead><tr><th>#</th>${isMedEx?'<th>Utente</th>':''}<th>Tipo</th><th>Exame</th><th>Médico ID</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
+  c.innerHTML=`<table><thead><tr><th>#</th>${isMedEx?'<th>Utente</th>':''}<th>Tipo</th><th>Exame</th><th>Médico</th><th>Data Marcação</th><th>Data Criação</th></tr></thead><tbody>
     ${dados.map(x=>`<tr><td>${x.id}</td>${isMedEx?`<td><span class="badge-info">ID ${x.utente_id??'—'}</span>${x.utente_nome?` — ${x.utente_nome}`:''}</td>`:''}<td>${x.tipo_exame??''}</td><td>${x.exame??''}</td>
-      <td><span class="badge-info">ID ${x.medico_id??'—'}</span></td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
+      <td>${x.medico_nome??'—'}</td><td>${fmt(x.data_marcacao)}</td><td>${fmt(x.data_criacao)}</td></tr>`).join('')}
   </tbody></table>`;
 }
 
@@ -976,11 +1000,11 @@ async function carregarHistoricoCARAT(utenteId=null){
     if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum questionário registado.</p>';return;}
     const isMedCarat=role()==='medico';
     c.innerHTML=`<table><thead><tr>${isMedCarat?'<th>Utente ID</th>':''}<th>#</th><th>Score Total</th><th>Rinite</th><th>Asma</th><th>Estado</th><th>Data</th></tr></thead><tbody>
-      ${d.map(c=>{const ok=c.nivelControlo==='CONTROLADA'||c.controloTotal==='CONTROLADA';
-        return `<tr>${isMedCarat?`<td><span class="badge-info">ID ${c.utente_id??'—'}</span></td>`:''}<td>${c.id}</td><td><strong>${c.scoreTotal}/30</strong></td><td>${c.scoreRinite}/12</td>
-          <td>${c.scoreAsma}/18</td>
+      ${d.map(av=>{const ok=av.nivelControlo==='CONTROLADA'||av.controloTotal==='CONTROLADA';
+        return `<tr>${isMedCarat?`<td><span class="badge-info">ID ${av.utente_id??'—'}</span></td>`:''}<td>${av.id}</td><td><strong>${av.scoreTotal}/30</strong></td><td>${av.scoreRinite}/12</td>
+          <td>${av.scoreAsma}/18</td>
           <td><span class="${ok?'badge-ok':'badge-nok'}">${ok?'Controlada':'Não Controlada'}</span></td>
-          <td>${fmt(c.dataCriacao)}</td></tr>`}).join('')}
+          <td>${fmt(av.dataCriacao)}</td></tr>`}).join('')}
     </tbody></table>`;
   } catch {c.innerHTML='<p class="msg erro">Erro ao carregar.</p>';}
 }
@@ -1113,7 +1137,7 @@ function renderDash(d){
         <div><div class="admin-stat-label">Avaliações</div><div class="admin-stat-value">${d.totalCarats}</div></div>
         <div class="admin-stat-icon g"><svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       </div>
-      <div class="admin-stat-card">
+      <div class="admin-stat-card" data-uid="${u.id}" data-nome="${u.nome.replace(/"/g,'&quot;')}" onclick="irParaAlertasUtente(+this.dataset.uid,this.dataset.nome)" style="cursor:pointer" title="Ver alertas de ${u.nome}">
         <div><div class="admin-stat-label">Alertas ativos</div><div class="admin-stat-value">${d.alertasAtivos??0}</div></div>
         <div class="admin-stat-icon r"><svg width="22" height="22" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
       </div>
@@ -1290,12 +1314,17 @@ async function carregarPerfil(){
 document.getElementById('formPerfil').addEventListener('submit',async e=>{
   e.preventDefault();
   const m=document.getElementById('msgPerfil'); m.textContent=''; m.className='msg';
+  // Limpar erros inline
+  ['erroTelefone','erroNif','erroCodigoPostal'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='';el.style.display='none';}});
+  const erroCampo=(id,msg)=>{const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}document.getElementById(id.replace('erro','perfil').replace('Telefone','Telefone').replace('Nif','Nif').replace('CodigoPostal','CodigoPostal'))?.focus();};
+  let temErro=false;
   const tel=document.getElementById('perfilTelefone').value.trim();
-  if(tel && !/^[0-9]{9}$/.test(tel)){m.textContent='Por favor introduza 9 números.';m.className='msg erro';return;}
+  if(tel && !/^[0-9]{9}$/.test(tel)){erroCampo('erroTelefone','Por favor introduza 9 números.');temErro=true;}
   const nif=document.getElementById('perfilNif').value.trim();
-  if(nif && !/^[0-9]{9}$/.test(nif)){m.textContent='Por favor introduza 9 números.';m.className='msg erro';return;}
+  if(nif && !/^[0-9]{9}$/.test(nif)){erroCampo('erroNif','Por favor introduza 9 números.');temErro=true;}
   const cp=document.getElementById('perfilCodigoPostal').value.trim();
-  if(cp && !/^[0-9]{4}-[0-9]{3}$/.test(cp)){m.textContent='Código postal inválido. Formato: XXXX-XXX (ex: 4000-123).';m.className='msg erro';return;}
+  if(cp && !/^[0-9]{4}-[0-9]{3}$/.test(cp)){erroCampo('erroCodigoPostal','Formato inválido. Use XXXX-XXX (ex: 4000-123).');temErro=true;}
+  if(temErro) return;
   const nasc=document.getElementById('perfilNascimento').value;
   if(nasc && new Date(nasc)>new Date()){m.textContent='Data de nascimento não pode ser uma data futura.';m.className='msg erro';return;}
   try{
@@ -1346,6 +1375,7 @@ async function carregarMedicationRequests(){
   try{
     const r=await fetch(`/fhir/medication-requests${patientParam}`,{headers:ah()});
     const d=await r.json();
+    if(!r.ok) throw new Error(d.erro||`Erro ${r.status}`);
     if(!d.length){c.innerHTML='<p style="color:#64748b">Sem prescrições FHIR.</p>';return;}
     c.innerHTML=`<table><thead><tr><th>ID</th><th>Medicação</th><th>Posologia</th><th>Prescritor</th><th>Utente (ref.)</th><th>Data</th></tr></thead><tbody>
       ${d.map(m=>`<tr>
@@ -1357,7 +1387,7 @@ async function carregarMedicationRequests(){
         <td>${fmt(m.authoredOn)}</td>
       </tr>`).join('')}
     </tbody></table>`;
-  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar MedicationRequests.</p>';}
+  } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar MedicationRequests: ${e.message||e}</p>`;}
 }
 
 async function carregarServiceRequests(){
@@ -1367,6 +1397,7 @@ async function carregarServiceRequests(){
   try{
     const r=await fetch(`/fhir/service-requests${patientParam}`,{headers:ah()});
     const d=await r.json();
+    if(!r.ok) throw new Error(d.erro||`Erro ${r.status}`);
     if(!d.length){c.innerHTML='<p style="color:#64748b">Sem exames FHIR.</p>';return;}
     c.innerHTML=`<table><thead><tr><th>ID</th><th>Categoria</th><th>Exame</th><th>Utente (ref.)</th><th>Médico (ref.)</th><th>Data Marcação</th></tr></thead><tbody>
       ${d.map(s=>`<tr>
@@ -1378,7 +1409,7 @@ async function carregarServiceRequests(){
         <td>${fmt(s.occurrenceDateTime)}</td>
       </tr>`).join('')}
     </tbody></table>`;
-  } catch{c.innerHTML='<p class="msg erro">Erro ao carregar ServiceRequests.</p>';}
+  } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar ServiceRequests: ${e.message||e}</p>`;}
 }
 
 // ── Médicos (admin) ──────────────────────────────────────────────────────────
@@ -1406,6 +1437,7 @@ let _utenteParaInativar  = null;
 let _utentesAdminCache   = {};
 let _caratUtenteId       = null;
 let _autoDashUtenteId    = null;
+let _alertaFiltroUtente  = null; // {id, nome} ou null
 let _examesData          = [];
 let _prescricoesData     = [];
 
@@ -1540,11 +1572,19 @@ async function ativarUtente(id){
   } catch(er){alert(er.message);}
 }
 
-// ── Alertas (admin) ───────────────────────────────────────────────────────────
+// ── Alertas (admin + médico) ──────────────────────────────────────────────────
 async function carregarAlertas(){
+  if(role()==='medico'){
+    document.getElementById('alertasMedicoSection').style.display='block';
+    document.getElementById('alertasAdminSection').style.display='none';
+    await carregarAlertasMedico();
+    return;
+  }
+  document.getElementById('alertasMedicoSection').style.display='none';
+  document.getElementById('alertasAdminSection').style.display='block';
   // Limiar
   try{
-    const r=await fetch('/admin/limiar',{headers:ah()});
+    const r=await fetch('/alertas/limiar',{headers:ah()});
     const d=await r.json();
     document.getElementById('sliderScore').value=d.scoreMinimo;
     document.getElementById('valScore').textContent=d.scoreMinimo;
@@ -1553,7 +1593,7 @@ async function carregarAlertas(){
   // Lista
   const c=document.getElementById('listaAlertas');
   try{
-    const r=await fetch('/admin/alertas',{headers:ah()});
+    const r=await fetch('/alertas',{headers:ah()});
     const d=await r.json();
     if(!d.length){c.innerHTML='<p style="color:#64748b">Sem alertas de momento.</p>';return;}
     c.innerHTML=`<table><thead><tr><th>#</th><th>Utente</th><th>Tipo</th><th>Prioridade</th><th>Estado</th><th>Motivo</th><th>Data</th></tr></thead><tbody>
@@ -1564,11 +1604,90 @@ async function carregarAlertas(){
   } catch {c.innerHTML='<p class="msg erro">Erro ao carregar alertas.</p>';}
 }
 
+function irParaAlertasUtente(id, nome){
+  _alertaFiltroUtente={id:Number(id),nome};
+  ir('pagina-alertas');
+}
+
+async function carregarAlertasMedico(){
+  const c=document.getElementById('listaAlertasMedico');
+  c.innerHTML='<p style="color:#64748b">A carregar…</p>';
+
+  // Barra de filtro
+  const filtro=_alertaFiltroUtente;
+  const filtroBar=document.getElementById('alertasFiltroBar');
+  const titulo=document.getElementById('alertasMedicoTitulo');
+  if(filtro){
+    document.getElementById('alertasFiltroNome').textContent=filtro.nome;
+    filtroBar.style.display='flex';
+    titulo.textContent='Alertas de '+filtro.nome;
+  } else {
+    filtroBar.style.display='none';
+    titulo.textContent='Alertas dos Meus Utentes';
+  }
+
+  try{
+    const r=await fetch('/dashboard/medico/alertas-utentes',{headers:ah()});
+    const todos=await r.json();
+    if(!r.ok) throw new Error(todos.erro||`Erro ${r.status}`);
+    const alertas=filtro ? todos.filter(a=>a.utente_id===filtro.id) : todos;
+    if(!alertas.length){
+      c.innerHTML=`<p style="color:#16a34a;font-weight:500">✅ ${filtro?'Sem alertas ativos para '+filtro.nome+'.':'Sem alertas ativos para os seus utentes.'}</p>`;
+      return;
+    }
+    const estadoBadge=(e)=>e==='EM_SEGUIMENTO'
+      ?'<span class="badge-info" style="background:#fef9c3;color:#92400e;border-color:#fde68a">Em Seguimento</span>'
+      :'<span class="badge-info" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5">Novo</span>';
+    const linha=(a)=>`
+      <div id="alerta-row-${a.id}" style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 8px;border-bottom:1px solid #f1f5f9;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <span style="font-weight:700;color:#1e293b;cursor:pointer;text-decoration:underline dotted" onclick="irParaDashUtente(${a.utente_id})">${a.utente_nome}</span>
+          <span class="badge-info" style="margin-left:8px;font-size:11px">${a.tipo==='SCORE_BAIXO'?'Score Baixo':'Deterioração'}</span>
+          ${estadoBadge(a.estado)}
+          ${a.ultimo_score!=null?`<span style="margin-left:8px;font-size:12px;color:#64748b">Score: <strong>${a.ultimo_score}/30</strong></span>`:''}
+          <div style="font-size:12px;color:#64748b;margin-top:3px">${a.motivo||''}</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:2px">${fmt(a.dataCriacao)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          ${a.estado==='NOVO'?`<button onclick="atualizarEstadoAlerta(${a.id},'EM_SEGUIMENTO')" style="padding:6px 12px;font-size:12px;border:1px solid #d97706;background:#fff;color:#d97706;border-radius:8px;cursor:pointer;white-space:nowrap">Em Seguimento</button>`:''}
+          <button onclick="atualizarEstadoAlerta(${a.id},'FECHADO')" style="padding:6px 12px;font-size:12px;border:1px solid #dc2626;background:#fff;color:#dc2626;border-radius:8px;cursor:pointer;white-space:nowrap">Terminado</button>
+        </div>
+      </div>`;
+    const criticos=alertas.filter(a=>a.prioridade==='CRITICA');
+    const altos=alertas.filter(a=>a.prioridade==='ALTA');
+    const outros=alertas.filter(a=>!['CRITICA','ALTA'].includes(a.prioridade));
+    c.innerHTML=`
+      ${criticos.length?`<div style="border-left:4px solid #dc2626;padding-left:12px;margin-bottom:16px">
+        <h3 style="color:#dc2626;margin-bottom:8px">🚨 Crítico (${criticos.length})</h3>
+        ${criticos.map(linha).join('')}</div>`:''}
+      ${altos.length?`<div style="border-left:4px solid #d97706;padding-left:12px;margin-bottom:16px">
+        <h3 style="color:#d97706;margin-bottom:8px">⚠️ Alta prioridade (${altos.length})</h3>
+        ${altos.map(linha).join('')}</div>`:''}
+      ${outros.length?`<div style="border-left:4px solid #64748b;padding-left:12px">
+        <h3 style="color:#64748b;margin-bottom:8px">ℹ️ Outros (${outros.length})</h3>
+        ${outros.map(linha).join('')}</div>`:''}`;
+  } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar alertas: ${e.message||e}</p>`;}
+}
+
+async function atualizarEstadoAlerta(id, estado){
+  try{
+    const r=await fetch(`/alertas/${id}/estado`,{method:'PATCH',headers:ah({'Content-Type':'application/json'}),body:JSON.stringify({estado})});
+    if(!r.ok){const d=await r.json();throw new Error(d.erro||'Erro');}
+    if(estado==='FECHADO'){
+      const row=document.getElementById(`alerta-row-${id}`);
+      if(row) row.remove();
+      await carregarMedicoDashboard();
+    } else {
+      await carregarAlertasMedico();
+    }
+  } catch(er){alert(er.message);}
+}
+
 document.getElementById('formLimiar').addEventListener('submit', async e=>{
   e.preventDefault();
   const m=document.getElementById('msgLimiar'); m.textContent=''; m.className='msg';
   try{
-    const res=await fetch('/admin/limiar',{method:'PUT',headers:ah({'Content-Type':'application/json'}),
+    const res=await fetch('/alertas/limiar',{method:'PUT',headers:ah({'Content-Type':'application/json'}),
       body:JSON.stringify({scoreMinimo:Number(document.getElementById('sliderScore').value),
         deterioracaoPontos:Number(document.getElementById('inputDeteri').value)})});
     if(!res.ok){const d=await res.json();throw new Error(d.erro||'Erro');}
