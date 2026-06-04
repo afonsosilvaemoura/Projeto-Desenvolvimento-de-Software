@@ -489,7 +489,7 @@
       <div><label>Sexo</label>
         <select id="rSexo"><option value="M">Masculino</option><option value="F">Feminino</option></select>
       </div>
-      <div><label>Idade</label><input type="number" id="rIdade" min="0" max="120"></div>
+      <div><label>Data de Nascimento</label><input type="date" id="rNascimento"></div>
       <div style="display:flex;align-items:center;gap:8px">
         <input type="checkbox" id="rAsma">
         <label for="rAsma" style="font-weight:400;margin:0">Diagnóstico de Asma</label>
@@ -701,7 +701,11 @@ function iniciar(){
   if(role()!=='administrador'){
     carregarPrescricoes(); carregarExames(); carregarPerguntasCarat(); carregarHistoricoCARAT();
     iniciarCarat();
-    if(role()==='medico'){ carregarUtentesPrescricao(); carregarUtentesExame(); }
+    if(role()==='medico'){
+      document.getElementById('cardNovaPrescricao').style.display='block';
+      document.getElementById('cardCriarExame').style.display='block';
+      carregarUtentesPrescricao(); carregarUtentesExame();
+    }
     if(role()==='utente'){
       document.getElementById('cardNovaPrescricao').style.display='none';
       document.getElementById('cardCriarExame').style.display='none';
@@ -758,7 +762,12 @@ async function carregarGraficoCaratInicio(){
     if(!r.ok) throw new Error('Não foi possível carregar o histórico.');
     const dados = await r.json();
     if(!dados.length){
-      cont.innerHTML = '<p style="color:#64748b">Ainda não existe histórico CARAT.</p>';
+      cont.innerHTML = `<div style="text-align:center;padding:24px">
+        <p style="color:#64748b;margin-bottom:14px">Ainda não existe histórico CARAT.</p>
+        <button class="form-btn" onclick="ir('pagina-carat')" style="width:auto;padding:12px 28px;background:#2563eb">
+          Responder ao Questionário CARAT
+        </button>
+      </div>`;
       return;
     }
     const ordenados = dados.sort((a,b)=>new Date(a.dataCriacao)-new Date(b.dataCriacao)).slice(-6);
@@ -948,11 +957,16 @@ async function carregarPerguntasCarat(){
   } catch { document.getElementById('perguntasContainer').innerHTML='<p class="msg erro">Erro ao carregar perguntas.</p>'; }
 }
 
-async function carregarHistoricoCARAT(){
+async function carregarHistoricoCARAT(utenteId=null){
   const c=document.getElementById('listaCARAT');
+  if(role()==='medico' && !utenteId){
+    c.innerHTML='<p style="color:#64748b">Selecione um utente para ver o histórico CARAT.</p>';
+    return;
+  }
   c.innerHTML='<p style="color:#64748b">A carregar…</p>';
   try{
-    const r=await fetch('/carat',{headers:ah()});
+    const url=utenteId?`/carat?utente_id=${utenteId}`:'/carat';
+    const r=await fetch(url,{headers:ah()});
     const d=await r.json();
     if(!d.length){c.innerHTML='<p style="color:#64748b">Nenhum questionário registado.</p>';return;}
     const isMedCarat=role()==='medico';
@@ -998,11 +1012,14 @@ document.getElementById('formCarat').addEventListener('submit', async e=>{
     document.getElementById('modalCarat').classList.add('aberto');
     document.getElementById('formCarat').reset();
     if(role()==='medico'){
+      const idParaHistorico=_caratUtenteId;
       _caratUtenteId=null;
       document.getElementById('caratSelectUtente').value='';
       document.getElementById('caratFormCard').style.display='none';
+      await carregarHistoricoCARAT(idParaHistorico);
+    } else {
+      await carregarHistoricoCARAT();
     }
-    await carregarHistoricoCARAT();
   } catch(er){erEl.textContent=er.message;}
 });
 
@@ -1233,6 +1250,7 @@ async function carregarUtentesCarat(){
 function selecionarUtenteParaCarat(utenteId){
   _caratUtenteId = utenteId ? Number(utenteId) : null;
   document.getElementById('caratFormCard').style.display = utenteId ? 'block' : 'none';
+  carregarHistoricoCARAT(utenteId ? Number(utenteId) : null);
 }
 
 // ── Perfil utente ─────────────────────────────────────────────────────────────
@@ -1244,8 +1262,16 @@ async function carregarPerfil(){
     document.getElementById('perfilUsername').value=d.username||'';
     document.getElementById('perfilEmail').value=d.email||'';
     document.getElementById('perfilTelefone').value=d.telefone||'';
-    document.getElementById('perfilNascimento').value=d.data_nascimento||'';
-    document.getElementById('perfilNascimento').max=new Date().toISOString().split('T')[0];
+    const nascEl=document.getElementById('perfilNascimento');
+    nascEl.value=d.data_nascimento||'';
+    nascEl.max=new Date().toISOString().split('T')[0];
+    if(d.data_nascimento){
+      nascEl.disabled=true;
+      nascEl.style.background='#f1f5f9';nascEl.style.color='#94a3b8';nascEl.style.cursor='not-allowed';
+      nascEl.title='A data de nascimento não pode ser alterada após registo.';
+    } else {
+      nascEl.disabled=false;nascEl.style.background='';nascEl.style.color='';nascEl.style.cursor='';nascEl.title='';
+    }
     document.getElementById('perfilNif').value=d.nif||'';
     document.getElementById('perfilRua').value=d.rua||'';
     document.getElementById('perfilNumeroPorta').value=d.numero_porta||'';
@@ -1547,6 +1573,7 @@ document.getElementById('formLimiar').addEventListener('submit', async e=>{
 async function abrirModalRegisto(){
   document.getElementById('overlayRegisto').style.display='flex';
   document.getElementById('overlayRegisto').classList.add('aberto');
+  document.getElementById('rNascimento').max=new Date().toISOString().split('T')[0];
   // Carregar médicos para o dropdown
   try{
     const r=await fetch('/registo/medicos',{headers:ah()});
@@ -1573,7 +1600,7 @@ document.getElementById('formRegistoUtente').addEventListener('submit', async e=
         username:document.getElementById('rUsername').value.trim(),
         password:document.getElementById('rPassword').value,
         sexo:document.getElementById('rSexo').value,
-        idade:document.getElementById('rIdade').value||null,
+        data_nascimento:document.getElementById('rNascimento').value||null,
         diagnostico_asma:document.getElementById('rAsma').checked,
         data_primeira_consulta:document.getElementById('rConsulta').value||null,
         medico_id:document.getElementById('rMedico').value||null

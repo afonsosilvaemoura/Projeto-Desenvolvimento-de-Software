@@ -102,8 +102,15 @@ export async function listarAvaliacoesCarat(req: AuthRequest, res: Response) {
     } else if (req.user?.role === 'medico') {
       const utentes = db.prepare('SELECT id FROM utente WHERE medico_id = ?').all(req.user.id) as any[];
       if (!utentes.length) return res.json([]);
-      const placeholders = utentes.map(() => '?').join(',');
-      lista = db.prepare(`SELECT * FROM avaliacao_carat WHERE utente_id IN (${placeholders}) ORDER BY dataCriacao DESC`).all(...utentes.map(u => u.id));
+      const utenteIdParam = req.query.utente_id ? Number(req.query.utente_id) : null;
+      if (utenteIdParam) {
+        if (!(utentes as any[]).some(u => u.id === utenteIdParam))
+          return res.status(403).json({ erro: 'Utente não atribuído a este médico.' });
+        lista = db.prepare('SELECT * FROM avaliacao_carat WHERE utente_id = ? ORDER BY dataCriacao DESC').all(utenteIdParam);
+      } else {
+        const placeholders = utentes.map(() => '?').join(',');
+        lista = db.prepare(`SELECT * FROM avaliacao_carat WHERE utente_id IN (${placeholders}) ORDER BY dataCriacao DESC`).all(...utentes.map(u => u.id));
+      }
     } else {
       lista = db.prepare('SELECT * FROM avaliacao_carat ORDER BY dataCriacao DESC').all();
     }

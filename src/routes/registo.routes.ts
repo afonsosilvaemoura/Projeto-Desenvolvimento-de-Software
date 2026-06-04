@@ -30,17 +30,24 @@ router.get('/medicos', authMiddleware, (_req, res: Response) => {
 
 router.post('/utente', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
-    const { nome, username, password, sexo, idade, diagnostico_asma, data_primeira_consulta, medico_id } = req.body;
+    const { nome, username, password, sexo, data_nascimento, diagnostico_asma, data_primeira_consulta, medico_id } = req.body;
     if (db.prepare('SELECT id FROM utente WHERE username = ?').get(username)) {
       return res.status(409).json({ erro: 'Username já existe.' });
     }
+    let idade: number | null = null;
+    if (data_nascimento) {
+      const nasc = new Date(data_nascimento), hoje = new Date();
+      let i = hoje.getFullYear() - nasc.getFullYear();
+      if (hoje.getMonth() < nasc.getMonth() || (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate())) i--;
+      idade = i >= 0 ? i : 0;
+    }
     const now = new Date().toISOString();
     const result = db.prepare(
-      `INSERT INTO utente (nome, username, password_hash, sexo, idade, diagnostico_asma, data_primeira_consulta, medico_id, ativo, dataCriacao, dataAtualizacao)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`
+      `INSERT INTO utente (nome, username, password_hash, sexo, idade, data_nascimento, diagnostico_asma, data_primeira_consulta, medico_id, ativo, dataCriacao, dataAtualizacao)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`
     ).run(
       nome, username, bcrypt.hashSync(password, 10),
-      sexo || null, idade ? Number(idade) : null,
+      sexo || null, idade, data_nascimento || null,
       (diagnostico_asma === true || diagnostico_asma === 'true') ? 1 : 0,
       data_primeira_consulta || null, medico_id ? Number(medico_id) : null,
       now, now
@@ -54,13 +61,14 @@ router.post('/medico', authMiddleware, (req: AuthRequest, res: Response) => {
     const { nome, username, password, especialidade, numero_cedula } = req.body;
     if (db.prepare('SELECT id FROM medico WHERE username = ?').get(username))
       return res.status(409).json({ erro: 'Username já existe.' });
-    if (numero_cedula && db.prepare('SELECT id FROM medico WHERE numero_cedula = ?').get(numero_cedula))
+    const cedulaNorm = numero_cedula ? numero_cedula.toUpperCase() : null;
+    if (cedulaNorm && db.prepare('SELECT id FROM medico WHERE UPPER(numero_cedula) = ?').get(cedulaNorm))
       return res.status(409).json({ erro: 'Cédula profissional já registada noutro médico.' });
     const now = new Date().toISOString();
     const result = db.prepare(
       `INSERT INTO medico (nome, username, password_hash, especialidade, numero_cedula, ativo, dataCriacao, dataAtualizacao)
        VALUES (?, ?, ?, ?, ?, 1, ?, ?)`
-    ).run(nome, username, bcrypt.hashSync(password, 10), especialidade || 'Medicina Geral', numero_cedula || null, now, now);
+    ).run(nome, username, bcrypt.hashSync(password, 10), especialidade || 'Medicina Geral', cedulaNorm, now, now);
     return res.status(201).json({ mensagem: 'Médico criado com sucesso.', id: result.lastInsertRowid });
   } catch (e: any) { return res.status(400).json({ erro: e.message }); }
 });
@@ -77,8 +85,17 @@ router.put('/perfil', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     if (req.user?.role !== 'utente') return res.status(403).json({ erro: 'Apenas utentes.' });
     const { email, telefone, data_nascimento, nif, rua, numero_porta, codigo_postal, localidade, alergia } = req.body;
-    db.prepare('UPDATE utente SET email=?, telefone=?, data_nascimento=?, nif=?, rua=?, numero_porta=?, codigo_postal=?, localidade=?, alergia=?, dataAtualizacao=? WHERE id=?')
-      .run(email||null, telefone||null, data_nascimento||null, nif||null, rua||null, numero_porta||null, codigo_postal||null, localidade||null, alergia||null, new Date().toISOString(), req.user.id);
+    const existing = db.prepare('SELECT data_nascimento FROM utente WHERE id = ?').get(req.user.id) as any;
+    const nascFinal = existing.data_nascimento || data_nascimento || null;
+    let idadeFinal: number | null = null;
+    if (nascFinal) {
+      const nasc = new Date(nascFinal), hoje = new Date();
+      let i = hoje.getFullYear() - nasc.getFullYear();
+      if (hoje.getMonth() < nasc.getMonth() || (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate())) i--;
+      idadeFinal = i >= 0 ? i : null;
+    }
+    db.prepare('UPDATE utente SET email=?, telefone=?, data_nascimento=?, nif=?, rua=?, numero_porta=?, codigo_postal=?, localidade=?, alergia=?, idade=?, dataAtualizacao=? WHERE id=?')
+      .run(email||null, telefone||null, nascFinal, nif||null, rua||null, numero_porta||null, codigo_postal||null, localidade||null, alergia||null, idadeFinal, new Date().toISOString(), req.user.id);
     return res.json({ mensagem: 'Dados pessoais atualizados com sucesso.' });
   } catch (e: any) { return res.status(400).json({ erro: e.message }); }
 });
