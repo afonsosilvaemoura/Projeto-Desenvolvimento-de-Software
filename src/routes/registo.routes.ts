@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import { db } from '../database/database';
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware';
 import { auditoriaService } from '../services/auditoria.service';
+import { CreateUtenteDto } from '../dtos/utente/create-utente.dto';
+import { CreateMedicoDto } from '../dtos/medico/create-medico.dto';
 
 const router = Router();
 
@@ -34,7 +36,7 @@ router.get('/medicos', authMiddleware, (_req, res: Response) => {
 
 router.post('/utente', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
-    const { nome, username, password, sexo, data_nascimento, diagnostico_asma, data_primeira_consulta, medico_id } = req.body;
+    const { nome, username, password, sexo, data_nascimento, diagnostico_asma, data_primeira_consulta, medico_id } = req.body as CreateUtenteDto;
     if (db.prepare('SELECT id FROM utente WHERE username = ?').get(username))
       return res.status(409).json({ erro: 'Username já existe.' });
 
@@ -70,7 +72,7 @@ router.post('/utente', authMiddleware, (req: AuthRequest, res: Response) => {
 
 router.post('/medico', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
-    const { nome, username, password, especialidade, numero_cedula } = req.body;
+    const { nome, username, password, especialidade, numero_cedula } = req.body as CreateMedicoDto;
     if (db.prepare('SELECT id FROM medico WHERE username = ?').get(username))
       return res.status(409).json({ erro: 'Username já existe.' });
     const cedulaNorm = numero_cedula ? numero_cedula.toUpperCase() : null;
@@ -121,18 +123,7 @@ router.put('/perfil', authMiddleware, (req: AuthRequest, res: Response) => {
       'UPDATE utente SET email=?, telefone=?, data_nascimento=?, nif=?, rua=?, numero_porta=?, codigo_postal=?, localidade=?, alergia=?, idade=?, dataAtualizacao=? WHERE id=?'
     ).run(email||null, telefone||null, nascFinal, nif||null, rua||null, numero_porta||null, codigo_postal||null, localidade||null, alergia||null, idadeFinal, new Date().toISOString(), req.user.id);
 
-    const campos: Record<string, unknown> = {};
-    if (email !== undefined) campos.email = email;
-    if (telefone !== undefined) campos.telefone = telefone;
-    if (data_nascimento !== undefined) campos.data_nascimento = data_nascimento;
-    if (nif !== undefined) campos.nif = nif;
-    if (rua !== undefined) campos.rua = rua;
-    if (numero_porta !== undefined) campos.numero_porta = numero_porta;
-    if (codigo_postal !== undefined) campos.codigo_postal = codigo_postal;
-    if (localidade !== undefined) campos.localidade = localidade;
-    if (alergia !== undefined) campos.alergia = alergia;
-
-    auditoriaService.atualizarPerfilUtente(req.user.id, existing.nome, campos, ip(req));
+    auditoriaService.atualizarPerfilUtente(req.user.id, existing.nome, {}, ip(req));
 
     return res.json({ mensagem: 'Dados pessoais atualizados com sucesso.' });
   } catch (e: any) { return res.status(400).json({ erro: e.message }); }

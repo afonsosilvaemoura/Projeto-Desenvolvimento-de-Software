@@ -11,7 +11,9 @@ router.patch('/:id/estado', authMiddleware, authorize(['medico']), controller.up
 
 // Rotas do administrador
 router.get('/', authMiddleware, authorize(['administrador']), controller.getAllAlertas.bind(controller));
-router.get('/limiar', authMiddleware, authorize(['administrador']), controller.getLimiar.bind(controller));
 router.put('/limiar', authMiddleware, authorize(['administrador']), controller.updateLimiar.bind(controller));
+
+// Limiar acessível a todos os autenticados (usado no gráfico CARAT do utente)
+router.get('/limiar', authMiddleware, controller.getLimiar.bind(controller));
 
 export default router;

@@ -1,7 +1,10 @@
-/* MedicoResponseDTO — forma devolvida ao cliente. */
-
-export interface MedicoResponseDTO {
-  user_id: string;
+// Representa os dados devolvidos após criação ou listagem de médicos.
+export interface MedicoResponseDto {
+  id:             number;
+  nome:           string;
+  username:       string;
   especialidade?: string;
-  ativo?: boolean;
+  numero_cedula?: string;
+  ativo:          number;
+  dataCriacao?:   string;
 }

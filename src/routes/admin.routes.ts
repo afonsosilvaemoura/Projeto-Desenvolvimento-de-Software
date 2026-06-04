@@ -93,6 +93,7 @@ router.post('/medico/:id/desativar', ...adminOnly, (req: AuthRequest, res: Respo
     for (const r of realocacoes) {
       db.prepare('UPDATE utente SET medico_id = ?, dataAtualizacao = ? WHERE id = ?')
         .run(Number(r.novoMedicoId), now, Number(r.utenteId));
+      auditoriaService.realocacaoUtente(req.user!.id, req.user!.nome, Number(r.utenteId), Number(r.novoMedicoId), ip(req));
       utentesMigrados++;
     }
 

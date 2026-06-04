@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.services';
 import { auditoriaService } from '../services/auditoria.service';
+import { LoginRequestDto } from '../dtos/login/login-request.dto';
+import { LoginResponseDto } from '../dtos/login/login-response.dto';
 
 const ip = (req: Request) =>
   (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || '?';
@@ -9,9 +11,9 @@ export class LoginController {
   private authService = new AuthService();
 
   async login(req: Request, res: Response) {
-    const { username, password, role } = req.body;
+    const { username, password, role } = req.body as LoginRequestDto;
     try {
-      const result = await this.authService.login(username, password, role);
+      const result: LoginResponseDto = await this.authService.login(username, password, role);
       auditoriaService.loginSucesso(result.userId, result.nome, result.role, ip(req));
       console.log(`Login bem-sucedido para ${role} "${username}".`);
       return res.status(200).json({ mensagem: 'Login com sucesso', ...result });

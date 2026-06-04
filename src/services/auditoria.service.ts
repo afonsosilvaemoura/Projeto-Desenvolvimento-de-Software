@@ -87,11 +87,11 @@ export class AuditoriaService {
     });
   }
 
-  atualizarPerfilUtente(id: number, nome: string, camposAlterados: Record<string, unknown>, ip?: string): void {
+  atualizarPerfilUtente(id: number, nome: string, _campos: Record<string, unknown>, ip?: string): void {
     this.registar({
       acao: 'ATUALIZAR_PERFIL_UTENTE', entidade: 'utente', entidade_id: id,
       utilizador_id: id, utilizador_nome: nome, utilizador_role: 'utente',
-      detalhes: { camposAlterados }, ip,
+      ip,
     });
   }
 
@@ -119,12 +119,12 @@ export class AuditoriaService {
     });
   }
 
-  respostaCarat(utenteId: number, utenteName: string, role: string, scoreTotal: number, avaliacaoId: number, ip?: string): void {
+  respostaCarat(atorId: number, atorNome: string, role: string, targetUtenteId: number, avaliacaoId: number, ip?: string): void {
     const acao: AcaoAuditoria = role === 'medico' ? 'RESPOSTA_CARAT_MEDICO' : 'RESPOSTA_CARAT_UTENTE';
     this.registar({
       acao, entidade: 'avaliacao_carat', entidade_id: avaliacaoId,
-      utilizador_id: utenteId, utilizador_nome: utenteName, utilizador_role: role,
-      detalhes: { scoreTotal }, ip,
+      utilizador_id: atorId, utilizador_nome: atorNome, utilizador_role: role,
+      detalhes: { utente_id: targetUtenteId }, ip,
     });
   }
 

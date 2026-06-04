@@ -261,7 +261,10 @@
             <h2 class="sec" style="margin-bottom:4px">Últimas ações do sistema</h2>
             <p class="hint-text" style="margin-bottom:0">Registo de acessos, criações, alterações e inativações.</p>
           </div>
-          <button onclick="exportarAuditoria()" class="btn-primary-sm">⬇ Exportar .txt</button>
+          <button onclick="exportarAuditoria()" id="btnExportarAuditoria" style="display:flex;align-items:center;gap:8px;padding:10px 18px;background:#0f172a;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s" onmouseover="this.style.background='#1e293b'" onmouseout="this.style.background='#0f172a'">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar Auditoria (.txt)
+          </button>
         </div>
         <div id="listaAuditoria"><p class="text-muted">A carregar…</p></div>
       </div>
@@ -702,9 +705,15 @@ async function carregarGraficoCaratInicio(){
   const cont = document.getElementById('graficoCaratIntro');
   cont.innerHTML = '<p style="color:#64748b">A carregar histórico CARAT…</p>';
   try{
-    const r = await fetch('/carat',{headers:ah()});
-    if(!r.ok) throw new Error('Não foi possível carregar o histórico.');
-    const dados = await r.json();
+    const [rCarat, rLimiar] = await Promise.all([
+      fetch('/carat', {headers:ah()}),
+      fetch('/alertas/limiar', {headers:ah()})
+    ]);
+    if(!rCarat.ok) throw new Error('Não foi possível carregar o histórico.');
+    const dados = await rCarat.json();
+    const limiar = rLimiar.ok ? (await rLimiar.json()) : {scoreMinimo: 24};
+    const scoreMinimo = limiar.scoreMinimo ?? 24;
+
     if(!dados.length){
       cont.innerHTML = `<div style="text-align:center;padding:24px">
         <p style="color:#64748b;margin-bottom:14px">Ainda não existe histórico CARAT.</p>
@@ -715,13 +724,13 @@ async function carregarGraficoCaratInicio(){
       return;
     }
     const ordenados = dados.sort((a,b)=>new Date(a.dataCriacao)-new Date(b.dataCriacao)).slice(-6);
-    renderGraficoCaratIntro(cont, ordenados);
+    renderGraficoCaratIntro(cont, ordenados, scoreMinimo);
   } catch(err){
     cont.innerHTML = `<p class="msg erro">${err.message||'Erro ao carregar gráfico.'}</p>`;
   }
 }
 
-function renderGraficoCaratIntro(container, dados){
+function renderGraficoCaratIntro(container, dados, scoreMinimo=24){
   const largura = 660;
   const altura = 260;
   const padding = 36;
@@ -740,12 +749,12 @@ function renderGraficoCaratIntro(container, dados){
   const labels = pontos.map(p=>`
       <text x="${p.x}" y="${altura - 8}" text-anchor="middle" font-size="11" fill="#475569">${p.label}</text>
     `).join('');
-  const y24 = padding + (maxScore - 24) * (altura - padding*2) / maxScore;
+  const yLimiar = padding + (maxScore - scoreMinimo) * (altura - padding*2) / maxScore;
   container.innerHTML = `
     <div class="grafico-legenda">
       <div>
         <div style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:6px">Histórico dos últimos CARAT</div>
-        <div class="nota">A linha vermelha indica o limiar de controlo (24 pontos).</div>
+        <div class="nota">A linha vermelha indica o limiar de controlo (${scoreMinimo} pontos).</div>
       </div>
       <button class="form-btn" type="button" onclick="carregarGraficoCaratInicio()">Atualizar</button>
     </div>
@@ -753,8 +762,8 @@ function renderGraficoCaratIntro(container, dados){
       <rect x="0" y="0" width="${largura}" height="${altura}" fill="#f8fafc" />
       <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${altura-padding}" stroke="#e2e8f0" />
       <line x1="${padding}" y1="${altura-padding}" x2="${largura-padding}" y2="${altura-padding}" stroke="#e2e8f0" />
-      <line x1="${padding}" y1="${y24}" x2="${largura-padding}" y2="${y24}" stroke="#dc2626" stroke-dasharray="6 4" stroke-width="1.5" />
-      <text x="${padding + 8}" y="${y24 - 8}" font-size="11" fill="#dc2626">24</text>
+      <line x1="${padding}" y1="${yLimiar}" x2="${largura-padding}" y2="${yLimiar}" stroke="#dc2626" stroke-dasharray="6 4" stroke-width="1.5" />
+      <text x="${padding + 8}" y="${yLimiar - 8}" font-size="11" fill="#dc2626">${scoreMinimo}</text>
       <polyline fill="none" stroke="#2563eb" stroke-width="3" points="${linha}" />
       ${circulos}
       ${labels}
@@ -1050,7 +1059,7 @@ function renderDash(d){
         <div><div class="admin-stat-label">Avaliações</div><div class="admin-stat-value">${d.totalCarats}</div></div>
         <div class="admin-stat-icon g"><svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       </div>
-      <div class="admin-stat-card" data-uid="${u.id}" data-nome="${u.nome.replace(/"/g,'&quot;')}" onclick="irParaAlertasUtente(+this.dataset.uid,this.dataset.nome)" style="cursor:pointer" title="Ver alertas de ${u.nome}">
+      <div class="admin-stat-card" ${role()==='medico'?`data-uid="${u.id}" data-nome="${u.nome.replace(/"/g,'&quot;')}" onclick="irParaAlertasUtente(+this.dataset.uid,this.dataset.nome)" style="cursor:pointer" title="Ver alertas de ${u.nome}"`:''}>
         <div><div class="admin-stat-label">Alertas ativos</div><div class="admin-stat-value">${d.alertasAtivos??0}</div></div>
         <div class="admin-stat-icon r"><svg width="22" height="22" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
       </div>

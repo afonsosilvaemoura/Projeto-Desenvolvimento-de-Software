@@ -71,6 +71,7 @@ routes.patch('/:id/ativo', authMiddleware, authorize(['medico']), (req: AuthRequ
     `).get(id, req.user!.id);
     if (!presc) return res.status(404).json({ erro: 'Prescrição não encontrada ou sem permissão.' });
     db.prepare('UPDATE prescricao SET ativo = ? WHERE id = ?').run(ativo ? 1 : 0, id);
+    auditoriaService.togglePrescricao(req.user!.id, req.user!.nome, id, ativo, ip(req));
     return res.json({ mensagem: `Prescrição ${ativo ? 'ativada' : 'inativada'}.` });
   } catch (e: any) { return res.status(500).json({ erro: e.message }); }
 });

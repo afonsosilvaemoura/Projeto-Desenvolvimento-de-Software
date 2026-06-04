@@ -3,13 +3,15 @@ import { calcularCARAT, PERGUNTAS_CARAT, OPCOES_RESPOSTA } from '../services/car
 import { db } from '../database/database';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { auditoriaService } from '../services/auditoria.service';
+import { CreateCaratDto } from '../dtos/carat/create-carat.dto';
+import { CaratResponseDto } from '../dtos/carat/carat-response.dto';
 
 const ip = (req: any) =>
   (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || '?';
 
 export async function criarAvaliacaoCarat(req: AuthRequest, res: Response) {
   try {
-    const { perg1, perg2, perg3, perg4, perg5, perg6, perg7, perg8, perg9, perg10, utente_id } = req.body;
+    const { perg1, perg2, perg3, perg4, perg5, perg6, perg7, perg8, perg9, perg10, utente_id } = req.body as CreateCaratDto;
 
     const arrayRespostas = [
       Number(perg1), Number(perg2), Number(perg3), Number(perg4), Number(perg5),
@@ -55,21 +57,19 @@ export async function criarAvaliacaoCarat(req: AuthRequest, res: Response) {
 
     auditoriaService.respostaCarat(
       req.user!.id, req.user!.nome, req.user!.role,
-      resultado.scoreTotal, Number(result.lastInsertRowid), ip(req)
+      targetUtenteId!, Number(result.lastInsertRowid), ip(req)
     );
 
-    return res.status(201).json({
-      mensagem: 'Questionário CARAT processado com sucesso!',
-      avaliacao: {
-        id: result.lastInsertRowid,
-        nome: req.user?.username ?? 'Doente',
-        scoreTotal: resultado.scoreTotal,
-        scoreRinite: resultado.scoreRinite,
-        scoreAsma: resultado.scoreAsma,
-        controloTotal: resultado.controloTotal,
-        dataCriacao: new Date().toISOString(),
-      },
-    });
+    const avaliacao: CaratResponseDto = {
+      id:           result.lastInsertRowid,
+      utente_id:    targetUtenteId,
+      scoreTotal:   resultado.scoreTotal,
+      scoreRinite:  resultado.scoreRinite,
+      scoreAsma:    resultado.scoreAsma,
+      controloTotal: resultado.controloTotal,
+      dataCriacao:  new Date().toISOString(),
+    };
+    return res.status(201).json({ mensagem: 'Questionário CARAT processado com sucesso!', avaliacao });
   } catch (erro: any) {
     return res.status(400).json({ erro: erro.message || 'Erro ao processar o CARAT' });
   }
