@@ -1,6 +1,7 @@
 import { ObservationDTO } from '../dtos/fhir/Observation';
 import { MedicationRequestDTO } from '../dtos/fhir/MedicationRequest';
 import { ServiceRequestDTO } from '../dtos/fhir/ServiceRequest';
+import { ProcedureDTO } from '../dtos/fhir/Procedure';
 import { db } from '../database/database';
 
 const FHIR_BASE_URL = 'https://fhir.hl7.pt/r5/fhir';
@@ -76,4 +77,28 @@ export function getExamesAsFhir(utenteId?: number): ServiceRequestDTO[] {
     occurrenceDateTime: e.data_marcacao,
     authoredOn: e.data_criacao,
   } satisfies ServiceRequestDTO));
+}
+
+export async function getProceduresFromFhir(subject?: string): Promise<ProcedureDTO[]> {
+  let url = `${FHIR_BASE_URL}/Procedure`;
+  if (subject) url += `?subject=Patient/${subject}`;
+
+  const resposta = await fetch(url);
+  if (!resposta.ok) throw new Error(`Erro FHIR: ${resposta.status}`);
+
+  const bundle = await resposta.json() as { entry?: Array<{ resource: any }> };
+
+  return bundle.entry?.map((entry) => {
+    const r = entry.resource;
+    return {
+      resourceType: 'Procedure',
+      id:      String(r?.id ?? ''),
+      status:  String(r?.status ?? ''),
+      code:    r?.code ?? undefined,
+      subject: { reference: String(r?.subject?.reference ?? '') },
+      performer:         r?.performer ?? undefined,
+      performedDateTime: r?.performedDateTime ?? undefined,
+      note:              r?.note ?? undefined,
+    } satisfies ProcedureDTO;
+  }) ?? [];
 }

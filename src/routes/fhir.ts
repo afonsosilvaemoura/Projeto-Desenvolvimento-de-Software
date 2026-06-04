@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getObservationsFromFhir, getPrescricoesAsFhir, getExamesAsFhir } from '../services/fhir.service';
+import { getObservationsFromFhir, getPrescricoesAsFhir, getExamesAsFhir, getProceduresFromFhir } from '../services/fhir.service';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -43,6 +43,17 @@ router.get('/service-requests', authMiddleware, (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ erro: 'Erro ao gerar FHIR ServiceRequest.' });
+  }
+});
+
+router.get('/procedures', async (req, res) => {
+  try {
+    const subject = typeof req.query.subject === 'string' ? req.query.subject : undefined;
+    const procedures = await getProceduresFromFhir(subject);
+    res.json(procedures);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ erro: 'Erro ao consultar servidor FHIR.' });
   }
 });
 

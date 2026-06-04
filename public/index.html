@@ -387,22 +387,27 @@
       <h1 class="pg-title">Recursos FHIR</h1>
       <div class="card">
         <h2 class="sec">Observações — Servidor HL7 PT (R5)</h2>
-        <div style="display:flex;gap:10px;margin-bottom:14px;align-items:flex-end;flex-wrap:wrap">
-          <div style="flex:1">
-            <label style="font-size:13px;font-weight:500;color:#374151;display:block;margin-bottom:4px">Código LOINC</label>
-            <input id="fhirCode" value="8310-5" placeholder="ex: 8310-5" style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;background:#f9fafb">
+        <div class="fhir-search-row">
+          <div class="flex-1">
+            <label class="fhir-label">Código LOINC</label>
+            <input id="fhirCode" value="8310-5" placeholder="ex: 8310-5" class="fhir-input">
+            <p style="margin-top:6px;font-size:12px;color:#64748b">Sugestão: <span onclick="document.getElementById('fhirCode').value='LP208442-6'" style="color:#2563eb;cursor:pointer;text-decoration:underline">LP208442-6</span> — Respiratory (LOINC Part)</p>
           </div>
-          <button class="form-btn" onclick="carregarObservacoes()" style="width:auto;padding:10px 20px">Pesquisar</button>
+          <button class="form-btn btn-search" onclick="carregarObservacoes()">Pesquisar</button>
         </div>
-        <div id="listaObservacoes"><p style="color:#64748b">Introduza um código LOINC e clique em Pesquisar.</p></div>
+        <div id="listaObservacoes"><p class="text-muted">Introduza um código LOINC e clique em Pesquisar.</p></div>
       </div>
       <div class="card">
-        <h2 class="sec">Prescrições — FHIR MedicationRequest (R5)</h2>
+        <h2 class="sec">Prescrições — FHIR Representation MedicationRequest (R5)</h2>
         <div id="listaMedicationRequests"><p style="color:#64748b">A carregar…</p></div>
       </div>
       <div class="card">
-        <h2 class="sec">Exames — FHIR ServiceRequest (R5)</h2>
+        <h2 class="sec">Exames — FHIR Representation ServiceRequest (R5)</h2>
         <div id="listaServiceRequests"><p style="color:#64748b">A carregar…</p></div>
+      </div>
+      <div class="card">
+        <h2 class="sec">Procedimentos — FHIR Procedure (R5)</h2>
+        <div id="listaProcedures"><p class="text-muted">A carregar…</p></div>
       </div>
     </section>
 
@@ -1271,6 +1276,7 @@ document.getElementById('formPerfil').addEventListener('submit',async e=>{
 async function carregarFhir(){
   carregarMedicationRequests();
   carregarServiceRequests();
+  carregarProcedures();
 }
 
 async function carregarObservacoes(){
@@ -1331,6 +1337,29 @@ async function carregarServiceRequests(){
       </tr>`).join('')}
     </tbody></table>`;
   } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar ServiceRequests: ${e.message||e}</p>`;}
+}
+
+async function carregarProcedures(){
+  const c=document.getElementById('listaProcedures');
+  c.innerHTML='<p class="text-muted">A carregar…</p>';
+  const subjectParam=role()==='utente'?`?subject=${uid()}`:'';
+  try{
+    const r=await fetch(`/fhir/procedures${subjectParam}`,{headers:ah()});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.erro||`Erro ${r.status}`);
+    if(!d.length){c.innerHTML='<p class="text-muted">Sem procedimentos FHIR.</p>';return;}
+    c.innerHTML=`<table><thead><tr><th>ID</th><th>Procedimento</th><th>Estado</th><th>Sujeito (ref.)</th><th>Profissional</th><th>Data</th><th>Notas</th></tr></thead><tbody>
+      ${d.map(p=>`<tr>
+        <td>${p.id}</td>
+        <td>${p.code?.concept?.text||'—'}</td>
+        <td><span class="badge-info">${p.status||'—'}</span></td>
+        <td><span class="badge-info">${p.subject?.reference||'—'}</span></td>
+        <td>${p.performer?.[0]?.actor?.display||'—'}</td>
+        <td>${fmt(p.performedDateTime)||'—'}</td>
+        <td style="font-size:12px;color:#64748b">${p.note?.map(n=>n.text).join('; ')||'—'}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar Procedures: ${e.message||e}</p>`;}
 }
 
 // ── Médicos (admin) ──────────────────────────────────────────────────────────
