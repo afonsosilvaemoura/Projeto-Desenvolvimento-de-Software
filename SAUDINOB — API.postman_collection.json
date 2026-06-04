@@ -1,0 +1,1419 @@
+{
+  "info": {
+    "_postman_id": "a6badc3d-20b5-42f1-a952-c9127b693188",
+    "name": "SAUDINOB — API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55434226",
+    "_collection_link": "https://go.postman.co/collection/55434226-a6badc3d-20b5-42f1-a952-c9127b693188?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Autenticação",
+      "item": [
+        {
+          "name": "Login — Médico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set('tokenMedico', b.token);",
+                  "pm.collectionVariables.set('medicoId', b.userId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"medico1\",\n  \"password\": \"1234.\",\n  \"role\": \"medico\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login — Utente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set('tokenUtente', b.token);",
+                  "pm.collectionVariables.set('utenteId', b.userId);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"joao\",\n  \"password\": \"1234\",\n  \"role\": \"utente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login — Administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set('tokenAdmin', b.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"1234.\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login — Credenciais Inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"naoexiste\",\n  \"password\": \"errada\",\n  \"role\": \"utente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Registo",
+      "item": [
+        {
+          "name": "Criar Utente (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Novo Utente\",\n  \"username\": \"novoutente\",\n  \"password\": \"1234\",\n  \"sexo\": \"M\",\n  \"data_nascimento\": \"1990-01-01\",\n  \"diagnostico_asma\": false,\n  \"medico_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registo/utente",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "utente"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Médico (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Dr. Novo Médico\",\n  \"username\": \"novomedico\",\n  \"password\": \"1234.\",\n  \"especialidade\": \"Pneumologia\",\n  \"numero_cedula\": \"OM-99999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registo/medico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "medico"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Utentes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/registo/utentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "utentes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Médicos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/registo/medicos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "medicos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalhe Utente por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/registo/utente/{{utenteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "utente",
+                "{{utenteId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Perfil (Utente)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUtente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/registo/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "perfil"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Perfil (Utente)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUtente}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"utente@email.com\",\n  \"telefone\": \"912345678\",\n  \"localidade\": \"Porto\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/registo/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "registo",
+                "perfil"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Prescrições",
+      "item": [
+        {
+          "name": "Criar Prescrição (Médico)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": {{utenteId}},\n  \"farmaco\": \"Salbutamol 100 mcg\",\n  \"dosagem\": \"2 inalações\",\n  \"posologia\": \"3x/dia\",\n  \"medico_nome\": \"Dr. Carlos Silva\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/prescricoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prescricoes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Prescrições (Médico)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/prescricoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prescricoes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Prescrições (Utente)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUtente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/prescricoes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prescricoes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inativar Prescrição (Médico)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/prescricoes/{{prescricaoId}}/ativo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prescricoes",
+                "{{prescricaoId}}",
+                "ativo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ativar Prescrição (Médico)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/prescricoes/{{prescricaoId}}/ativo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "prescricoes",
+                "{{prescricaoId}}",
+                "ativo"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Exames",
+      "item": [
+        {
+          "name": "Criar Exame (Médico)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": {{utenteId}},\n  \"tipo_exame\": \"Espirometria\",\n  \"exame\": \"FVC, FEV1\",\n  \"medico_id\": {{medicoId}},\n  \"data_marcacao\": \"2026-07-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/exames",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "exames"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Exames (Médico)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exames",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "exames"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Exames (Utente)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUtente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exames",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "exames"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Avaliação CARAT",
+      "item": [
+        {
+          "name": "Perguntas CARAT (público)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/carat/perguntas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "carat",
+                "perguntas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submeter CARAT (Utente)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUtente}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"perg1\": 3, \"perg2\": 2, \"perg3\": 3, \"perg4\": 2,\n  \"perg5\": 3, \"perg6\": 3, \"perg7\": 3, \"perg8\": 2,\n  \"perg9\": 3, \"perg10\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/carat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "carat"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submeter CARAT para Utente (Médico)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"utente_id\": {{utenteId}},\n  \"perg1\": 2, \"perg2\": 1, \"perg3\": 2, \"perg4\": 1,\n  \"perg5\": 2, \"perg6\": 2, \"perg7\": 3, \"perg8\": 2,\n  \"perg9\": 3, \"perg10\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/carat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "carat"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Avaliações CARAT (Médico)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/carat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "carat"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Avaliações CARAT (Utente)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUtente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/carat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "carat"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Clínico Utente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard/{{utenteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard",
+                "{{utenteId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard Médico — Alertas Utentes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/medico/alertas-utentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "medico",
+                "alertas-utentes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard Admin — Estatísticas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/admin/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "admin",
+                "stats"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Alertas",
+      "item": [
+        {
+          "name": "Listar Alertas do Médico",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/alertas/medico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "alertas",
+                "medico"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Estado Alerta — Em Seguimento",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"EM_SEGUIMENTO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alertas/{{alertaId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "alertas",
+                "{{alertaId}}",
+                "estado"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Estado Alerta — Terminado",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"FECHADO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alertas/{{alertaId}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "alertas",
+                "{{alertaId}}",
+                "estado"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Todos os Alertas (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/alertas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "alertas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obter Limiar de Alertas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/alertas/limiar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "alertas",
+                "limiar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Limiar (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scoreMinimo\": 24,\n  \"deterioracaoPontos\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alertas/limiar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "alertas",
+                "limiar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Administração",
+      "item": [
+        {
+          "name": "Listar Médicos (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/medicos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "medicos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ativar Médico",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/medico/{{medicoId}}/ativo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "medico",
+                "{{medicoId}}",
+                "ativo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inativar Médico (com realocação)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"1234.\",\n  \"realocacoes\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/medico/{{medicoId}}/desativar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "medico",
+                "{{medicoId}}",
+                "desativar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Utentes do Médico",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/medico/{{medicoId}}/utentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "medico",
+                "{{medicoId}}",
+                "utentes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Utentes (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/utentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "utentes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inativar Utente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": false,\n  \"motivo\": \"pedido_rgpd\",\n  \"password\": \"1234.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/utente/{{utenteId}}/ativo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "utente",
+                "{{utenteId}}",
+                "ativo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ativar Utente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/utente/{{utenteId}}/ativo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "utente",
+                "{{utenteId}}",
+                "ativo"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Auditoria",
+      "item": [
+        {
+          "name": "Listar Registos de Auditoria (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "?limite=100",
+              "query": [
+                {
+                  "key": "limite",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exportar Auditoria (.txt)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auditoria/exportar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auditoria",
+                "exportar"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10. FHIR",
+      "item": [
+        {
+          "name": "Observações — Servidor HL7 PT (por código LOINC)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "?code=8310-5",
+              "query": [
+                {
+                  "key": "code",
+                  "value": "8310-5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Observações — Respiratory (LP208442-6)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "?code=LP208442-6",
+              "query": [
+                {
+                  "key": "code",
+                  "value": "LP208442-6"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prescrições — FHIR Representation MedicationRequest",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/medication-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "medication-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prescrições — por Utente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "?patient={{utenteId}}",
+              "query": [
+                {
+                  "key": "patient",
+                  "value": "{{utenteId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exames — FHIR Representation ServiceRequest",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/service-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "service-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Procedimentos — Servidor HL7 PT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/procedures",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "procedures"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Procedimentos — por Utente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenMedico}}"
+              }
+            ],
+            "url": {
+              "raw": "?subject={{utenteId}}",
+              "query": [
+                {
+                  "key": "subject",
+                  "value": "{{utenteId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "tokenMedico",
+      "value": ""
+    },
+    {
+      "key": "tokenUtente",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "utenteId",
+      "value": "1"
+    },
+    {
+      "key": "medicoId",
+      "value": "1"
+    },
+    {
+      "key": "alertaId",
+      "value": "1"
+    },
+    {
+      "key": "prescricaoId",
+      "value": "1"
+    },
+    {
+      "key": "exameId",
+      "value": "1"
+    }
+  ]
+}

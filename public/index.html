@@ -405,10 +405,6 @@
         <h2 class="sec">Exames — FHIR Representation ServiceRequest (R5)</h2>
         <div id="listaServiceRequests"><p style="color:#64748b">A carregar…</p></div>
       </div>
-      <div class="card">
-        <h2 class="sec">Procedimentos — FHIR Procedure (R5)</h2>
-        <div id="listaProcedures"><p class="text-muted">A carregar…</p></div>
-      </div>
     </section>
 
   </main>
@@ -1276,7 +1272,6 @@ document.getElementById('formPerfil').addEventListener('submit',async e=>{
 async function carregarFhir(){
   carregarMedicationRequests();
   carregarServiceRequests();
-  carregarProcedures();
 }
 
 async function carregarObservacoes(){
@@ -1337,29 +1332,6 @@ async function carregarServiceRequests(){
       </tr>`).join('')}
     </tbody></table>`;
   } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar ServiceRequests: ${e.message||e}</p>`;}
-}
-
-async function carregarProcedures(){
-  const c=document.getElementById('listaProcedures');
-  c.innerHTML='<p class="text-muted">A carregar…</p>';
-  const subjectParam=role()==='utente'?`?subject=${uid()}`:'';
-  try{
-    const r=await fetch(`/fhir/procedures${subjectParam}`,{headers:ah()});
-    const d=await r.json();
-    if(!r.ok) throw new Error(d.erro||`Erro ${r.status}`);
-    if(!d.length){c.innerHTML='<p class="text-muted">Sem procedimentos FHIR.</p>';return;}
-    c.innerHTML=`<table><thead><tr><th>ID</th><th>Procedimento</th><th>Estado</th><th>Sujeito (ref.)</th><th>Profissional</th><th>Data</th><th>Notas</th></tr></thead><tbody>
-      ${d.map(p=>`<tr>
-        <td>${p.id}</td>
-        <td>${p.code?.concept?.text||'—'}</td>
-        <td><span class="badge-info">${p.status||'—'}</span></td>
-        <td><span class="badge-info">${p.subject?.reference||'—'}</span></td>
-        <td>${p.performer?.[0]?.actor?.display||'—'}</td>
-        <td>${fmt(p.performedDateTime)||'—'}</td>
-        <td style="font-size:12px;color:#64748b">${p.note?.map(n=>n.text).join('; ')||'—'}</td>
-      </tr>`).join('')}
-    </tbody></table>`;
-  } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar Procedures: ${e.message||e}</p>`;}
 }
 
 // ── Médicos (admin) ──────────────────────────────────────────────────────────
