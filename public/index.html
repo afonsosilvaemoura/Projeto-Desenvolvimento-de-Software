@@ -4,114 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema Clínico SAUDINOB</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:"Segoe UI",Arial,sans-serif;background:#f5f7fb;min-height:100vh;color:#1f2937}
-
-    /* Login */
-    #bloco-login{display:flex;justify-content:center;align-items:center;height:100vh}
-    .login-box{background:white;padding:40px;border-radius:24px;box-shadow:0 8px 30px rgba(0,0,0,.06);width:100%;max-width:400px}
-    .login-box h2{text-align:center;margin-bottom:20px;color:#0f172a}
-    .fg{margin-bottom:14px}
-    .fg label{display:block;margin-bottom:6px;font-weight:500;font-size:14px}
-    .fg input,.fg select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;font-size:15px}
-    .btn-primary{width:100%;padding:14px;background:#2563eb;color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:4px}
-    .btn-primary:hover{background:#1d4ed8}
-    .msg-erro{color:#dc2626;font-weight:500;margin-top:12px;text-align:center}
-
-    /* Layout */
-    #bloco-app{display:none;min-height:100vh}
-    nav{width:250px;background:linear-gradient(180deg,#0f172a,#1e293b);color:white;padding:28px 16px;display:flex;flex-direction:column;flex-shrink:0}
-    nav h2{font-size:19px;margin-bottom:4px;text-align:center;color:#e2e8f0}
-    #navNomeUser{font-size:12px;color:#94a3b8;text-align:center;margin-bottom:20px}
-    nav button{width:100%;border:none;padding:13px 14px;margin-bottom:8px;border-radius:12px;background:rgba(255,255,255,.08);color:#e5e7eb;cursor:pointer;text-align:left;font-size:14px;transition:all .18s}
-    nav button:hover{background:#2563eb;transform:translateX(3px)}
-    .btn-logout{margin-top:auto!important;background:#dc2626!important;text-align:center!important}
-    .btn-registo{background:rgba(22,163,74,.25)!important;color:#4ade80!important}
-    .btn-registo:hover{background:#16a34a!important;color:white!important}
-    main{flex:1;padding:36px;overflow-y:auto}
-    .pagina{display:none}
-    .pagina.ativa{display:block;animation:fi .22s ease}
-    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-    /* Cards e forms */
-    .card{background:white;border-radius:20px;padding:28px;box-shadow:0 4px 16px rgba(0,0,0,.05);margin-bottom:22px}
-    .grafico-card{padding:24px 24px 20px;border-radius:22px;max-width:100%;background:#ffffff;box-shadow:0 8px 24px rgba(15,23,42,.08);}
-    .grafico-intro{display:flex;flex-direction:column;gap:18px;width:100%;max-width:960px;margin:0 auto;margin-top:14px;}
-    .grafico-intro svg{width:100%;height:auto;max-height:340px;border-radius:18px;}
-    .grafico-legenda{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;}
-    .grafico-legenda .nota{color:#64748b;font-size:13px;line-height:1.5;}
-    .grafico-legenda button{padding:10px 14px;font-size:13px;}
-    h1.pg-title{font-size:26px;margin-bottom:20px}
-    h2.sec{margin:0 0 14px;color:#374151;font-size:19px}
-    .app-form{display:flex;flex-direction:column;gap:12px;max-width:500px}
-    .app-form label{font-size:13px;font-weight:500;color:#374151;display:block;margin-bottom:2px}
-    .app-form input:not([type=radio]):not([type=checkbox]),.app-form select{padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;background:#f9fafb;width:100%}
-    .app-form input[type=checkbox]{width:16px;height:16px;cursor:pointer}
-    button.form-btn{padding:13px;border:none;border-radius:12px;background:#2563eb;color:white;cursor:pointer;font-weight:600;font-size:14px}
-    button.form-btn:hover{background:#1d4ed8}
-    .msg{font-size:13px;font-weight:500;margin-top:2px}
-    .msg.erro{color:#dc2626}.msg.ok{color:#16a34a}
-    table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
-    th{background:#eef2ff;font-weight:600;padding:12px 14px;text-align:left}
-    td{padding:12px 14px;border-bottom:1px solid #e5e7eb}
-    tr:last-child td{border-bottom:none}
-    .badge-ok{background:#d1fae5;color:#065f46;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
-    .badge-nok{background:#fee2e2;color:#991b1b;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
-    .badge-info{background:#dbeafe;color:#1e40af;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
-
-    /* Dashboard */
-    .ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
-    .ficha-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:16px;text-align:center}
-    .ficha-item .val{font-size:22px;font-weight:700;color:#2563eb;margin-bottom:4px}
-    .ficha-item .lbl{font-size:12px;color:#64748b}
-    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
-    .stat{background:#eef2ff;border-radius:14px;padding:20px;text-align:center}
-    .stat .num{font-size:32px;font-weight:700;color:#2563eb}
-    .stat .lbl{font-size:12px;color:#475569;margin-top:4px}
-    select.dropdown{padding:11px;border:1px solid #d1d5db;border-radius:11px;font-size:14px;width:100%;max-width:320px;background:#f9fafb;margin-bottom:18px}
-
-    /* Alertas */
-    .limiar-form{display:flex;flex-direction:column;gap:14px;max-width:420px}
-    .limiar-form label{font-size:13px;font-weight:500;color:#374151}
-    .limiar-form input[type=range]{width:100%}
-    .limiar-form input[type=number]{padding:10px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;width:120px}
-    .range-row{display:flex;align-items:center;gap:14px}
-    .range-val{font-size:18px;font-weight:700;color:#2563eb;min-width:28px}
-
-    /* Modal Registo */
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8000;justify-content:center;align-items:center}
-    .overlay.aberto{display:flex}
-    .modal{background:white;padding:32px;border-radius:20px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto}
-    .modal h2{margin-bottom:20px;color:#0f172a}
-    .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#64748b;margin-top:-4px}
-
-    /* Admin Dashboard Panel */
-    .admin-panel-header{margin-bottom:24px}
-    .admin-panel-header h1{font-size:26px;font-weight:700;color:#0f172a;margin-bottom:4px}
-    .admin-panel-header p{color:#64748b;font-size:14px}
-    .admin-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
-    .admin-stat-card{background:white;border-radius:16px;padding:22px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center}
-    .admin-stat-label{font-size:13px;color:#64748b;margin-bottom:6px}
-    .admin-stat-value{font-size:30px;font-weight:700;color:#0f172a}
-    .admin-stat-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .admin-stat-icon.g{background:#d1fae5}
-    .admin-stat-icon.r{background:#fee2e2}
-    .admin-action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-    .admin-action-card{background:white;border-radius:16px;padding:22px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);cursor:pointer;transition:all .18s;border:2px solid transparent}
-    .admin-action-card:hover{border-color:#16a34a;background:#f0fdf4;transform:translateY(-2px)}
-    .admin-action-icon{width:38px;height:38px;border-radius:10px;background:#d1fae5;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
-    .admin-action-title{font-size:14px;font-weight:700;color:#0f172a;margin-bottom:3px}
-    .admin-action-sub{font-size:12px;color:#64748b}
-
-    /* Modal CARAT */
-    #modalCarat{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;justify-content:center;align-items:center}
-    #modalCarat.aberto{display:flex}
-    .scores-row{display:flex;gap:12px;justify-content:center;margin:14px 0;flex-wrap:wrap}
-    .score-box{background:#eef2ff;border-radius:12px;padding:14px 18px;text-align:center;min-width:90px}
-    .score-box .sv{font-size:26px;font-weight:700;color:#2563eb}
-    .score-box .sl{font-size:11px;color:#64748b;margin-top:3px}
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -607,10 +500,10 @@
       </div>
       <p style="font-weight:600;color:#15803d;margin-top:10px;margin-bottom:6px">Interpretação (total 0–30 pontos):</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 16px;color:#374151">
-        <span>✅ > 24 — Controlado</span>
-        <span>⚠️ 17–24 — Vigiar</span>
-        <span>❌ ≤ 16 — Urgente</span>
-        <span>🚨 &lt; 10 — Estado Crítico</span>
+        <span> > 24 — Controlado</span>
+        <span> 17–24 — Vigiar</span>
+        <span> ≤ 16 — Urgente</span>
+        <span> &lt; 10 — Estado Crítico</span>
       </div>
     </div>
 
@@ -627,7 +520,7 @@
     <div id="secaoResultadoAnonimo" style="display:none">
       <div id="resultadoAnonimoScores"></div>
       <div id="alertaCriticoAnonimo" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:14px;padding:20px;margin:16px 0;text-align:center">
-        <p style="font-size:17px;font-weight:700;color:#991b1b;margin-bottom:10px">🚨 Estado Crítico</p>
+        <p style="font-size:17px;font-weight:700;color:#991b1b;margin-bottom:10px">Estado Crítico</p>
         <p style="color:#7f1d1d;font-size:14px;line-height:1.8">
           Entre em contacto connosco para marcar uma consulta o mais rapidamente possível!<br>
           <strong>Tel:</strong> 229 229 229<br>
@@ -1028,9 +921,9 @@ document.getElementById('formCarat').addEventListener('submit', async e=>{
     const av=d.avaliacao;
     const score=av.scoreTotal;
     let reco,cor;
-    if(score>24){reco='✅ Controlado — próxima avaliação em 12 semanas.';cor='#16a34a';}
-    else if(score>16){reco='⚠️ Vigiar — marque consulta em 4 semanas.';cor='#d97706';}
-    else{reco='🚨 Urgente — consulte o médico com brevidade.';cor='#dc2626';}
+    if(score>24){reco='Controlado — próxima avaliação em 12 semanas.';cor='#16a34a';}
+    else if(score>16){reco='Vigiar — marque consulta em 4 semanas.';cor='#d97706';}
+    else{reco='Urgente — consulte o médico com brevidade.';cor='#dc2626';}
     document.getElementById('caratScores').innerHTML=`
       <div class="score-box"><div class="sv">${score}/30</div><div class="sl">Total</div></div>
       <div class="score-box" style="background:#f0fdf4"><div class="sv" style="color:#16a34a">${av.scoreRinite}/12</div><div class="sl">Rinite</div></div>
@@ -1185,7 +1078,7 @@ async function carregarMedicoDashboard(){
     const r=await fetch('/dashboard/medico/alertas-utentes',{headers:ah()});
     const alertas=await r.json();
     if(!alertas.length){
-      c.innerHTML='<div class="card"><p style="color:#16a34a;font-weight:500">✅ Sem alertas ativos para os seus utentes.</p></div>';
+      c.innerHTML='<div class="card"><p style="color:#16a34a;font-weight:500">Sem alertas ativos para os seus utentes.</p></div>';
       return;
     }
     const criticos=alertas.filter(a=>a.prioridade==='CRITICA');
@@ -1203,13 +1096,13 @@ async function carregarMedicoDashboard(){
       </div>`;
     c.innerHTML=`
       ${criticos.length?`<div class="card" style="border-left:4px solid #dc2626">
-        <h2 class="sec" style="color:#dc2626">🚨 Crítico (${criticos.length})</h2>
+        <h2 class="sec" style="color:#dc2626">Crítico (${criticos.length})</h2>
         ${criticos.map(linha).join('')}</div>`:''}
       ${altos.length?`<div class="card" style="border-left:4px solid #d97706">
-        <h2 class="sec" style="color:#d97706">⚠️ Alta prioridade (${altos.length})</h2>
+        <h2 class="sec" style="color:#d97706">Alta prioridade (${altos.length})</h2>
         ${altos.map(linha).join('')}</div>`:''}
       ${outros.length?`<div class="card">
-        <h2 class="sec">ℹ️ Outros alertas (${outros.length})</h2>
+        <h2 class="sec">Outros alertas (${outros.length})</h2>
         ${outros.map(linha).join('')}</div>`:''}`;
   } catch{c.innerHTML='<p class="msg erro">Erro ao carregar alertas.</p>';}
 }
@@ -1632,7 +1525,7 @@ async function carregarAlertasMedico(){
     if(!r.ok) throw new Error(todos.erro||`Erro ${r.status}`);
     const alertas=filtro ? todos.filter(a=>a.utente_id===filtro.id) : todos;
     if(!alertas.length){
-      c.innerHTML=`<p style="color:#16a34a;font-weight:500">✅ ${filtro?'Sem alertas ativos para '+filtro.nome+'.':'Sem alertas ativos para os seus utentes.'}</p>`;
+      c.innerHTML=`<p style="color:#16a34a;font-weight:500">${filtro?'Sem alertas ativos para '+filtro.nome+'.':'Sem alertas ativos para os seus utentes.'}</p>`;
       return;
     }
     const estadoBadge=(e)=>e==='EM_SEGUIMENTO'
@@ -1658,13 +1551,13 @@ async function carregarAlertasMedico(){
     const outros=alertas.filter(a=>!['CRITICA','ALTA'].includes(a.prioridade));
     c.innerHTML=`
       ${criticos.length?`<div style="border-left:4px solid #dc2626;padding-left:12px;margin-bottom:16px">
-        <h3 style="color:#dc2626;margin-bottom:8px">🚨 Crítico (${criticos.length})</h3>
+        <h3 style="color:#dc2626;margin-bottom:8px">Crítico (${criticos.length})</h3>
         ${criticos.map(linha).join('')}</div>`:''}
       ${altos.length?`<div style="border-left:4px solid #d97706;padding-left:12px;margin-bottom:16px">
-        <h3 style="color:#d97706;margin-bottom:8px">⚠️ Alta prioridade (${altos.length})</h3>
+        <h3 style="color:#d97706;margin-bottom:8px"> Alta prioridade (${altos.length})</h3>
         ${altos.map(linha).join('')}</div>`:''}
       ${outros.length?`<div style="border-left:4px solid #64748b;padding-left:12px">
-        <h3 style="color:#64748b;margin-bottom:8px">ℹ️ Outros (${outros.length})</h3>
+        <h3 style="color:#64748b;margin-bottom:8px"> Outros (${outros.length})</h3>
         ${outros.map(linha).join('')}</div>`:''}`;
   } catch(e){c.innerHTML=`<p class="msg erro">Erro ao carregar alertas: ${e.message||e}</p>`;}
 }
@@ -1802,9 +1695,9 @@ document.getElementById('formCaratAnonimo').addEventListener('submit',function(e
   const scoreRinite=respostas.slice(0,4).reduce((a,v)=>a+v,0);
   const scoreAsma=respostas.slice(4).reduce((a,v)=>a+v,0);
   let nivel,cor,emoji;
-  if(scoreTotal>24){nivel='Controlado';cor='#16a34a';emoji='✅';}
-  else if(scoreTotal>16){nivel='Não Controlado — Vigiar';cor='#d97706';emoji='⚠️';}
-  else{nivel='Urgente — Consulte o médico';cor='#dc2626';emoji='🚨';}
+  if(scoreTotal>24){nivel='Controlado';cor='#16a34a';emoji=' ';}
+  else if(scoreTotal>16){nivel='Não Controlado — Vigiar';cor='#d97706';emoji=' ';}
+  else{nivel='Urgente — Consulte o médico';cor='#dc2626';emoji=' ';}
   document.getElementById('resultadoAnonimoScores').innerHTML=`
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0">
       <div style="background:#eef2ff;border-radius:12px;padding:14px 20px;text-align:center;min-width:88px">
