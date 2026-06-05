@@ -1,4 +1,5 @@
 import { db } from '../database/database';
+import { Prescricao } from '../models';
 
 export class PrescricaoService {
   criarPrescricaoDTO(dados: { utente_id: number; medico_nome: string; farmaco: string; dosagem: string; posologia: string; embalagens_total?: number }) {
@@ -15,29 +16,29 @@ export class PrescricaoService {
     return db.prepare('SELECT * FROM prescricao WHERE id = ?').get(result.lastInsertRowid);
   }
 
-  listarPrescricoesComDTO() {
+  listarPrescricoesComDTO(): Prescricao[] {
     return db.prepare(`
       SELECT p.*, u.nome as utente_nome
       FROM prescricao p LEFT JOIN utente u ON p.utente_id = u.id
       ORDER BY p.data_criacao DESC
-    `).all();
+    `).all() as Prescricao[];
   }
 
-  listarPrescricoesParaMedico(medicoId: number) {
+  listarPrescricoesParaMedico(medicoId: number): Prescricao[] {
     return db.prepare(`
       SELECT p.*, u.nome as utente_nome
       FROM prescricao p JOIN utente u ON p.utente_id = u.id
       WHERE u.medico_id = ?
       ORDER BY p.data_criacao DESC
-    `).all(medicoId);
+    `).all(medicoId) as Prescricao[];
   }
 
-  listarPrescricoesComDTOParaUtente(utenteId: number) {
+  listarPrescricoesComDTOParaUtente(utenteId: number): Prescricao[] {
     return db.prepare(`
       SELECT p.*, u.nome as utente_nome
       FROM prescricao p LEFT JOIN utente u ON p.utente_id = u.id
       WHERE p.utente_id = ?
       ORDER BY p.data_criacao DESC
-    `).all(utenteId);
+    `).all(utenteId) as Prescricao[];
   }
 }

@@ -3,6 +3,7 @@ import { AuthRequest } from '../middleware/auth.middleware';
 import { PrescricaoService } from '../services/prescricao.service';
 import { auditoriaService } from '../services/auditoria.service';
 import { CreatePrescricaoDto } from '../dtos/prescricao/create-prescricao.dto';
+import { Prescricao } from '../models';
 import { db } from '../database/database';
 
 const ip = (req: any) =>
@@ -45,5 +46,20 @@ export class PrescricaoController {
     } catch (error: any) {
       return res.status(400).json({ erro: error.message });
     }
+  }
+
+  toggleAtivo(req: AuthRequest, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const { ativo } = req.body;
+      if (typeof ativo !== 'boolean') return res.status(400).json({ erro: 'Campo "ativo" deve ser boolean.' });
+      const presc = db.prepare(
+        'SELECT p.id FROM prescricao p JOIN utente u ON p.utente_id = u.id WHERE p.id = ? AND u.medico_id = ?'
+      ).get(id, req.user!.id) as Prescricao | undefined;
+      if (!presc) return res.status(404).json({ erro: 'Prescrição não encontrada ou sem permissão.' });
+      db.prepare('UPDATE prescricao SET ativo = ? WHERE id = ?').run(ativo ? 1 : 0, id);
+      auditoriaService.togglePrescricao(req.user!.id, req.user!.nome, id, ativo, ip(req));
+      return res.json({ mensagem: `Prescrição ${ativo ? 'ativada' : 'inativada'}.` });
+    } catch (e: any) { return res.status(500).json({ erro: e.message }); }
   }
 }

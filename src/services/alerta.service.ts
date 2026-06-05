@@ -1,4 +1,5 @@
 import { db } from '../database/database';
+import { Alerta, LimiarAlerta } from '../models';
 
 export class AlertaService {
 
@@ -28,15 +29,15 @@ export class AlertaService {
       .run(estado, new Date().toISOString(), alertaId);
   }
 
-  getAllAlertas() {
-    return db.prepare('SELECT * FROM alerta ORDER BY dataCriacao DESC').all();
+  getAllAlertas(): Alerta[] {
+    return db.prepare('SELECT * FROM alerta ORDER BY dataCriacao DESC').all() as Alerta[];
   }
 
-  getLimiar() {
-    let limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get() as any;
+  getLimiar(): LimiarAlerta {
+    let limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get() as LimiarAlerta | undefined;
     if (!limiar) {
       db.prepare('INSERT INTO limiar_alerta (scoreMinimo, deterioracaoPontos, dataAtualizacao) VALUES (24, 3, ?)').run(new Date().toISOString());
-      limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get();
+      limiar = db.prepare('SELECT * FROM limiar_alerta ORDER BY id LIMIT 1').get() as LimiarAlerta;
     }
     return limiar;
   }
