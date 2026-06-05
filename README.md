@@ -5,7 +5,8 @@ Projeto desenvolvido no âmbito da disciplina de Desenvolvimento de Software da 
 Implementação de uma API REST seguindo o padrão MVC (Model-View-Controller) com Node.js, Express e TypeScript, utilizando armazenamento local em memória.
 # Projeto-Desenvolvimento-de-Software
 **Importante:** A versão final do projeto encontra-se na branch **`aqui`**.  
-Após clonar o repositório, deve mudar para essa branch antes de executar a aplicação
+Após clonar o repositório, deve mudar para essa branch antes de executar a aplicação.
+
 
 <h2>Estrutura do Projeto</h2>
 <br><br>
@@ -26,10 +27,16 @@ git checkout aqui
 # Instalar dependências
 npm install
 
+
+
 <h2>Como Correr</h2><br>
 <h3>Modo de desenvolvimento (com auto-reload)</h3>
 npx nodemon src/app.ts<br>
 O servidor arranca em http://localhost:3000<br>
+Para polular a base de dados:
+npx ts-node src/database/seed.ts
+
+
 
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
