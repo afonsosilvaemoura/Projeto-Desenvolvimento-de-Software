@@ -4,7 +4,8 @@ Projeto desenvolvido no âmbito da disciplina de Desenvolvimento de Software da 
 
 Implementação de uma API REST seguindo o padrão MVC (Model-View-Controller) com Node.js, Express e TypeScript, utilizando armazenamento local em memória.
 # Projeto-Desenvolvimento-de-Software
-
+**Importante:** A versão final do projeto encontra-se na branch **`aqui`**.  
+Após clonar o repositório, deve mudar para essa branch antes de executar a aplicação
 
 <h2>Estrutura do Projeto</h2>
 <br><br>
@@ -18,7 +19,9 @@ npm (verificar com npm -v)<br>
 <h2>Instalação</h2>
 # Clonar o repositório<br>
 git clone https://github.com/afonsosilvaemoura/Projeto-Desenvolvimento-de-Software.git<br>
-cd !!!!!
+
+# Mudar para a branch correta
+git checkout aqui
 
 # Instalar dependências
 npm install
